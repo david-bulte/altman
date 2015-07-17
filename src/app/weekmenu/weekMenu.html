@@ -1,0 +1,55 @@
+<sidebar sidebar-title="'Grocies'"></sidebar>
+
+<div layout="column" flex>
+
+  <toolbar toolbar-title="'Week Menu'"></toolbar>
+
+  <md-content>
+
+    <md-card ng-repeat="dish in weekMenu.dishes">
+      <!--<img ng-src="{{imagePath}}" class="md-card-image" alt="Washed Out">-->
+      <md-card-content>
+        <h2 class="md-title">{{dish.name}}</h2>
+
+        <p>
+          {{dish.notes}}
+        </p>
+
+        <ul>
+          <li ng-repeat="ingredient in dish.ingredients">
+            {{ingredient.amount}} {{ingredient.type}} {{ingredient.name}}
+          </li>
+        </ul>
+
+      </md-card-content>
+
+      <div class="md-actions" layout="row" layout-align="end center">
+        <md-button ng-click="weekMenu.remove($event, dish)">Remove</md-button>
+        <md-button ng-href="#/edit-dish/{{dish.id}}">Edit</md-button>
+      </div>
+    </md-card>
+  </md-content>
+
+</div>
+
+<div style="position: fixed; z-index: 30; right: 0; bottom: 0">
+  <md-fab-speed-dial md-open="weekMenu.isOpen" md-direction="left"
+                     class="md-fling">
+    <md-fab-trigger>
+      <md-button aria-label="menu" class="md-fab md-warn">
+        <md-icon md-svg-src="assets/images/icons/ic_menu_white_24px.svg"></md-icon>
+      </md-button>
+    </md-fab-trigger>
+    <md-fab-actions>
+      <md-button ng-href="#/shoppinglist" aria-label="shopping list" class="md-fab md-raised md-mini">
+        <md-icon md-svg-src="assets/images/icons/ic_shopping_basket_black_24px.svg"></md-icon>
+      </md-button>
+      <md-button ng-href="#/dishes" aria-label="search dish" class="md-fab md-raised md-mini">
+        <md-icon md-svg-src="assets/images/icons/ic_search_black_24px.svg"></md-icon>
+      </md-button>
+      <md-button ng-click="weekMenu.addDish()" aria-label="create new dish" class="md-fab md-raised md-mini">
+        <md-icon md-svg-src="assets/images/icons/ic_add_circle_outline_black_24px.svg"></md-icon>
+      </md-button>
+    </md-fab-actions>
+  </md-fab-speed-dial>
+</div>

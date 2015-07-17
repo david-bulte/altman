@@ -1,0 +1,80 @@
+<div layout="column" flex>
+
+  <md-content md-theme="docs-dark" layout-padding layout="row" layout-sm="column">
+    <md-input-container>
+      <label>Dish</label>
+      <input ng-model="dish.dish.name">
+    </md-input-container>
+  </md-content>
+
+  <md-content layout-padding>
+    <form name="userForm">
+
+      <div layout layout-sm="row" ng-repeat="ingredient in dish.dish.ingredients">
+        <md-input-container flex>
+          <label>Ingredient</label>
+          <!--todo autocomplete-->
+          <input ng-model="ingredient.name" ng-change="dish.changed(ingredient)">
+        </md-input-container>
+        <md-input-container flex>
+          <label>Amount</label>
+          <input ng-model="ingredient.amount">
+        </md-input-container>
+        <md-input-container flex>
+          <label>Type</label>
+          <input ng-model="ingredient.type">
+        </md-input-container>
+        <md-select placeholder="Section" ng-model="ingredient.section">
+          <md-option ng-repeat="section in dish.sections" value="{{section}}">{{section}}</md-option>
+        </md-select>
+        <md-button class="md-icon-button" aria-label="Delete">
+          <md-icon md-svg-icon="assets/images/icons/print.svg"></md-icon>
+        </md-button>
+      </div>
+
+
+      <!--<div layout layout-sm="row">-->
+        <!--<md-input-container style="width:80%" class="md-icon-float">-->
+          <!--<md-icon md-svg-src="assets/images/icons/print.svg" class="name"></md-icon>-->
+          <!--<input ng-model="ingredient.name" ng-change="dish.newDish">-->
+        <!--</md-input-container>-->
+        <!--<md-input-container flex>-->
+          <!--<input ng-model="ingredient.amount">-->
+        <!--</md-input-container>-->
+        <!--<md-input-container flex>-->
+          <!--<input ng-model="ingredient.type">-->
+        <!--</md-input-container>-->
+        <!--<md-select placeholder="Section" ng-model="ingredient.section">-->
+          <!--<md-option ng-repeat="section in dish.sections" value="{{section}}">{{section}}</md-option>-->
+        <!--</md-select>-->
+
+      <!--</div>-->
+    </form>
+  </md-content>
+
+  <md-content layout-padding>
+    <md-input-container flex>
+      <label>Notes</label>
+      <textarea ng-model="user.biography" columns="1" md-maxlength="150"></textarea>
+    </md-input-container>
+  </md-content>
+
+
+  <md-content layout-padding>
+
+    <h7 class="md-title">Badges</h7>
+
+    <md-chips
+      ng-model="dish.tags"
+      readonly="false"></md-chips>
+
+
+  </md-content>
+
+
+  <div class="md-actions" layout="row" layout-align="end center">
+    <md-button class="md-raised md-primary" ng-href="'#/weekmenu">Done</md-button>
+  </div>
+
+
+</div>

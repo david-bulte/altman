@@ -1,0 +1,43 @@
+
+<md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left"
+            md-is-locked-open="$mdMedia('gt-sm')" md-swipe-left="sidebar.toggle()">
+
+  <md-toolbar class="md-primary" layout="row" layout-align="space-between center">
+    <h1 class="md-toolbar-tools">{{sidebar.sidebarTitle}}</h1>
+    <md-button class="md-icon-button" aria-label="Close sidebar" hide-gt-sm ng-click="sidebar.toggle()">
+      <md-icon md-svg-icon="assets/images/icons/ic_keyboard_arrow_left_white_24px.svg"></md-icon>
+    </md-button>
+  </md-toolbar>
+
+  <md-content layout-padding>
+
+    <md-menu-content width="4">
+      <md-menu-item>
+        <md-button href="#/weekmenu">
+          <!--<md-icon md-svg-icon="call:dialpad" md-menu-align-target></md-icon>-->
+          Week Menu
+        </md-button>
+      </md-menu-item>
+      <md-menu-item>
+        <md-button href="#/dishes">
+          <!--<md-icon md-svg-icon="call:voicemail"></md-icon>-->
+          Dishes
+        </md-button>
+      </md-menu-item>
+      <md-menu-item>
+        <md-button href="#/shoppinglist">
+          <!--<md-icon md-svg-icon="social:notifications-{{ctrl.notificationsEnabled ? 'off' : 'on'}}"></md-icon>-->
+          Shopping List
+        </md-button>
+      </md-menu-item>
+      <md-menu-divider></md-menu-divider>
+      <md-menu-item>
+        <md-button href="#/config">
+          <!--<md-icon md-svg-icon="social:notifications-{{ctrl.notificationsEnabled ? 'off' : 'on'}}"></md-icon>-->
+          Config
+        </md-button>
+      </md-menu-item>
+    </md-menu-content>
+
+  </md-content>
+</md-sidenav>

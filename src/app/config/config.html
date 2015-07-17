@@ -1,0 +1,25 @@
+<sidebar sidebar-title="'Grocies'"></sidebar>
+
+<div layout="column" flex>
+
+  <toolbar toolbar-title="'Config'"></toolbar>
+
+    <h7 class="md-title">Sections</h7>
+
+    <md-chips
+      ng-model="config.sections"
+      readonly="false"></md-chips>
+
+    <h7 class="md-title">Tags</h7>
+
+    <md-chips
+      ng-model="config.tags"
+      readonly="false"></md-chips>
+
+
+
+  <div class="md-actions" layout="row" layout-align="end center">
+    <md-button class="md-raised md-primary" ng-href="'#/weekmenu">Done</md-button>
+  </div>
+
+</div>

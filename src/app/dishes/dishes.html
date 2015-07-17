@@ -1,0 +1,36 @@
+<sidebar sidebar-title="'Grocies'"></sidebar>
+
+<div layout="column" flex>
+
+  <toolbar toolbar-title="'Dishes'"  toolbar-filter-enabled="true" toolbar-filter="dishes.filter"></toolbar>
+
+  <md-content>
+
+    <md-card ng-repeat="dish in dishes.dishes">
+      <!--<img ng-src="{{imagePath}}" class="md-card-image" alt="Washed Out">-->
+      <md-card-content>
+        <h2 class="md-title">{{dish.name}}</h2>
+
+        <p>
+          {{dish.notes}}
+        </p>
+
+        <ul>
+          <li ng-repeat="ingredient in dish.ingredients">
+            {{ingredient.amount}} {{ingredient.type}} {{ingredient.name}}
+          </li>
+        </ul>
+
+      </md-card-content>
+
+      <div class="md-actions" layout="row" layout-align="end center">
+        <md-button ng-click="dishes.deleteDish($event, dish)">Remove</md-button>
+        <md-button ng-href="#/edit-dish/{{dish.id}}">Edit</md-button>
+        <md-button ng-click="dishes.addDishToWeekMenu(dish)">Add to week menu</md-button>
+        <!--todo flag op dish niveau? evt berekend adh van weekmenu? subclass van Dish? DishVm-->
+        <!--<md-button ng-click="dishes.removeDishFromWeekMenu(dish)">Add to week menu</md-button>-->
+      </div>
+    </md-card>
+  </md-content>
+
+</div>

@@ -1,0 +1,19 @@
+
+<md-toolbar class="">
+  <div class="md-toolbar-tools md-primary">
+    <md-button class="md-icon-button" hide-gt-sm aria-label="Settings" ng-click="toolbar.toggleSidebar()">
+      <md-icon md-svg-icon="assets/images/icons/ic_menu_white_24px.svg"></md-icon>
+    </md-button>
+    <h2>
+      <span>#{{toolbar.toolbarTitle}}</span>
+    </h2>
+    <span flex></span>
+    <md-input-container ng-show="toolbar.toolbarFilterEnabled">
+      <!--todo sytle-->
+      <input ng-model="toolbar.toolbarFilter" type="text" style="color: white; border-color: white">
+    </md-input-container>
+    <md-button class="md-icon-button" aria-label="Search" ng-show="toolbar.toolbarFilterEnabled">
+      <md-icon md-svg-icon="assets/images/icons/ic_search_white_24px.svg"></md-icon>
+    </md-button>
+  </div>
+</md-toolbar>
