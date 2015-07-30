@@ -16,7 +16,7 @@ function routerConfig ($routeProvider) {
       controller: 'ConfigController',
       controllerAs: 'config'
     })
-    .when('/edit-dish/:id', {
+    .when('/edit-dish/:key', {
       templateUrl: 'app/dish/create-or-edit.html',
       controller: 'DishController',
       controllerAs: 'dish'

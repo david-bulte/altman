@@ -10,11 +10,10 @@
   <md-content layout-padding>
     <form name="userForm">
 
-      <div layout layout-sm="row" ng-repeat="ingredient in dish.dish.ingredients">
+      <div layout layout-sm="row" ng-repeat="ingredient in dish.ingredients">
         <md-input-container flex>
           <label>Ingredient</label>
-          <!--todo autocomplete-->
-          <input ng-model="ingredient.name" ng-change="dish.changed(ingredient)">
+          <input ng-model="ingredient.name" ng-change="dish.ingredientChanged(ingredient)">
         </md-input-container>
         <md-input-container flex>
           <label>Amount</label>
@@ -73,7 +72,8 @@
 
 
   <div class="md-actions" layout="row" layout-align="end center">
-    <md-button class="md-raised md-primary" ng-href="'#/weekmenu">Done</md-button>
+    <!--<md-button class="md-raised md-primary" ng-href="'#/weekmenu">Done</md-button>-->
+    <md-button class="md-raised md-primary" ng-click="dish.save()">Done</md-button>
   </div>
 
 

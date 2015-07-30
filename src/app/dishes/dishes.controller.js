@@ -9,18 +9,30 @@ class DishesController {
     this._toast = $mdToast;
     this._location = $location;
 
-    this.filterDishes('');
-
     $scope.$watch('dishes.filter', (query) => {
-      this.filterDishes(query);
+      this._getDishes(query);
+    });
+
+  }
+
+  _getDishes(query) {
+    "use strict";
+    this._dishesService.getDishes(query).then((dishes) => {
+      "use strict";
+      this.dishes = dishes;
     });
   }
 
-  filterDishes(query) {
-    "use strict";
-
-    this.dishes = this._dishesService.filterDishes(query);
-  }
+  //filterDishes(query) {
+  //  "use strict";
+  //
+  //  console.log('filter');
+  //  console.log('filter');
+  //  console.log('filter');
+  //  console.log('filter');
+  //  //this.dishes = this._dishesService.filterDishes(query);
+  //  this.dishes = this._dishesService.dishes;
+  //}
 
   deleteDish(ev, dish) {
     "use strict";
@@ -34,9 +46,13 @@ class DishesController {
 
     //cool, because we have an arrow function, 'this' still refers to the class
     this._dialog.show(confirm).then(() => {
-      this.dishes.splice(dish, 1);
-      this._dishesService.deleteDish(dish.id);
-      this.toast(dish.name + ' removed');
+      this._dishesService.deleteDish(dish)
+        .then(() => {
+          this.toast(dish.name + ' removed');
+        })
+        .catch((err) => {
+          //ok
+        });
     }, () => {
       //ok
     });
@@ -44,8 +60,9 @@ class DishesController {
 
   addDishToWeekMenu(dish) {
     "use strict";
-    this._weekMenuService.addDishId(dish.id);
-    this.toast(dish.name + ' added to week menu');
+    this._weekMenuService.addDishId(dish.key).then(() => {
+      this.toast(dish.name + ' added to week menu');
+    });
   }
 
   removeDishFromWeekMenu(dish) {

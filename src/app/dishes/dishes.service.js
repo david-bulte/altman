@@ -1,69 +1,109 @@
-let _counter = new WeakMap();
-let _dishes = new WeakMap();
+let _cache = new WeakMap();
 
 class DishesService {
 
-  constructor() {
+  constructor($timeout) {
     'ngInject';
 
-    _dishes.set(this, new Map());
-    _counter.set(this, 0);
+    this._$timeout = $timeout;
 
-    for (var i = 0; i < 10; i++) {
-      let dish = this.createDish();
-      dish.name = 'test ' + i;
-    }
+    _cache.set(this, []);
   }
 
-  get dishes() {
+  static _model(snapshot) {
     "use strict";
-    return _dishes.get(this).values();
+    let obj = snapshot.val();
+    obj.key = snapshot.key();
+    return obj;
   }
 
-  createDish() {
+  //get dishes() {
+  //  "use strict";
+  //  return _cache.get(this);
+  //}
+
+  getDishes(query) {
     "use strict";
-    let id = _counter.get(this) + 1;
-    let dish = new Dish({id: id});
-    _dishes.get(this).set(id, dish);
-    _counter.set(this, id);
-    return dish;
-  }
 
-  getDish(id) {
-    "use strict";
-    let dishes = _dishes.get(this).values();
-    for (let dish of dishes) {
-      if (dish.id === id) {
-        return dish;
-      }
-    }
-  }
+    let result = _cache.get(this);
+    result.length = 0;
 
-  deleteDish(id) {
-    "use strict";
-    _dishes.get(this).delete(id);
-  }
-
-  filterDishes(query = '') {
-    var dishes = Array.from(_dishes.get(this).values());
-    return dishes.filter((dish) => {
-      return query.length === 0 || dish.name.toLowerCase().startsWith(query.toLowerCase());
+    return new Promise((resolve, reject) => {
+      let ref = new Firebase("https://altman.firebaseio.com/dishes");
+      ref.on('child_added', (snapshot) => {
+        let dish = DishesService._model(snapshot);
+        result.push(dish);
+        this._$timeout(() => {
+          resolve(result);
+        });
+      });
     });
   }
 
-}
-
-class Dish {
-
-  constructor(spec) {
+  getDish(key) {
     "use strict";
 
-    this.id = spec.id;
-    this.ingredients = [];
-    this.name = spec.name;
-    this.notes = spec.notes;
-    this.section = undefined;
-    this.tags = [];
+    return new Promise((resolve, reject) => {
+      let ref = new Firebase("https://altman.firebaseio.com/dishes/" + key);
+      ref.on("value", (snapshot) => {
+        let dish = DishesService._model(snapshot);
+        this._$timeout(() => {
+          resolve(dish);
+        });
+      });
+    });
+  }
+
+  addDish(dish) {
+    "use strict";
+    let ref = new Firebase("https://altman.firebaseio.com/dishes");
+    dish.key = ref.push(dish).key();
+  }
+
+  saveDish(dish) {
+    "use strict";
+
+    let key = dish.key;
+    delete dish.key;
+
+    return new Promise(function (resolve, reject) {
+      if (key) {
+        let ref = new Firebase("https://altman.firebaseio.com/dishes/" + key);
+        ref.set(dish, (err) => {
+          if (err) {
+            reject(err);
+          }
+          else {
+            dish.key = key;
+            resolve(dish);
+          }
+        });
+      }
+      else {
+        let ref = new Firebase("https://altman.firebaseio.com/dishes");
+        dish.key = ref.push(dish).key();
+        //todo resolve
+      }
+    });
+  }
+
+  deleteDish(dish) {
+    "use strict";
+
+    return new Promise((resolve, reject) => {
+      let ref = new Firebase("https://altman.firebaseio.com/dishes/" + dish.key);
+      ref.remove((err) => {
+        if (err) {
+          reject(err);
+        }
+        else {
+          this._$timeout(() => {
+            _cache.get(self).splice(dish, 1);
+            resolve();
+          });
+        }
+      });
+    });
   }
 
 }

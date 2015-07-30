@@ -20,7 +20,7 @@ import SidebarDirective from './components/sidebar/sidebar.directive.js';
 import ToolbarDirective from './components/toolbar/toolbar.directive.js';
 
 
-angular.module('altman', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize', 'ngRoute', 'ngMaterial'])
+angular.module('altman', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize', 'ngRoute', 'ngMaterial', 'firebase'])
   .constant('malarkey', malarkey)
   .constant('toastr', toastr)
   .constant('moment', moment)

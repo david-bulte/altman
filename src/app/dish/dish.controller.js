@@ -1,29 +1,69 @@
 class DishController {
 
-  constructor(ConfigService, DishesService, $routeParams) {
+  constructor(ConfigService, DishesService, $location, $scope, $routeParams) {
     'ngInject';
 
-    this.sections = ConfigService.sections;
-    this.tags = ConfigService.tags;
+    this._$scope = $scope;
+    this._$location = $location;
+    this._dishesService = DishesService;
 
-    let id = $routeParams.id;
+    ConfigService.getConfig().then((config) => {
+      "use strict";
+      this.sections = config.sections;
+      this.tags = config.tags;
+    });
 
-    if (id !== undefined) {
-      this.dish = DishesService.getDish(parseInt(id, 10));
+    this.dish = {};
+
+    let key = $routeParams.key;
+
+    if (key !== undefined) {
+      this._dishesService.getDish(key)
+        .then((dish) => {
+          this.dish.key = dish.key;
+          this.dish.name = dish.name;
+          if (dish.ingredients) {
+            this.dish.ingredients = Array.from(dish.ingredients);
+          }
+        });
     }
-    else {
-      //first add to DishesService
-      //next just add id to WeekMenuService
-      this.dish = DishesService.add();
-    }
-    this.dish.ingredients.push({name : undefined, fresh : true});
+
+    this.tags = [];
+    this.ingredients = [];
+    this.ingredients.push({name: undefined, fresh: true});
+
+    //$scope.$watch('dish.dish', (dish) => {
+    //  "use strict";
+    //  if (dish) {
+    //    DishesService.addDish(dish);
+    //  }
+    //})
   }
 
-  changed(ingredient) {
+  save() {
+    "use strict";
+    let dish = {
+      key: this.dish.key,
+      name: this.dish.name,
+      ingredients: this.ingredients.filter((ingredient) => {
+        return !ingredient.fresh;
+      })
+    };
+
+    var self = this;
+    this._dishesService.saveDish(dish).then(() => {
+      //toast
+      //change location
+      self._$location.path('/dishes');
+      self._$scope.$apply();
+    });
+  }
+
+  ingredientChanged(ingredient) {
     "use strict";
     if (ingredient.fresh === true) {
       delete ingredient.fresh;
-      this.dish.ingredients.push({name : undefined, fresh : true});
+      this.ingredients.push({name: undefined, fresh: true});
     }
   }
 

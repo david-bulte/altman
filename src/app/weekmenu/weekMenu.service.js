@@ -13,16 +13,39 @@ class WeekMenuService {
     return _dishIds.get(this).values();
   }
 
-  addDishId(dishId) {
+  addDishId(key) {
     "use strict";
-    if (dishId !== undefined) {
-      _dishIds.get(this).add(dishId);
-    }
+
+    let callback = (resolve, reject) => {
+      return (err) => {
+        if (err) {
+          reject();
+        }
+        else {
+          resolve()
+        }
+      };
+    };
+
+
+    let updateWeekmenu = new Promise((resolve, reject) => {
+      let ref = new Firebase('https://altman.firebaseio.com/weekmenus/david_bulte/dishes');
+      let dish = {};
+      dish[key] = 1;
+      ref.set(dish, callback(resolve, reject));
+    });
+
+    let updateDish = new Promise((resolve, reject) => {
+      let ref = new Firebase('https://altman.firebaseio.com/dishes/' + key + '/weekmenus');
+      ref.set({david_bulte : 1}, callback(resolve, reject));
+    });
+
+    return Promise.all([updateWeekmenu, updateDish]);
   }
 
   removeDishId(dishId) {
     "use strict";
-     _dishIds.get(this).delete(dishId);
+    _dishIds.get(this).delete(dishId);
   }
 
 }
