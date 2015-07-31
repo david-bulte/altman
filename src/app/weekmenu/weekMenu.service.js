@@ -1,16 +1,7 @@
-let _dishIds = new WeakMap();
-
 class WeekMenuService {
 
   constructor() {
     'ngInject';
-
-    _dishIds.set(this, new Set());
-  }
-
-  get dishIds() {
-    "use strict";
-    return _dishIds.get(this).values();
   }
 
   getDishes() {
@@ -44,6 +35,7 @@ class WeekMenuService {
       let makePromise = (key, result) => {
         return new Promise((resolve) => {
           getDish(key, (val) => {
+            val.key = key;
             result.push(val);
             resolve();
           });
@@ -88,7 +80,7 @@ class WeekMenuService {
       let ref = new Firebase('https://altman.firebaseio.com/weekmenus/david_bulte/dishes');
       let dish = {};
       dish[key] = 1;
-      ref.set(dish, callback(resolve, reject));
+      ref.update(dish, callback(resolve, reject));
     });
 
     //let updateDish = new Promise((resolve, reject) => {
@@ -101,9 +93,26 @@ class WeekMenuService {
     return updateWeekmenu;
   }
 
-  removeDishId(dishId) {
+  removeDishId(key) {
+    console.log(key);
+    console.log(key);
+    console.log(key);
+    console.log(key);
+    console.log(key);
     "use strict";
-    _dishIds.get(this).delete(dishId);
+    return new Promise((resolve, reject) => {
+      let ref = new Firebase('https://altman.firebaseio.com/weekmenus/david_bulte/dishes');
+      let dish = {};
+      dish[key] = null;
+      ref.update(dish, (err) => {
+        if (err) {
+          reject();
+        }
+        else {
+          resolve();
+        }
+      });
+    });
   }
 
 }

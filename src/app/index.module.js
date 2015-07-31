@@ -10,6 +10,7 @@ import WebDevTecService from '../app/components/webDevTec/webDevTec.service';
 import NavbarDirective from '../app/components/navbar/navbar.directive';
 import MalarkeyDirective from '../app/components/malarkey/malarkey.directive';
 import DishController from './dish/dish.controller.js';
+import CreateDishController from './dish/createDish.controller.js';
 import DishesController from './dishes/dishes.controller.js';
 import DishesService from './dishes/dishes.service.js';
 import ConfigController from './config/config.controller.js';
@@ -36,6 +37,7 @@ angular.module('altman', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize', 'ng
   .controller('MainController', MainController)
   .controller('ConfigController', ConfigController)
   .controller('DishController', DishController)
+  .controller('CreateDishController', CreateDishController)
   .controller('DishesController', DishesController)
   .controller('WeekMenuController', WeekMenuController)
 
@@ -43,7 +45,7 @@ angular.module('altman', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize', 'ng
   .service('DishesService', DishesService)
   .service('WeekMenuService', WeekMenuService)
 
-  .directive('toolbar', () => new ToolbarDirective())
+  .directive('toolbar', () => new ToolbarDirective()) //register directive classes as factories
   .directive('sidebar', () => new SidebarDirective())
   .directive('acmeNavbar', () => new NavbarDirective())
   .directive('acmeMalarkey', () => new MalarkeyDirective(malarkey));

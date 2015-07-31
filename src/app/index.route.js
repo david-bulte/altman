@@ -23,7 +23,7 @@ function routerConfig ($routeProvider) {
     })
     .when('/create-dish', {
       templateUrl: 'app/dish/create-or-edit.html',
-      controller: 'DishController',
+      controller: 'CreateDishController',
       controllerAs: 'dish'
     })
     .when('/dishes', {

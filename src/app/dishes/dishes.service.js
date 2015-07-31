@@ -81,7 +81,18 @@ class DishesService {
       }
       else {
         let ref = new Firebase("https://altman.firebaseio.com/dishes");
-        dish.key = ref.push(dish).key();
+        let dishRef = ref.push();
+        dishRef.set(dish, (err) => {
+          if (err) {
+            reject(err);
+          }
+          else {
+            dish.key = dishRef.key();
+            resolve(dish);
+          }
+        });
+        //dish.key = ref.push(dish).key();
+        //resolve(dish);
         //todo resolve
       }
     });

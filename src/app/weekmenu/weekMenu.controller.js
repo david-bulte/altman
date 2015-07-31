@@ -7,7 +7,7 @@ class WeekMenuController {
     this._weekMenuService = WeekMenuService;
     this._dialog = $mdDialog;
     this._toast = $mdToast;
-    this._location = $location;
+    this._$location = $location;
 
     this.dishes = [];
 
@@ -23,9 +23,7 @@ class WeekMenuController {
 
   addDish() {
     "use strict";
-    let dish = this._dishesService.createDish();
-    this._weekMenuService.addDishId(dish.id);
-    this._location.path(`/edit-dish/${dish.id}`);
+    this._$location.path('/create-dish');
   }
 
   remove(ev, dish) {
@@ -40,9 +38,10 @@ class WeekMenuController {
 
     //cool, because we have an arrow function, 'this' still refers to the class
     this._dialog.show(confirm).then(() => {
-      this.dishes.splice(dish, 1);
-      this._weekMenuService.removeDishId(dish.id);
-      this.toast(dish.name + ' removed');
+      this._weekMenuService.removeDishId(dish.key).then(() => {
+        this.dishes.splice(this.dishes.indexOf(dish), 1);
+        this.toast(dish.name + ' removed');
+      });
     }, () => {
       //ok
     });

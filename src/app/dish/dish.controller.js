@@ -7,6 +7,8 @@ class DishController {
     this._$location = $location;
     this._dishesService = DishesService;
 
+    this.ctrl = 'DishController';
+
     ConfigService.getConfig().then((config) => {
       "use strict";
       this.sections = config.sections;
@@ -41,6 +43,9 @@ class DishController {
   }
 
   save() {
+
+    console.log('save() ' + this.ctrl);
+
     "use strict";
     let dish = {
       key: this.dish.key,
@@ -54,17 +59,23 @@ class DishController {
           name : ingredient.name,
           amount : ingredient.amount,
           section : ingredient.section
-        }
+        };
       }
     }
 
     var self = this;
-    this._dishesService.saveDish(dish).then(() => {
-      //toast
-      //change location
-      self._$location.path('/dishes');
-      self._$scope.$apply();
+    this._dishesService.saveDish(dish).then((dish) => {
+      self.saved(dish);
     });
+  }
+
+  saved(dish) {
+    "use strict";
+
+    console.log('saved() ' + this.ctrl);
+
+    this._$location.path('/dishes');
+    this._$scope.$apply();
   }
 
   ingredientChanged(ingredient) {

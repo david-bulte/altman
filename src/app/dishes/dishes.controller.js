@@ -7,7 +7,7 @@ class DishesController {
     this._weekMenuService = WeekMenuService;
     this._dialog = $mdDialog;
     this._toast = $mdToast;
-    this._location = $location;
+    this._$location = $location;
 
     $scope.$watch('dishes.filter', (query) => {
       this._getDishes(query);
