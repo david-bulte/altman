@@ -19,10 +19,6 @@
           <label>Amount</label>
           <input ng-model="ingredient.amount">
         </md-input-container>
-        <md-input-container flex>
-          <label>Type</label>
-          <input ng-model="ingredient.type">
-        </md-input-container>
         <md-select placeholder="Section" ng-model="ingredient.section">
           <md-option ng-repeat="section in dish.sections" value="{{section}}">{{section}}</md-option>
         </md-select>
@@ -30,7 +26,6 @@
           <md-icon md-svg-icon="assets/images/icons/print.svg"></md-icon>
         </md-button>
       </div>
-
 
       <!--<div layout layout-sm="row">-->
         <!--<md-input-container style="width:80%" class="md-icon-float">-->

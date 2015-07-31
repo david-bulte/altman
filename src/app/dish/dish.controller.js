@@ -14,6 +14,8 @@ class DishController {
     });
 
     this.dish = {};
+    this.tags = [];
+    this.ingredients = [{name: undefined, fresh: true}];
 
     let key = $routeParams.key;
 
@@ -23,14 +25,12 @@ class DishController {
           this.dish.key = dish.key;
           this.dish.name = dish.name;
           if (dish.ingredients) {
-            this.dish.ingredients = Array.from(dish.ingredients);
+            for (let ingredient of Object.keys(dish.ingredients)) {
+              this.ingredients.unshift(dish.ingredients[ingredient]);
+            }
           }
         });
     }
-
-    this.tags = [];
-    this.ingredients = [];
-    this.ingredients.push({name: undefined, fresh: true});
 
     //$scope.$watch('dish.dish', (dish) => {
     //  "use strict";
@@ -45,10 +45,18 @@ class DishController {
     let dish = {
       key: this.dish.key,
       name: this.dish.name,
-      ingredients: this.ingredients.filter((ingredient) => {
-        return !ingredient.fresh;
-      })
+      ingredients: {}
     };
+
+    for (let ingredient of this.ingredients) {
+      if (!ingredient.fresh) {
+        dish.ingredients[ingredient.name] = {
+          name : ingredient.name,
+          amount : ingredient.amount,
+          section : ingredient.section
+        }
+      }
+    }
 
     var self = this;
     this._dishesService.saveDish(dish).then(() => {
