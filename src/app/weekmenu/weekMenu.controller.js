@@ -1,6 +1,6 @@
 class WeekMenuController {
 
-  constructor(DishesService, WeekMenuService, $mdDialog, $mdToast, $location) {
+  constructor(DishesService, WeekMenuService, $mdDialog, $mdToast, $location, $timeout) {
     'ngInject';
 
     this._dishesService = DishesService;
@@ -11,10 +11,12 @@ class WeekMenuController {
 
     this.dishes = [];
 
-    let dishIds = this._weekMenuService.dishIds;
-    for (let dishId of dishIds) {
-      this.dishes.push(this._dishesService.getDish(dishId));
-    }
+    this._weekMenuService.getDishes().then((dishes) => {
+      "use strict";
+      $timeout(() => {
+        this.dishes = dishes;
+      });
+    });
 
     this.isOpen = false;
   }
