@@ -34,6 +34,8 @@ class DishesController {
   //  this.dishes = this._dishesService.dishes;
   //}
 
+  //todo we shouldn't be able to delete dishes if they are used by other users -> each dish should have hint
+  //if they are only used by us -> also delete entry in weekmenu
   deleteDish(ev, dish) {
     "use strict";
 

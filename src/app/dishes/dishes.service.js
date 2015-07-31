@@ -25,8 +25,11 @@ class DishesService {
 
     return new Promise((resolve, reject) => {
       let ref = new Firebase("https://altman.firebaseio.com/dishes");
-      ref.on('child_added', (snapshot) => {
+      ref.orderByChild('name').startAt(query).on('child_added', (snapshot) => {
         let dish = DishesService._model(snapshot);
+        if (query && query.length > 0 && !dish.name.startsWith(query)) {
+          return;
+        }
         result.push(dish);
         this._$timeout(() => {
           resolve(result);
@@ -86,9 +89,6 @@ class DishesService {
             resolve(dish);
           }
         });
-        //dish.key = ref.push(dish).key();
-        //resolve(dish);
-        //todo resolve
       }
     });
   }
