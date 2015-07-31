@@ -94,11 +94,6 @@ class WeekMenuService {
   }
 
   removeDishId(key) {
-    console.log(key);
-    console.log(key);
-    console.log(key);
-    console.log(key);
-    console.log(key);
     "use strict";
     return new Promise((resolve, reject) => {
       let ref = new Firebase('https://altman.firebaseio.com/weekmenus/david_bulte/dishes');

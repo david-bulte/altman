@@ -25,7 +25,7 @@
 
       <div class="md-actions" layout="row" layout-align="end center">
         <md-button ng-click="weekMenu.remove($event, dish)">Remove</md-button>
-        <md-button ng-href="#/edit-dish/{{dish.id}}">Edit</md-button>
+        <md-button ng-href="#/edit-dish/{{dish.key}}">Edit</md-button>
       </div>
     </md-card>
   </md-content>
@@ -47,7 +47,7 @@
       <md-button ng-href="#/dishes" aria-label="search dish" class="md-fab md-raised md-mini">
         <md-icon md-svg-src="assets/images/icons/ic_search_black_24px.svg"></md-icon>
       </md-button>
-      <md-button ng-click="weekMenu.addDish()" aria-label="create new dish" class="md-fab md-raised md-mini">
+      <md-button ng-href="#/create-dish" aria-label="create new dish" class="md-fab md-raised md-mini">
         <md-icon md-svg-src="assets/images/icons/ic_add_circle_outline_black_24px.svg"></md-icon>
       </md-button>
     </md-fab-actions>

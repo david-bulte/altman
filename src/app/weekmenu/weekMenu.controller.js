@@ -21,10 +21,10 @@ class WeekMenuController {
     this.isOpen = false;
   }
 
-  addDish() {
-    "use strict";
-    this._$location.path('/create-dish');
-  }
+  //addDish() {
+  //  "use strict";
+  //  this._$location.path('/create-dish');
+  //}
 
   remove(ev, dish) {
     "use strict";

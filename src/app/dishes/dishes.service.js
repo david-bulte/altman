@@ -17,11 +17,6 @@ class DishesService {
     return obj;
   }
 
-  //get dishes() {
-  //  "use strict";
-  //  return _cache.get(this);
-  //}
-
   getDishes(query) {
     "use strict";
 
@@ -109,7 +104,8 @@ class DishesService {
         }
         else {
           this._$timeout(() => {
-            _cache.get(self).splice(dish, 1);
+            let dishes = _cache.get(this);
+            dishes.splice(dishes.indexOf(dish), 1);
             resolve();
           });
         }
