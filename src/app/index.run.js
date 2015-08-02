@@ -1,41 +1,40 @@
-function runBlock($log) {
+function runBlock($log, $location, $rootScope) {
   'ngInject';
 
-  var ref = new Firebase("https://altman.firebaseio.com");
-  var authData = ref.getAuth();
+  let ref = new Firebase('https://altman.firebaseio.com');
 
-  if (authData) {
-    $log.debug("User already authenticated :", authData);
-  }
-  else {
-    ref.authWithOAuthPopup("google", function (error, authData) {
-      if (error) {
-        $log.debug("Login Failed!", error);
-      }
-      else {
-        $log.debug("Authenticated successfully with payload:", authData);
+  //only needed when authenticating via redirect
+  ref.onAuth(function (authData) {
+    "use strict";
 
-        ref.child("users").child(authData.uid).set({
-          provider: authData.provider,
-          name: getName(authData)
-        });
+    if (authData) {
 
-      }
-    }, {
-      remember: 'default'
-    });
-  }
+      $log.debug("User already authenticated :", authData);
 
-  function getName(authData) {
-    switch (authData.provider) {
-      case 'google':
-        return authData.google.displayName;
-      case 'twitter':
-        return authData.twitter.displayName;
-      case 'facebook':
-        return authData.facebook.displayName;
+      let userRef = new Firebase('https://altman.firebaseio.com/users/' + authData.uid);
+      userRef.once('value', (snapshot) => {
+
+        let redirectPage = (snapshot.val() === null) ? '/welcome' : '/weekmenu';
+        $location.path(redirectPage);
+        $rootScope.$apply();
+
+      });
+
+      //ref.child("users").child(authData.uid).set({
+      //  provider: authData.provider,
+      //  name: getName(authData)
+      //});
+
+      //$location.path('/weekmenu');
+      //$rootScope.$apply();
     }
-  }
+    else {
+
+      $log.debug('User unknown - redirecting to login page');
+
+      $location.path('/login');
+    }
+  });
 
 }
 

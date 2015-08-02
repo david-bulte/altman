@@ -6,10 +6,15 @@ function routerConfig ($routeProvider) {
       controller: 'WeekMenuController',
       controllerAs: 'weekMenu'
     })
-    .when('/main', {
-      templateUrl: 'app/main/main.html',
-      controller: 'MainController',
-      controllerAs: 'main'
+    .when('/login', {
+      templateUrl: 'app/login/login.html',
+      controller: 'LoginController',
+      controllerAs: 'login'
+    })
+    .when('/welcome', {
+      templateUrl: 'app/login/welcome.html',
+      controller: 'WelcomeController',
+      controllerAs: 'welcome'
     })
     .when('/config', {
       templateUrl: 'app/config/config.html',
