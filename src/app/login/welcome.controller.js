@@ -21,7 +21,7 @@ class WelcomeController {
      */
     this.invitation = undefined;
     this.family = {};
-    this.members = [{name: undefined, fresh: true}];
+    this.members = [{email: undefined, fresh: true}];
 
     this._init().then(() => {
       "use strict";
@@ -111,41 +111,81 @@ class WelcomeController {
   setupFamily() {
     "use strict";
 
-    //todo how to change this in chain of promises?
-
     let ref = new Firebase('https://altman.firebaseio.com/families/');
 
     let familyRef = ref.push({name : this.family.name});
     this.family.key = familyRef.key();
 
     let auth = ref.getAuth();
-
     let member = {};
     member[auth.uid] = true;
-    familyRef.child('members').update(member);
-    familyRef.child('admins').update(member);
 
     let userRef = new Firebase('https://altman.firebaseio.com/users/' + auth.uid);
     let family = {};
     family[familyRef.key()] = true;
-    userRef.child('families').update(family);
 
-    for (let member of this.members) {
-      //todo send invitation to member
-    }
+    let updateMembers = promisify((cont) => {
+      familyRef.child('members').update(member, cont);
+    });
+    let updateAdmins = promisify((cont) => {
+      familyRef.child('admins').update(member, cont);
+    });
+    let updateFamilies = promisify((cont) => {
+      userRef.child('families').update(family, cont);
+    });
+
+    updateMembers
+      .then(updateAdmins)
+      .then(updateFamilies)
+      .then(() => {
+
+        for (let member of this.members) {
+          //todo send invitation to member
+          console.log(member);
+        }
+
+      });
+
 
   }
+  //setupFamily() {
+  //  "use strict";
+  //
+  //  //todo how to change this in chain of promises?
+  //
+  //  let ref = new Firebase('https://altman.firebaseio.com/families/');
+  //
+  //  let familyRef = ref.push({name : this.family.name});
+  //  this.family.key = familyRef.key();
+  //
+  //  let auth = ref.getAuth();
+  //
+  //  let member = {};
+  //  member[auth.uid] = true;
+  //  familyRef.child('members').update(member);
+  //  familyRef.child('admins').update(member);
+  //
+  //  let userRef = new Firebase('https://altman.firebaseio.com/users/' + auth.uid);
+  //  let family = {};
+  //  family[familyRef.key()] = true;
+  //  userRef.child('families').update(family);
+  //
+  //  for (let member of this.members) {
+  //    //todo send invitation to member
+  //  }
+  //
+  //}
 
   addMember() {
     "use strict";
 
   }
 
-  memberChanged() {
+  memberChanged(member) {
     "use strict";
     if (member.fresh === true) {
       delete member.fresh;
-      this.members.push({name: undefined, fresh: true});
+      this.members.push({email: undefined, fresh: true});
     }
   }
 
@@ -173,6 +213,25 @@ class WelcomeController {
     this._$location.path('/weekmenu');
 
   }
+
+}
+
+function promisify(callback) {
+  "use strict";
+
+  return new Promise((resolve, reject) => {
+
+    let cont = (err) => {
+      if (err == null) {
+        resolve();
+      }
+      else {
+        reject();
+      }
+    };
+
+    callback(cont);
+  });
 
 }
 

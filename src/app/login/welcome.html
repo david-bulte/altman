@@ -51,7 +51,7 @@
             <div layout layout-sm="row" ng-repeat="member in welcome.members">
               <md-input-container flex>
                 <label>Email</label>
-                <input ng-model="member.email" ng-change="welcome.memberChanged()">
+                <input ng-model="member.email" ng-change="welcome.memberChanged(member)">
               </md-input-container>
             </div>
 
