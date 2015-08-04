@@ -1,10 +1,15 @@
 class WelcomeController {
 
-  constructor() {
+  constructor($location, $log, $timeout) {
     'ngInject';
+
+    this._$location = $location;
+    this._$log = $log;
+    this._$timeout = $timeout;
 
     this.initialized = false;
     this.registered = false;
+    this.progressing = false;
 
     /*
      {
@@ -15,67 +20,60 @@ class WelcomeController {
      }
      */
     this.invitation = undefined;
+    this.family = {};
+    this.members = [{name: undefined, fresh: true}];
 
     this._init().then(() => {
       "use strict";
       this.initialized = true;
+      this._$log.debug('initialization finished');
     }).catch((err) => {
       "use strict";
-
     });
   }
 
   _init() {
 
+    this._$log.debug('starting initialization');
+
     let ref = new Firebase('https://altman.firebaseio.com');
     let authData = ref.getAuth();
 
-    let register = new Promise((resolve, reject) => {
-      "use strict";
-
-      ref.child('users').child(authData.uid).set({
-        provider: authData.provider,
-        name: getName(authData)
-      }, (err) => {
+    let register = () => {
+      return new Promise((resolve, reject) => {
         "use strict";
-        if (err !== null) {
-          resolve();
-        }
-        else {
-          reject();
-        }
-      });
 
-    });
+        this._$log.debug(`registering ${authData.uid}`);
 
-    let checkInvitation = new Promise((resolve, reject) => {
-      let ref = new Firebase('https://altman.firebaseio.com/invitations/' + authData.uid);
-      ref.once('value', (snapshot) => {
-        resolve(snapshot.val());
+        ref.child('users').child(authData.uid).set({
+          provider: authData.provider,
+          name: getName(authData)
+        }, (err) => {
+          "use strict";
+          if (err !== null) {
+            resolve();
+          }
+          else {
+            reject();
+          }
+        });
+
       });
-    });
+    };
+
+    let checkInvitation = ()=> {
+      return new Promise((resolve, reject) => {
+
+        this._$log.debug(`checking invitation ${authData.uid}`);
+
+        let ref = new Firebase('https://altman.firebaseio.com/invitations/' + authData.uid);
+        ref.once('value', (snapshot) => {
+          resolve(snapshot.val());
+        });
+      });
+    };
 
     return register().then(checkInvitation);
-
-    //return new Promise((resolve, reject) => {
-    //  "use strict";
-    //
-    //  let ref = new Firebase('https://altman.firebaseio.com');
-    //  let authData = ref.getAuth();
-    //
-    //  ref.child('users').child(authData.uid).set({
-    //    provider: authData.provider,
-    //    name: getName(authData)
-    //  }, (err) => {
-    //    "use strict";
-    //    if (err !== null) {
-    //      this._checkInvitation(authData.uid).then((invitation) => {
-    //        resolve(invitation);
-    //      });
-    //    }
-    //  });
-    //
-    //});
 
   }
 
@@ -93,18 +91,48 @@ class WelcomeController {
   acceptInvitation() {
     "use strict";
 
+    //todo -> message we'll set you up in no time
+    this._$location.path('/weekmenu');
   }
 
   requestInvitation() {
     "use strict";
 
+    this.progressing = true;
+    //send mail (cf php background)
+
+    //todo
+    this._$timeout(() => {
+      this._$location.path('/weekmenu');
+    }, 1000);
+
   }
 
-  /**
-   * Can also be used for 'single mode' - in that case the family name ===  uid and we'll only have 1 member
-   */
   setupFamily() {
     "use strict";
+
+    //todo how to change this in chain of promises?
+
+    let ref = new Firebase('https://altman.firebaseio.com/families/');
+
+    let familyRef = ref.push({name : this.family.name});
+    this.family.key = familyRef.key();
+
+    let auth = ref.getAuth();
+
+    let member = {};
+    member[auth.uid] = true;
+    familyRef.child('members').update(member);
+    familyRef.child('admins').update(member);
+
+    let userRef = new Firebase('https://altman.firebaseio.com/users/' + auth.uid);
+    let family = {};
+    family[familyRef.key()] = true;
+    userRef.child('families').update(family);
+
+    for (let member of this.members) {
+      //todo send invitation to member
+    }
 
   }
 
@@ -113,9 +141,26 @@ class WelcomeController {
 
   }
 
+  memberChanged() {
+    "use strict";
+    if (member.fresh === true) {
+      delete member.fresh;
+      this.members.push({name: undefined, fresh: true});
+    }
+  }
+
+  notNow() {
+    "use strict";
+    this.setupFamily();
+
+    //todo setupFamily should be promises
+    //then redirect
+  }
+
   sendInvitations() {
     "use strict";
 
+    //todo send mails
   }
 
   done() {
@@ -123,10 +168,13 @@ class WelcomeController {
 
     //todo this in html with url to weekmenu.html
     //(or intro.html)
+
+    //todo create family
+    this._$location.path('/weekmenu');
+
   }
 
 }
-
 
 function getName(authData) {
   "use strict";
@@ -143,3 +191,37 @@ function getName(authData) {
 
 
 export default WelcomeController;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//return new Promise((resolve, reject) => {
+//  "use strict";
+//
+//  let ref = new Firebase('https://altman.firebaseio.com');
+//  let authData = ref.getAuth();
+//
+//  ref.child('users').child(authData.uid).set({
+//    provider: authData.provider,
+//    name: getName(authData)
+//  }, (err) => {
+//    "use strict";
+//    if (err !== null) {
+//      this._checkInvitation(authData.uid).then((invitation) => {
+//        resolve(invitation);
+//      });
+//    }
+//  });
+//
+//});
