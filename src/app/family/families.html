@@ -1,0 +1,27 @@
+<sidebar sidebar-title="'Grocies'"></sidebar>
+
+<div layout="column" flex>
+
+  <toolbar toolbar-title="'Families'"></toolbar>
+
+  <md-content>
+
+    <md-card ng-repeat="family in familiesCtrl.families">
+      <md-card-content>
+        <h2 class="md-title">{{family.name}}</h2>
+
+        <!--<ul>-->
+          <!--<li ng-repeat="ingredient in dish.ingredients">-->
+            <!--{{ingredient.amount}} {{ingredient.name}}-->
+          <!--</li>-->
+        <!--</ul>-->
+
+      </md-card-content>
+
+      <div class="md-actions" layout="row" layout-align="end center">
+        <md-button ng-href="#/edit-family/{{family.key}}">Edit</md-button>
+      </div>
+    </md-card>
+  </md-content>
+
+</div>

@@ -30,7 +30,7 @@ class ShoppingListService {
     //calc();
     //else resolve(ingredients)
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       this._weekMenuService.getDishes().then((dishes) => {
         let ingredients = [];
         for (let dish of dishes) {

@@ -1,8 +1,9 @@
 class LoginController {
 
-  constructor() {
+  constructor($log) {
     'ngInject';
 
+    this._$log = $log;
   }
 
   authenticateWithGoogle() {
@@ -11,8 +12,7 @@ class LoginController {
     let ref = new Firebase("https://altman.firebaseio.com");
 
     ref.authWithOAuthRedirect("google", function (error) {
-      "use strict";
-      $log.debug("Login Failed!", error);
+      this._$log.debug("Login Failed!", error);
     }, {remember: 'sessionOnly'});
   }
 

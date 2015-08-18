@@ -23,7 +23,7 @@ class DishesService {
     let result = _cache.get(this);
     result.length = 0;
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       let ref = new Firebase("https://altman.firebaseio.com/dishes");
       ref.orderByChild('name').startAt(query).on('child_added', (snapshot) => {
         let dish = DishesService._model(snapshot);
@@ -41,7 +41,7 @@ class DishesService {
   getDish(key) {
     "use strict";
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       let ref = new Firebase("https://altman.firebaseio.com/dishes/" + key);
       ref.on("value", (snapshot) => {
         let dish = DishesService._model(snapshot);

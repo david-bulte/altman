@@ -7,6 +7,7 @@ import ConfigController from './config/config.controller.js';
 import CreateDishController from './dish/createDish.controller.js';
 import DishController from './dish/dish.controller.js';
 import DishesController from './dishes/dishes.controller.js';
+import FamiliesController from './family/families.controller.js';
 import LoginController from './login/login.controller.js';
 import ShoppingListController from './shoppinglist/shoppingList.controller.js';
 import WeekMenuController from './weekmenu/weekMenu.controller.js';
@@ -36,6 +37,7 @@ angular.module('altman', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize', 'ng
   .controller('CreateDishController', CreateDishController)
   .controller('DishController', DishController)
   .controller('DishesController', DishesController)
+  .controller('FamiliesController', FamiliesController)
   .controller('LoginController', LoginController)
   .controller('ShoppingListController', ShoppingListController)
   .controller('WeekMenuController', WeekMenuController)

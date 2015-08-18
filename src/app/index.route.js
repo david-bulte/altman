@@ -36,6 +36,16 @@ function routerConfig ($routeProvider) {
       controller: 'DishesController',
       controllerAs: 'dishes'
     })
+    .when('/families', {
+      templateUrl: 'app/family/families.html',
+      controller: 'FamiliesController',
+      controllerAs: 'familiesCtrl'
+    })
+    .when('/edit-family/:key', {
+      templateUrl: 'app/family/create-or-edit.html',
+      controller: 'FamilyController',
+      controllerAs: 'familyCtrl'
+    })
     .when('/shoppinglist', {
       templateUrl: 'app/shoppinglist/shoppinglist.html',
       controller: 'ShoppingListController',

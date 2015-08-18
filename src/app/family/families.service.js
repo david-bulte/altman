@@ -50,87 +50,125 @@ class FamiliesService {
 
   }
 
-  static _model(snapshot) {
-    "use strict";
-    let obj = snapshot.val();
-    obj.key = snapshot.key();
-    return obj;
-  }
-
-  getDishes(query) {
+  addInvite(key, member) {
     "use strict";
 
     return new Promise((resolve, reject) => {
 
-      var result = [];
-      let ref = new Firebase("https://altman.firebaseio.com/dishes");
-      ref.orderByChild('name').startAt(query).on('child_added', (snapshot) => {
-        let dish = DishesService._model(snapshot);
-        if (query && query.length > 0 && !dish.name.startsWith(query)) {
-          return;
+      //check if there's already a user for this email
+      //if so ->
+
+      //inivites : {
+      //  key : {
+      //    user : key,
+      //    family : key,
+      //    mailSent : new Date()
+      //  },
+      //  anotherKey : {
+      //    family : key,
+      //    email : email,
+      //    mailSent : new Date()
+      //  }
+      //}
+
+      //user : {
+      //  inivites : {
+      //    inviteKey : true
+      //  }
+      //}
+
+      //family : {
+      //  invites : {
+      //    key : true
+      // }
+      // }
+
+      //let userRef
+
+      let familyRef = new Firebase(`ttps://altman.firebaseio.com/families/${key}`);
+
+      //todo
+
+      let invitation = {family: key};
+      //search user with member.email
+      //if exists: { user : user.key
+
+      // }
+
+      let invite = {};
+      invite[invitation.key] = true;
+      familyRef.child('invites').update(invitation, (err) => {
+        if (!err) {
+          resolve();
         }
-        result.push(dish);
-        this._$timeout(() => {
-          resolve(result);
-        });
+        else {
+          reject();
+        }
       });
+
     });
   }
 
-  getDish(key) {
+  addMember(key, member) {
     "use strict";
 
     return new Promise((resolve, reject) => {
-      let ref = new Firebase("https://altman.firebaseio.com/dishes/" + key);
-      ref.on("value", (snapshot) => {
-        let dish = DishesService._model(snapshot);
-        this._$timeout(() => {
-          resolve(dish);
-        });
+
+      let familyRef = new Firebase('https://altman.firebaseio.com/families/' + key);
+      let invite = {};
+      invite[member.key] = true;
+      familyRef.child('members').update(member, (err) => {
+        if (!err) {
+          resolve();
+        }
+        else {
+          reject();
+        }
       });
+
     });
   }
 
-  addDish(dish) {
-    "use strict";
-    let ref = new Firebase("https://altman.firebaseio.com/dishes");
-    dish.key = ref.push(dish).key();
-  }
-
-  saveDish(dish) {
+  getFamilies() {
     "use strict";
 
-    let key = dish.key;
-    delete dish.key;
+    let ref = new Firebase('https://altman.firebaseio.com');
+    let authData = ref.getAuth();
 
-    return new Promise(function (resolve, reject) {
-      if (key) {
-        let ref = new Firebase("https://altman.firebaseio.com/dishes/" + key);
-        ref.set(dish, (err) => {
-          if (err) {
-            reject(err);
-          }
-          else {
-            dish.key = key;
-            resolve(dish);
-          }
+    return new Promise((resolve) => {
+
+      let familyKeys = [];
+      let it = main();
+
+      let familiesRef = new Firebase(`https://altman.firebaseio.com/users/${authData.uid}/families`);
+      familiesRef.once('value', (snapshot) => {
+        familyKeys = Object.keys(snapshot.val());
+        it.next();
+      });
+
+      let addFamily = (key, result) => {
+        this._$log.debug(`Adding family ${key}`);
+        let familyRef = new Firebase(`https://altman.firebaseio.com/families/${key}`);
+        familyRef.once('value', (snapshot) => {
+          var family = snapshot.val();
+          family.key = key;
+          result.push(family);
+          it.next();
         });
+      };
+
+      function* main() {
+        let result = [];
+        for (let key of familyKeys) {
+          yield addFamily(key, result);
+        }
+        resolve(result);
       }
-      else {
-        let ref = new Firebase("https://altman.firebaseio.com/dishes");
-        let dishRef = ref.push();
-        dishRef.set(dish, (err) => {
-          if (err) {
-            reject(err);
-          }
-          else {
-            dish.key = dishRef.key();
-            resolve(dish);
-          }
-        });
-      }
+
     });
+
   }
+
 
 }
 
@@ -140,7 +178,7 @@ function promisify(callback) {
   return new Promise((resolve, reject) => {
 
     let cont = (err) => {
-      if (err == null) {
+      if (err === null) {
         resolve();
       }
       else {

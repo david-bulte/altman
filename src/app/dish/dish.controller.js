@@ -10,7 +10,6 @@ class DishController {
     this.ctrl = 'DishController';
 
     ConfigService.getConfig().then((config) => {
-      "use strict";
       this.sections = config.sections;
       this.tags = config.tags;
     });
@@ -44,9 +43,6 @@ class DishController {
 
   save() {
 
-    console.log('save() ' + this.ctrl);
-
-    "use strict";
     let dish = {
       key: this.dish.key,
       name: this.dish.name,
@@ -72,14 +68,11 @@ class DishController {
   saved(dish) {
     "use strict";
 
-    console.log('saved() ' + this.ctrl);
-
     this._$location.path('/dishes');
     this._$scope.$apply();
   }
 
   ingredientChanged(ingredient) {
-    "use strict";
     if (ingredient.fresh === true) {
       delete ingredient.fresh;
       this.ingredients.push({name: undefined, fresh: true});

@@ -8,7 +8,7 @@ class WeekMenuService {
     "use strict";
 
     let getKeys = () => {
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
         let ref = new Firebase('https://altman.firebaseio.com/weekmenus/david_bulte/dishes');
         ref.once('value', (snapshot) => {
           let keys = [];
@@ -42,7 +42,7 @@ class WeekMenuService {
         });
       };
 
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
         var dishes = [];
         var fs = [];
         for (let key of keys) {
@@ -50,11 +50,11 @@ class WeekMenuService {
         }
         Promise.all(fs).then(() => {
           resolve(dishes);
-        })
+        });
       });
     };
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       getKeys()
         .then(getDishes)
         .then(resolve);
@@ -71,7 +71,7 @@ class WeekMenuService {
           reject();
         }
         else {
-          resolve()
+          resolve();
         }
       };
     };

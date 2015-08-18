@@ -18,7 +18,6 @@ class DishesController {
   _getDishes(query) {
     "use strict";
     this._dishesService.getDishes(query).then((dishes) => {
-      "use strict";
       this.dishes = dishes;
     });
   }
@@ -52,9 +51,6 @@ class DishesController {
         .then(() => {
           this.toast(dish.name + ' removed');
         })
-        .catch((err) => {
-          //ok
-        });
     }, () => {
       //ok
     });

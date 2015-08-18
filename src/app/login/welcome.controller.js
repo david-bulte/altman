@@ -50,7 +50,6 @@ class WelcomeController {
           provider: authData.provider,
           name: getName(authData)
         }, (err) => {
-          "use strict";
           if (err !== null) {
             resolve();
           }
@@ -63,7 +62,7 @@ class WelcomeController {
     };
 
     let checkInvitation = ()=> {
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
 
         this._$log.debug(`checking invitation ${authData.uid}`);
 
@@ -81,7 +80,7 @@ class WelcomeController {
   _checkInvitation(uid) {
     "use strict";
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       let ref = new Firebase('https://altman.firebaseio.com/invitations/' + uid);
       ref.once('value', (snapshot) => {
         resolve(snapshot.val());
@@ -115,13 +114,41 @@ class WelcomeController {
 
     this._familiesService.createFamily(this.family.name).then((key) => {
       this.family.key = key;
+      this._addMembers().then(() => {
+        this._$location.path('/weekmenu');
+      });
     });
-
   }
 
-  addMember() {
+  /**
+   * cf. http://davidwalsh.name/async-generators
+   */
+  _addMembers() {
     "use strict";
+    this._$log.debug(`Adding members to family with key ${this.family.key}`);
 
+    return new Promise((resolve) => {
+      let self = this;
+      let it = main();
+
+      let addMember = (member) => {
+        this._$log.debug(`Adding member ${member}`);
+        //todo
+        this._familiesService.addMember(self.family.key, member).then(() => it.next());
+        //this._familiesService.addInvite(self.family.key, member).then(() => it.next());
+      };
+
+      function* main() {
+        for (let member of self.members) {
+          if (!member.fresh) {
+            yield addMember({email : member.email});
+          }
+        }
+        resolve();
+      }
+
+      it.next();
+    });
   }
 
   memberChanged(member) {
@@ -166,7 +193,6 @@ class WelcomeController {
 
 }
 
-
 function getName(authData) {
   "use strict";
 
@@ -178,8 +204,8 @@ function getName(authData) {
     case 'facebook':
       return authData.facebook.displayName;
   }
-}
 
+}
 
 export default WelcomeController;
 

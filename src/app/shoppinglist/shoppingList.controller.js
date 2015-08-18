@@ -19,7 +19,6 @@ class ShoppingListController {
       }
 
       this._shoppingListService.getIngredients().then((ingredients) => {
-        "use strict";
 
         for (let ingredient of ingredients) {
           let section = ingredient.section;
@@ -41,8 +40,6 @@ class ShoppingListController {
 
   getIngredients(section) {
     "use strict";
-    console.log(section);
-    console.log(this._cache);
     return this._cache[section];
   }
 
