@@ -14,6 +14,7 @@ import WelcomeController from './login/welcome.controller.js';
 
 import ConfigService from './config/config.service.js';
 import DishesService from './dishes/dishes.service.js';
+import FamiliesService from './family/families.service.js';
 import ShoppingListService from './shoppinglist/shoppingList.service.js';
 import WeekMenuService from './weekmenu/weekMenu.service.js';
 
@@ -42,6 +43,7 @@ angular.module('altman', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize', 'ng
 
   .service('ConfigService', ConfigService)
   .service('DishesService', DishesService)
+  .service('FamiliesService', FamiliesService)
   .service('ShoppingListService', ShoppingListService)
   .service('WeekMenuService', WeekMenuService)
 

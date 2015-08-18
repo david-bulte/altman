@@ -1,11 +1,12 @@
 class WelcomeController {
 
-  constructor($location, $log, $timeout) {
+  constructor(FamiliesService, $location, $log, $timeout) {
     'ngInject';
 
     this._$location = $location;
     this._$log = $log;
     this._$timeout = $timeout;
+    this._familiesService = FamiliesService;
 
     this.initialized = false;
     this.registered = false;
@@ -108,73 +109,15 @@ class WelcomeController {
 
   }
 
+  //todo move this to service
   setupFamily() {
     "use strict";
 
-    let ref = new Firebase('https://altman.firebaseio.com/families/');
-
-    let familyRef = ref.push({name : this.family.name});
-    this.family.key = familyRef.key();
-
-    let auth = ref.getAuth();
-    let member = {};
-    member[auth.uid] = true;
-
-    let userRef = new Firebase('https://altman.firebaseio.com/users/' + auth.uid);
-    let family = {};
-    family[familyRef.key()] = true;
-
-    let updateMembers = promisify((cont) => {
-      familyRef.child('members').update(member, cont);
+    this._familiesService.createFamily(this.family.name).then((key) => {
+      this.family.key = key;
     });
-    let updateAdmins = promisify((cont) => {
-      familyRef.child('admins').update(member, cont);
-    });
-    let updateFamilies = promisify((cont) => {
-      userRef.child('families').update(family, cont);
-    });
-
-    updateMembers
-      .then(updateAdmins)
-      .then(updateFamilies)
-      .then(() => {
-
-        for (let member of this.members) {
-          //todo send invitation to member
-          console.log(member);
-        }
-
-      });
-
 
   }
-  //setupFamily() {
-  //  "use strict";
-  //
-  //  //todo how to change this in chain of promises?
-  //
-  //  let ref = new Firebase('https://altman.firebaseio.com/families/');
-  //
-  //  let familyRef = ref.push({name : this.family.name});
-  //  this.family.key = familyRef.key();
-  //
-  //  let auth = ref.getAuth();
-  //
-  //  let member = {};
-  //  member[auth.uid] = true;
-  //  familyRef.child('members').update(member);
-  //  familyRef.child('admins').update(member);
-  //
-  //  let userRef = new Firebase('https://altman.firebaseio.com/users/' + auth.uid);
-  //  let family = {};
-  //  family[familyRef.key()] = true;
-  //  userRef.child('families').update(family);
-  //
-  //  for (let member of this.members) {
-  //    //todo send invitation to member
-  //  }
-  //
-  //}
 
   addMember() {
     "use strict";
@@ -191,7 +134,14 @@ class WelcomeController {
 
   notNow() {
     "use strict";
-    this.setupFamily();
+
+    let ref = new Firebase('https://altman.firebaseio.com');
+    let authData = ref.getAuth();
+
+    this._familiesService.createFamily({name : getName(authData)}).then((key) => {
+      this._$log.debug('family created now redirecting to weekmenu...');
+      this._$location.path('/weekmenu');
+    });
 
     //todo setupFamily should be promises
     //then redirect
@@ -216,24 +166,6 @@ class WelcomeController {
 
 }
 
-function promisify(callback) {
-  "use strict";
-
-  return new Promise((resolve, reject) => {
-
-    let cont = (err) => {
-      if (err == null) {
-        resolve();
-      }
-      else {
-        reject();
-      }
-    };
-
-    callback(cont);
-  });
-
-}
 
 function getName(authData) {
   "use strict";
@@ -284,3 +216,67 @@ export default WelcomeController;
 //  });
 //
 //});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//let ref = new Firebase('https://altman.firebaseio.com/families/');
+//
+//let familyRef = ref.push({name : this.family.name});
+//
+//let auth = ref.getAuth();
+//let member = {};
+//member[auth.uid] = true;
+//
+//let userRef = new Firebase('https://altman.firebaseio.com/users/' + auth.uid);
+//let family = {};
+//family[familyRef.key()] = true;
+//
+//let updateMembers = promisify((cont) => {
+//  familyRef.child('members').update(member, cont);
+//});
+//let updateAdmins = promisify((cont) => {
+//  familyRef.child('admins').update(member, cont);
+//});
+//let updateFamilies = promisify((cont) => {
+//  userRef.child('families').update(family, cont);
+//});
+//
+//updateMembers
+//  .then(updateAdmins)
+//  .then(updateFamilies)
+//  .then(() => {
+//
+//    for (let member of this.members) {
+//      //todo send invitation to member
+//      console.log(member);
+//    }
+//
+//    //todo and this part can remain in controller
+//    this.family.key = familyRef.key();
+//
+//    //todo also create familyRequests containing email addresses => ability to join once logged in for first time
+//  });
