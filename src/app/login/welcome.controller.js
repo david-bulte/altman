@@ -46,9 +46,11 @@ class WelcomeController {
 
         this._$log.debug(`registering ${authData.uid}`);
 
+        let userData = getUserData(authData);
         ref.child('users').child(authData.uid).set({
           provider: authData.provider,
-          name: getName(authData)
+          name: userData.displayName,
+          email: userData.email
         }, (err) => {
           if (err !== null) {
             resolve();
@@ -193,16 +195,14 @@ class WelcomeController {
 
 }
 
-function getName(authData) {
+function getUserData(authData) {
   "use strict";
 
   switch (authData.provider) {
     case 'google':
-      return authData.google.displayName;
-    case 'twitter':
-      return authData.twitter.displayName;
+      return {displayName : authData.google.displayName, email : authData.google.email };
     case 'facebook':
-      return authData.facebook.displayName;
+      return {displayName : authData.facebook.displayName, email : authData.facebook.email };
   }
 
 }
