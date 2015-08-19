@@ -8,7 +8,28 @@
 
     <md-card ng-repeat="family in familiesCtrl.families">
       <md-card-content>
-        <h2 class="md-title">{{family.name}}</h2>
+        <!--<h2 class="md-title">{{family.name}}</h2>-->
+
+        <md-input-container>
+          <label>Name</label>
+          <input ng-model="family.name" type="text">
+        </md-input-container>
+
+        <div layout layout-sm="row" ng-repeat="member in family.members">
+          <md-input-container flex>
+            <label>Email</label>
+            <input ng-model="member.name">
+          </md-input-container>
+          <md-button class="md-raised md-primary" aria-label="Remove"
+                     ng-click="familiesCtrl.removeMember(family, member)">
+            remove
+          </md-button>
+        </div>
+
+        <!--<md-button class="md-raised md-primary" aria-label="Save"-->
+                   <!--ng-click="welcome.setupFamily()">-->
+          <!--Donw-->
+        <!--</md-button>-->
 
         <!--<ul>-->
           <!--<li ng-repeat="ingredient in dish.ingredients">-->

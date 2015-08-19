@@ -18,7 +18,21 @@ class FamiliesController {
     });
   }
 
+  removeMember(family, member) {
+    //todo test
+    //todo via toast
+    this._familiesService.removeMember(family.key, member.key).then(() => {
+      family.members.splice(family.members.indexOf(member), 1);
+    });
+  }
 
+  toggleAdmin(family, member) {
+    //todo
+  }
+
+  createInvitation(query) {
+    //todo
+  }
 }
 
 export default FamiliesController;

@@ -116,7 +116,8 @@ class WelcomeController {
 
     this._familiesService.createFamily(this.family.name).then((key) => {
       this.family.key = key;
-      this._addMembers().then(() => {
+      this._addInvites().then(() => {
+        this._$log.debug('Invites created - now redirecting to weekmenu');
         this._$location.path('/weekmenu');
       });
     });
@@ -125,7 +126,7 @@ class WelcomeController {
   /**
    * cf. http://davidwalsh.name/async-generators
    */
-  _addMembers() {
+  _addInvites() {
     "use strict";
     this._$log.debug(`Adding members to family with key ${this.family.key}`);
 
@@ -135,9 +136,7 @@ class WelcomeController {
 
       let addMember = (member) => {
         this._$log.debug(`Adding member ${member}`);
-        //todo
-        this._familiesService.addMember(self.family.key, member).then(() => it.next());
-        //this._familiesService.addInvite(self.family.key, member).then(() => it.next());
+        this._familiesService.addInvite(self.family.key, member.email).then(() => it.next());
       };
 
       function* main() {
