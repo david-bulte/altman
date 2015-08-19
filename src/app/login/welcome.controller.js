@@ -20,16 +20,15 @@ class WelcomeController {
      authoredByUid : '1234'
      }
      */
-    this.invitation = undefined;
+    this.invites = [];
     this.family = {};
     this.members = [{email: undefined, fresh: true}];
+    this.userData;
 
     this._init().then(() => {
-      "use strict";
       this.initialized = true;
       this._$log.debug('initialization finished');
     }).catch((err) => {
-      "use strict";
     });
   }
 
@@ -39,6 +38,7 @@ class WelcomeController {
 
     let ref = new Firebase('https://altman.firebaseio.com');
     let authData = ref.getAuth();
+    this.userData = getUserData(authData);
 
     let register = () => {
       return new Promise((resolve, reject) => {
@@ -46,13 +46,12 @@ class WelcomeController {
 
         this._$log.debug(`registering ${authData.uid}`);
 
-        let userData = getUserData(authData);
         ref.child('users').child(authData.uid).set({
           provider: authData.provider,
-          name: userData.displayName,
-          email: userData.email
+          name: this.userData.displayName,
+          email: this.userData.email
         }, (err) => {
-          if (err !== null) {
+          if (err === null) {
             resolve();
           }
           else {
@@ -63,20 +62,29 @@ class WelcomeController {
       });
     };
 
-    let checkInvitation = ()=> {
+    let checkInvites = ()=> {
       return new Promise((resolve) => {
 
-        this._$log.debug(`checking invitation ${authData.uid}`);
+        let email = getUserData(authData).email;
+        this._$log.debug(`checking invite ${email}`);
 
-        let ref = new Firebase('https://altman.firebaseio.com/invitations/' + authData.uid);
-        ref.once('value', (snapshot) => {
-          resolve(snapshot.val());
+        let invitesRef = new Firebase('https://altman.firebaseio.com/invites');
+        invitesRef.orderByChild('email').equalTo(email).once('value', (snapshot) => {
+          let invites = [];
+          snapshot.forEach((data) => {
+            let invite = data.val();
+            invite.key = data.key();
+            invites.push(invite);
+          });
+          this._$timeout(() => this.invites = invites);
+          //now fetch families -> yield
+          resolve();
         });
       });
     };
 
-    return register().then(checkInvitation);
-
+    return register()
+      .then(checkInvites);
   }
 
   _checkInvitation(uid) {
@@ -90,11 +98,12 @@ class WelcomeController {
     });
   }
 
-  acceptInvitation() {
-    "use strict";
-
-    //todo -> message we'll set you up in no time
-    this._$location.path('/weekmenu');
+  acceptInvite(invite) {
+    this._familiesService.acceptInvite(invite.family, this.userData.key, invite.key)
+      .then(() => {
+        this._$log.debug('Invite accepted - now redirecting to weekmenu');
+        this._$location.path('/weekmenu');
+      });
   }
 
   requestInvitation() {
@@ -199,9 +208,9 @@ function getUserData(authData) {
 
   switch (authData.provider) {
     case 'google':
-      return {displayName : authData.google.displayName, email : authData.google.email };
+      return {displayName : authData.google.displayName, email : authData.google.email, key : authData.uid };
     case 'facebook':
-      return {displayName : authData.facebook.displayName, email : authData.facebook.email };
+      return {displayName : authData.facebook.displayName, email : authData.facebook.email, key : authData.uid };
   }
 
 }

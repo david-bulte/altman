@@ -50,13 +50,13 @@ class FamiliesService {
 
   }
 
-  addInvite(key, email) {
+  addInvite(familyKey, email) {
     return new Promise((resolve, reject) => {
 
       let invitesRef = new Firebase(`https://altman.firebaseio.com/invites`);
-      let inviteRef = invitesRef.push({family: key, email: email});
+      let inviteRef = invitesRef.push({family: familyKey, email: email});
 
-      let familyInvitesRef = new Firebase(`https://altman.firebaseio.com/families/${key}/invites`);
+      let familyInvitesRef = new Firebase(`https://altman.firebaseio.com/families/${familyKey}/invites`);
       let invites = {};
       invites[inviteRef.key()] = true;
       familyInvitesRef.update(invites, (err) => {
@@ -70,13 +70,13 @@ class FamiliesService {
     });
   }
 
-  addMember(key, member) {
+  addMember(familyKey, userKey) {
     return new Promise((resolve, reject) => {
 
-      let familyRef = new Firebase(`https://altman.firebaseio.com/families/${key}`);
+      let familyRef = new Firebase(`https://altman.firebaseio.com/families/${familyKey}`);
       let members = {};
-      members[member.key] = true;
-      familyRef.child('members').update(member, (err) => {
+      members[userKey] = true;
+      familyRef.child('members').update(members, (err) => {
         if (!err) {
           resolve();
         }
@@ -85,6 +85,63 @@ class FamiliesService {
         }
       });
     });
+  }
+
+  deleteInvite(familyKey, inviteKey) {
+
+    var self = this;
+
+    return new Promise((resolve) => {
+
+      let it = main();
+      it.next();
+
+      function deleteInvite() {
+        self._$log.debug(`deleteInvite ${inviteKey}`);
+        let inviteRef = new Firebase(`https://altman.firebaseio.com/invites/${inviteKey}`);
+        inviteRef.remove(() => it.next());
+      }
+
+      function updateFamily() {
+        self._$log.debug(`updateFamily ${familyKey}`);
+        let inviteRef = new Firebase(`https://altman.firebaseio.com/families/${familyKey}/invites/${inviteKey}`);
+        inviteRef.remove(() => it.next());
+      }
+
+      function* main() {
+        yield deleteInvite();
+        yield updateFamily();
+        resolve();
+      }
+    });
+  }
+
+  acceptInvite(familyKey, userKey, inviteKey) {
+
+    var self = this;
+
+    return new Promise((resolve) => {
+
+      let it = main();
+      it.next();
+
+      function addMember() {
+        self._$log.debug(`addMember ${userKey}`);
+        self.addMember(familyKey, userKey).then(() => it.next());
+      }
+
+      function deleteInvite() {
+        self._$log.debug(`deleteInvite ${inviteKey}`);
+        self.deleteInvite(familyKey, inviteKey).then(() => it.next());
+      }
+
+      function* main() {
+        yield addMember();
+        yield deleteInvite();
+        resolve();
+      }
+    });
+
   }
 
   getFamilies() {

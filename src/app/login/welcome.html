@@ -9,13 +9,14 @@
       <md-card-content>
         <!--<h2 class="md-title">Login</h2>-->
 
-        <div ng-show="this.invitation !== undefined">
-          <md-button class="md-raised" aria-label="Accept invitation" ng-click="welcome.acceptInvitation()">
+        <div ng-show="welcome.invites.length > 0">
+          There's an invitation
+          <md-button class="md-raised" aria-label="Accept invitation" ng-click="welcome.acceptInvite(invite)" ng-repeat="invite in welcome.invites">
             Yes! Make me part of this family!
           </md-button>
         </div>
 
-        <div ng-show="this.invitation === undefined">
+        <div>
 
           <!--<md-button class="md-raised" aria-label="Request invitation"-->
                      <!--ng-click="requestInvitation = !requestInvitation">-->
