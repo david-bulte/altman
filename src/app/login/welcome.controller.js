@@ -102,7 +102,7 @@ class WelcomeController {
     this._familiesService.acceptInvite(invite.family, this.userData.key, invite.key)
       .then(() => {
         this._$log.debug('Invite accepted - now redirecting to weekmenu');
-        this._$location.path('/weekmenu');
+        this._$timeout(() => this._$location.path('/weekmenu'));
       });
   }
 

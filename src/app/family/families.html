@@ -6,43 +6,100 @@
 
   <md-content>
 
-    <md-card ng-repeat="family in familiesCtrl.families">
+    <md-card ng-show="setupFamily">
+
       <md-card-content>
-        <!--<h2 class="md-title">{{family.name}}</h2>-->
 
         <md-input-container>
-          <label>Name</label>
-          <input ng-model="family.name" type="text">
+          <label>Naam familie</label>
+          <input ng-model="familiesCtrl.newFamily.name" type="text">
         </md-input-container>
 
-        <div layout layout-sm="row" ng-repeat="member in family.members">
-          <md-input-container flex>
-            <label>Email</label>
-            <input ng-model="member.name">
-          </md-input-container>
-          <md-button class="md-raised md-primary" aria-label="Remove"
-                     ng-click="familiesCtrl.removeMember(family, member)">
-            remove
-          </md-button>
+        <h5>members</h5>
+
+        <div layout layout-sm="row">
+          huidig ingelogde user (disabled) deze kan je niet editen
         </div>
 
-        <!--<md-button class="md-raised md-primary" aria-label="Save"-->
-                   <!--ng-click="welcome.setupFamily()">-->
-          <!--Donw-->
-        <!--</md-button>-->
+        <h5>invites</h5>
 
-        <!--<ul>-->
-          <!--<li ng-repeat="ingredient in dish.ingredients">-->
-            <!--{{ingredient.amount}} {{ingredient.name}}-->
-          <!--</li>-->
-        <!--</ul>-->
+        <div layout layout-sm="row" ng-repeat="invite in familiesCtrl.newFamily.invites">
+          <md-input-container flex>
+            <label>Email</label>
+            <input ng-model="invite.email" ng-change="familiesCtrl.inviteChanged(invite)">
+          </md-input-container>
+        </div>
 
       </md-card-content>
 
       <div class="md-actions" layout="row" layout-align="end center">
-        <md-button ng-href="#/edit-family/{{family.key}}">Edit</md-button>
+        <md-button class="md-raised md-primary" aria-label="Save"
+                   ng-click="familiesCtrl.setupFamily()">
+          Done
+        </md-button>
+      </div>
+
+    </md-card>
+
+    <md-card ng-repeat="family in familiesCtrl.families">
+      <md-card-content>
+
+        <h2 class="md-title">{{family.name}}</h2>
+
+        <!--<md-input-container>-->
+        <!--<label>Name</label>-->
+        <!--<input ng-model="family.name" type="text">-->
+        <!--</md-input-container>-->
+
+        <md-list>
+          <md-subheader class="md-no-sticky">members</md-subheader>
+          <md-list-item ng-repeat="member in family.members">
+            <div flex layout="row">
+              <p flex="60">{{ member.name }} {{member.email}} {{member._creator_}}</p>
+              <div layout-align="end">
+                <!--todo check-->
+                <md-checkbox class="md-secondary" ng-model="member.admin" ng-click="member.admin = !member.admin">
+                  Admin
+                </md-checkbox>
+                <md-button flex ng-click="familiesCtrl.removeMember(family, member)">remove</md-button>
+              </div>
+            </div>
+          </md-list-item>
+
+          <md-divider></md-divider>
+
+          <md-subheader class="md-no-sticky">invites</md-subheader>
+          <md-list-item ng-repeat="invite in family.invites">
+            <div flex layout="row">
+              <md-list-item ng-show="invite.key == undefined">
+                <md-input-container flex="60" md-no-float>
+                  <input placeholder="+ add invite" ng-model="invite.email">
+                </md-input-container>
+              </md-list-item>
+              <span flex="75" ng-show="invite.key != undefined">{{ invite.email }} (last sent: {{invite.lastSent}})</span>
+              </any>
+              <div layout-align="end">
+                <md-button ng-click="familiesCtrl.sendInvite(family, invite)">remind</md-button>
+                <md-button ng-click="familiesCtrl.removeInvite(family, invite)">remove</md-button>
+              </div>
+            </div>
+          </md-list-item>
+
+        </md-list>
+
+      </md-card-content>
+
+      <div class="md-actions" layout="row" layout-align="end center">
+        <md-button>Make family active</md-button>
+        <md-button ng-click="familiesCtrl.removeMe(family)">Remove me from family</md-button>
       </div>
     </md-card>
   </md-content>
 
+</div>
+
+<div style="position: fixed; z-index: 30; right: 0; bottom: 0">
+  <md-button class="md-fab" aria-label="Setup new Family" ng-click="setupFamily = true">
+    <md-icon md-svg-src="assets/images/icons/ic_add_circle_black_24px.svg"></md-icon>
+  </md-button>
 </div>
