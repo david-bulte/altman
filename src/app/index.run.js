@@ -5,7 +5,6 @@ function runBlock($log, $location, $rootScope) {
 
   //only needed when authenticating via redirect
   ref.onAuth(function (authData) {
-    "use strict";
 
     if (authData) {
 
@@ -14,24 +13,17 @@ function runBlock($log, $location, $rootScope) {
       let userRef = new Firebase('https://altman.firebaseio.com/users/' + authData.uid);
       userRef.once('value', (snapshot) => {
 
-        let redirectPage = (snapshot.val() === null) ? '/welcome' : '/weekmenu';
+        let userExists = snapshot.val() !== null;
+        let redirectPage = !userExists ? '/welcome' : '/weekmenu';
         $location.path(redirectPage);
         $rootScope.$apply();
 
       });
 
-      //ref.child("users").child(authData.uid).set({
-      //  provider: authData.provider,
-      //  name: getName(authData)
-      //});
-
-      //$location.path('/weekmenu');
-      //$rootScope.$apply();
     }
     else {
 
       $log.debug('User unknown - redirecting to login page');
-
       $location.path('/login');
     }
   });

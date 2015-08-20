@@ -7,6 +7,7 @@ class FamiliesService {
     this._$timeout = $timeout;
   }
 
+  //deprecated
   createFamily(name) {
     "use strict";
 
@@ -46,6 +47,46 @@ class FamiliesService {
         })
         .catch(() => reject);
 
+    });
+
+  }
+
+  addFamily(name) {
+
+    var self = this;
+
+    return new Promise((resolve) => {
+
+      let it = main();
+      it.next();
+
+      function createFamily(name = '_default_', createdBy = '') {
+        let familiesRef = new Firebase('https://altman.firebaseio.com/families');
+        let familyRef = familiesRef.push({name: name, createdBy: createdBy});
+        setTimeout(() => it.next(familyRef.key()), 0);  //calling it.next should be in another 'thread'
+      }
+
+      function addAdmin(familyKey, userKey) {
+        let adminsRef = new Firebase(`https://altman.firebaseio.com/families/${familyKey}/admins`);
+        let admins = {};
+        admins[userKey] = true;
+        adminsRef.update(admins, () => it.next());
+      }
+
+      function addMember(familyKey, userKey) {
+        self.addMember(familyKey, userKey, () => it.next());
+      }
+
+      function* main() { //we pass in a param on the first yield
+        let ref = new Firebase('https://altman.firebaseio.com');
+        var userKey = ref.getAuth().uid;
+
+        let familyKey = yield createFamily(name, userKey);
+        yield addAdmin(familyKey, userKey);
+        yield addMember(familyKey, userKey);
+
+        resolve({});
+      }
     });
 
   }
@@ -224,8 +265,10 @@ class FamiliesService {
         //now load members of each family
         for (let family of families) {
           let members = [];
-          for (let key of Object.keys(family.members)) {
-            yield loadUser(key, members);
+          if (family.members !== undefined) {
+            for (let key of Object.keys(family.members)) {
+              yield loadUser(key, members);
+            }
           }
           family.members = members;
         }
@@ -233,8 +276,10 @@ class FamiliesService {
         //now load invites of each family
         for (let family of families) {
           let invites = [];
-          for (let key of Object.keys(family.invites)) {
-            yield loadInvite(key, invites);
+          if (family.invites !== undefined) {
+            for (let key of Object.keys(family.invites)) {
+              yield loadInvite(key, invites);
+            }
           }
           family.invites = invites;
         }

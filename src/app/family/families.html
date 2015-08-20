@@ -6,50 +6,14 @@
 
   <md-content>
 
-    <md-card ng-show="setupFamily">
-
-      <md-card-content>
-
-        <md-input-container>
-          <label>Naam familie</label>
-          <input ng-model="familiesCtrl.newFamily.name" type="text">
-        </md-input-container>
-
-        <h5>members</h5>
-
-        <div layout layout-sm="row">
-          huidig ingelogde user (disabled) deze kan je niet editen
-        </div>
-
-        <h5>invites</h5>
-
-        <div layout layout-sm="row" ng-repeat="invite in familiesCtrl.newFamily.invites">
-          <md-input-container flex>
-            <label>Email</label>
-            <input ng-model="invite.email" ng-change="familiesCtrl.inviteChanged(invite)">
-          </md-input-container>
-        </div>
-
-      </md-card-content>
-
-      <div class="md-actions" layout="row" layout-align="end center">
-        <md-button class="md-raised md-primary" aria-label="Save"
-                   ng-click="familiesCtrl.setupFamily()">
-          Done
-        </md-button>
-      </div>
-
-    </md-card>
-
     <md-card ng-repeat="family in familiesCtrl.families">
       <md-card-content>
 
-        <h2 class="md-title">{{family.name}}</h2>
-
-        <!--<md-input-container>-->
-        <!--<label>Name</label>-->
-        <!--<input ng-model="family.name" type="text">-->
-        <!--</md-input-container>-->
+        <h2>
+          <md-input-container flex="60" md-no-float>
+            <input placeholder="family name" ng-model="family.name">
+          </md-input-container>
+        </h2>
 
         <md-list>
           <md-subheader class="md-no-sticky">members</md-subheader>
@@ -99,7 +63,7 @@
 </div>
 
 <div style="position: fixed; z-index: 30; right: 0; bottom: 0">
-  <md-button class="md-fab" aria-label="Setup new Family" ng-click="setupFamily = true">
+  <md-button class="md-fab" aria-label="Setup new Family" ng-click="familiesCtrl.setupFamily()">
     <md-icon md-svg-src="assets/images/icons/ic_add_circle_black_24px.svg"></md-icon>
   </md-button>
 </div>

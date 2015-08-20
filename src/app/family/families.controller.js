@@ -32,11 +32,17 @@ class FamiliesController {
     family.invites.push({email : undefined});
   }
 
-  toggleAdmin(family, member) {
-    //todo
+  setupFamily() {
+    //todo new createFamily method
+    //todo add methods to update name
+    this._familiesService.addFamily().then((family) => {
+      console.log('yes family created!!!!!!!!', family);
+      //todo just add new family iso reloading all
+      this._getFamilies();
+    });
   }
 
-  createInvitation(query) {
+  toggleAdmin(family, member) {
     //todo
   }
 

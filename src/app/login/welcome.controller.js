@@ -42,7 +42,6 @@ class WelcomeController {
 
     let register = () => {
       return new Promise((resolve, reject) => {
-        "use strict";
 
         this._$log.debug(`registering ${authData.uid}`);
 
