@@ -6,58 +6,17 @@
 
   <md-content>
 
-    <md-card ng-repeat="family in familiesCtrl.families">
-      <md-card-content>
+    <family-card family="family"
+                 update-name="familiesCtrl.updateName(family)"
+                 remove-member="familiesCtrl.removeMember(family, member)"
+                 send-invite="familiesCtrl.sendInvite(family, invite)"
+                 remove-invite="familiesCtrl.removeInvite(family, invite)"
+                 ng-repeat="family in familiesCtrl.families"></family-card>
 
-        <h2>
-          <md-input-container flex="60" md-no-float>
-            <input placeholder="family name" ng-model="family.name" ng-model-options="{updateOn: 'blur'}" ng-change="familiesCtrl.updateName(family)">
-          </md-input-container>
-        </h2>
-        <span ng-show="family.active">(active)</span>
-
-        <md-list>
-          <md-subheader class="md-no-sticky">members</md-subheader>
-          <md-list-item ng-repeat="member in family.members">
-            <div flex layout="row">
-              <p flex="60">{{ member.name }} {{member.email}} {{member._creator_}}</p>
-              <div layout-align="end">
-                <!--todo check-->
-                <md-checkbox class="md-secondary" ng-model="member.admin" ng-click="member.admin = !member.admin">
-                  Admin
-                </md-checkbox>
-                <md-button flex ng-click="familiesCtrl.removeMember(family, member)">remove</md-button>
-              </div>
-            </div>
-          </md-list-item>
-
-          <md-divider></md-divider>
-
-          <md-subheader class="md-no-sticky">invites</md-subheader>
-          <md-list-item ng-repeat="invite in family.invites">
-            <div flex layout="row">
-              <md-list-item ng-show="invite.key == undefined">
-                <md-input-container flex="60" md-no-float>
-                  <input placeholder="+ add invite" ng-model="invite.email">
-                </md-input-container>
-              </md-list-item>
-              <span flex="75" ng-show="invite.key != undefined">{{ invite.email }} (last sent: {{invite.lastSent}})</span>
-              </any>
-              <div layout-align="end">
-                <md-button ng-click="familiesCtrl.sendInvite(family, invite)">remind</md-button>
-                <md-button ng-click="familiesCtrl.removeInvite(family, invite)">remove</md-button>
-              </div>
-            </div>
-          </md-list-item>
-
-        </md-list>
-
-      </md-card-content>
-
-      <div class="md-actions" layout="row" layout-align="end center">
-        <md-button ng-click="familiesCtrl.setActive(family)">Make family active</md-button>
-        <md-button ng-click="familiesCtrl.removeMe(family)">Remove me from family</md-button>
-      </div>
+    <div class="md-actions" layout="row" layout-align="end center">
+      <md-button ng-click="familiesCtrl.setActive(family)">Make family active</md-button>
+      <md-button ng-click="familiesCtrl.removeMe(family)">Remove me from family</md-button>
+    </div>
     </md-card>
   </md-content>
 

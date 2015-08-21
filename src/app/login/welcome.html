@@ -11,57 +11,22 @@
 
         <div ng-show="welcome.invites.length > 0">
           There's an invitation
-          <md-button class="md-raised" aria-label="Accept invitation" ng-click="welcome.acceptInvite(invite)" ng-repeat="invite in welcome.invites">
+          <md-button class="md-raised" aria-label="Accept invitation" ng-click="welcome.acceptInvite(invite)"
+                     ng-repeat="invite in welcome.invites">
             Yes! Make me part of this family!
           </md-button>
         </div>
 
         <div>
 
-          <!--<md-button class="md-raised" aria-label="Request invitation"-->
-                     <!--ng-click="requestInvitation = !requestInvitation">-->
-            <!--Request invitation-->
-          <!--</md-button>-->
-          <!--<div ng-show="requestInvitation">-->
-            <!--<md-input-container>-->
-              <!--<label>Email</label>-->
-              <!--<input ng-model="welcome.request.email" type="email">-->
-            <!--</md-input-container>-->
-            <!--<md-input-container flex>-->
-              <!--<label>Notes</label>-->
-              <!--<textarea ng-model="welcome.request.note"></textarea>-->
-            <!--</md-input-container>-->
-            <!--<md-button class="md-raised md-primary" aria-label="Send invitation"-->
-                       <!--ng-click="welcome.requestInvitation()">-->
-              <!--Send-->
-            <!--</md-button>-->
-          <!--</div>-->
-
-          <!--<p/>-->
-
           <md-button class="md-raised" aria-label="Setup family"
                      ng-click="setupFamily = !setupFamily">
             Setup family
           </md-button>
           <div ng-show="setupFamily">
-            <md-input-container>
-              <label>Name</label>
-              <input ng-model="welcome.family.name" type="text">
-            </md-input-container>
 
-            <div layout layout-sm="row" ng-repeat="member in welcome.members">
-              <md-input-container flex>
-                <label>Email</label>
-                <input ng-model="member.email" ng-change="welcome.memberChanged(member)">
-              </md-input-container>
-            </div>
 
-            <md-button class="md-raised md-primary" aria-label="Save"
-                       ng-click="welcome.setupFamily()">
-              Donw
-            </md-button>
           </div>
-
           <p/>
 
           <md-button ng-click="welcome.notNow()">not now</md-button>
@@ -69,8 +34,11 @@
 
 
         <!--</p>-->
-
-
+        <family-card family="welcome.family"
+                     updateName="welcome.updateName"
+                     removeMember="welcome.removeMember"
+                     sendInvite="welcome.sendInvite"
+                     removeInvite="welcome.removeInvite"></family-card>
 
         <md-progress-linear md-mode="indeterminate" ng-show="welcome.progressing"></md-progress-linear>
 
@@ -80,3 +48,15 @@
   </md-content>
 
 </div>
+
+
+
+
+
+
+
+
+
+
+
+
