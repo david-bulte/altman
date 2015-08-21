@@ -17,6 +17,7 @@ import ConfigService from './config/config.service.js';
 import DishesService from './dishes/dishes.service.js';
 import FamiliesService from './family/families.service.js';
 import ShoppingListService from './shoppinglist/shoppingList.service.js';
+import UserService from './login/user.service.js';
 import WeekMenuService from './weekmenu/weekMenu.service.js';
 
 import SidebarDirective from './components/sidebar/sidebar.directive.js';
@@ -47,6 +48,7 @@ angular.module('altman', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize', 'ng
   .service('DishesService', DishesService)
   .service('FamiliesService', FamiliesService)
   .service('ShoppingListService', ShoppingListService)
+  .service('UserService', UserService)
   .service('WeekMenuService', WeekMenuService)
 
   .directive('toolbar', () => new ToolbarDirective()) //register directive classes as factories

@@ -202,19 +202,16 @@ class FamiliesService {
 
   }
 
-  getFamilies() {
+  getFamilies(userKey) {
     "use strict";
 
     var self = this;
-
-    let ref = new Firebase('https://altman.firebaseio.com');
-    let authData = ref.getAuth();
 
     return new Promise((resolve) => {
 
       let it;
 
-      let familiesRef = new Firebase(`https://altman.firebaseio.com/users/${authData.uid}/families`);
+      let familiesRef = new Firebase(`https://altman.firebaseio.com/users/${userKey}/families`);
       familiesRef.once('value', (snapshot) => {
         let keys = Object.keys(snapshot.val());
         it = loadFamilies(keys);

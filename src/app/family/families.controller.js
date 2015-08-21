@@ -1,23 +1,31 @@
 class FamiliesController {
 
-  constructor(FamiliesService, $log, $mdDialog, $mdToast, $location, $timeout) {
+  constructor(FamiliesService, UserService, $log, $mdDialog, $mdToast, $location, $timeout) {
     'ngInject';
 
     this._familiesService = FamiliesService;
+    this._userService = UserService;
     this._$log = $log;
     this._dialog = $mdDialog;
     this._toast = $mdToast;
     this._$location = $location;
     this._$timeout = $timeout;
-    this._getFamilies();
+
+    this._init();
+  }
+
+  _init() {
+    this._userService.getCurrentUser().then((user) => {
+      this.user = user;
+      this._getFamilies();
+    });
   }
 
   _getFamilies() {
     var self = this;
-    this._familiesService.getFamilies().then((families) => {
+    this._familiesService.getFamilies(this.user.key).then((families) => {
       for (let family of families) {
         self._model(family);
-        console.log(family.members);
       }
       this._$timeout(() => this.families = families);
     });
@@ -28,6 +36,7 @@ class FamiliesController {
     this._$log.debug('createdBy', createdBy);
     family._createdBy_ = createdBy;
     createdBy._creator_ = true;
+    family.active = family.key === this.user.activeFamily;
 
     family.invites.push({email : undefined});
   }
@@ -47,7 +56,9 @@ class FamiliesController {
 
   setActive(family) {
     this._familiesService.setActive(family.key).then(() => {
-      //todo toast
+      this.user.activeFamily = family.key;
+      //todo should we reload?
+      this._getFamilies();
     });
   }
 
