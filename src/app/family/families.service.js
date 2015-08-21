@@ -382,6 +382,13 @@ class FamiliesService {
     });
   }
 
+  updateName(familyKey, name) {
+    return new Promise((resolve) => {
+      let familyRef = new Firebase(`https://altman.firebaseio.com/families/${familyKey}`);
+      familyRef.update({name : name}, () => resolve());
+    });
+  }
+
 }
 
 function promisify(callback) {

@@ -34,19 +34,25 @@ class FamiliesController {
   _model(family) {
     let createdBy = family.members.filter((member) => member.key === family.createdBy)[0];
     this._$log.debug('createdBy', createdBy);
-    family._createdBy_ = createdBy;
-    createdBy._creator_ = true;
+    if (createdBy !== undefined) {
+      family._createdBy_ = createdBy;
+      createdBy._creator_ = true;
+    }
     family.active = family.key === this.user.activeFamily;
 
     family.invites.push({email : undefined});
   }
 
   setupFamily() {
-    //todo new createFamily method
-    //todo add methods to update name
     this._familiesService.addFamily().then((family) => {
       //todo just add new family iso reloading all
       this._getFamilies();
+    });
+  }
+
+  updateName(family) {
+    this._familiesService.updateName(family.key, family.name).then(() => {
+      //todo toast
     });
   }
 
@@ -92,7 +98,8 @@ class FamiliesController {
   }
 
   removeMe(family) {
-    //todo kan dit als je admin bent en er zijn geen andere admins?
+    //todo kan dit als je enige admin bent?
+    this.removeMember(family, this.user);
   }
 
 }

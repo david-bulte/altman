@@ -11,7 +11,7 @@
 
         <h2>
           <md-input-container flex="60" md-no-float>
-            <input placeholder="family name" ng-model="family.name">
+            <input placeholder="family name" ng-model="family.name" ng-model-options="{updateOn: 'blur'}" ng-change="familiesCtrl.updateName(family)">
           </md-input-container>
         </h2>
         <span ng-show="family.active">(active)</span>
