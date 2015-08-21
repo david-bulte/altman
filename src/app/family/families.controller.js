@@ -36,7 +36,6 @@ class FamiliesController {
     //todo new createFamily method
     //todo add methods to update name
     this._familiesService.addFamily().then((family) => {
-      console.log('yes family created!!!!!!!!', family);
       //todo just add new family iso reloading all
       this._getFamilies();
     });
@@ -44,6 +43,12 @@ class FamiliesController {
 
   toggleAdmin(family, member) {
     //todo
+  }
+
+  setActive(family) {
+    this._familiesService.setActive(family.key).then(() => {
+      //todo toast
+    });
   }
 
   sendInvite(family, invite) {

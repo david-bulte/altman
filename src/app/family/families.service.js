@@ -375,6 +375,16 @@ class FamiliesService {
     });
   }
 
+  setActive(familyKey) {
+    return new Promise((resolve) => {
+      let ref = new Firebase('https://altman.firebaseio.com');
+      let authData = ref.getAuth();
+
+      let userRef = new Firebase(`https://altman.firebaseio.com/users/${authData.uid}`);
+      userRef.update({activeFamily : familyKey}, () => resolve());
+    });
+  }
+
 }
 
 function promisify(callback) {
