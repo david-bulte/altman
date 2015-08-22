@@ -7,50 +7,6 @@ class FamiliesService {
     this._$timeout = $timeout;
   }
 
-  //deprecated
-  createFamily(name) {
-    "use strict";
-
-    return new Promise((resolve, reject) => {
-
-      let ref = new Firebase('https://altman.firebaseio.com/families/');
-      let auth = ref.getAuth();
-
-      let familyRef = ref.push({name: name, createdBy: auth.uid});
-
-      let member = {};
-      member[auth.uid] = true;
-
-      let userRef = new Firebase('https://altman.firebaseio.com/users/' + auth.uid);
-      let family = {};
-      family[familyRef.key()] = true;
-
-      let updateMembers = promisify((cont) => {
-        this._$log.debug('updating members');
-        familyRef.child('members').update(member, cont);
-      });
-      let updateAdmins = promisify((cont) => {
-        this._$log.debug('updating admins');
-        familyRef.child('admins').update(member, cont);
-      });
-      let updateFamilies = promisify((cont) => {
-        this._$log.debug('updating families');
-        userRef.child('families').update(family, cont);
-      });
-
-      updateMembers
-        .then(updateAdmins)
-        .then(updateFamilies)
-        .then(() => {
-          this._$log.debug(`family created - returning key ${familyRef.key()}`);
-          resolve(familyRef.key());
-        })
-        .catch(() => reject);
-
-    });
-
-  }
-
   addFamily(name) {
 
     var self = this;
@@ -472,3 +428,67 @@ function promisify(callback) {
 }
 
 export default FamiliesService;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+////deprecated
+//createFamily(name) {
+//  "use strict";
+//
+//  return new Promise((resolve, reject) => {
+//
+//    let ref = new Firebase('https://altman.firebaseio.com/families/');
+//    let auth = ref.getAuth();
+//
+//    let familyRef = ref.push({name: name, createdBy: auth.uid});
+//
+//    let member = {};
+//    member[auth.uid] = true;
+//
+//    let userRef = new Firebase('https://altman.firebaseio.com/users/' + auth.uid);
+//    let family = {};
+//    family[familyRef.key()] = true;
+//
+//    let updateMembers = promisify((cont) => {
+//      this._$log.debug('updating members');
+//      familyRef.child('members').update(member, cont);
+//    });
+//    let updateAdmins = promisify((cont) => {
+//      this._$log.debug('updating admins');
+//      familyRef.child('admins').update(member, cont);
+//    });
+//    let updateFamilies = promisify((cont) => {
+//      this._$log.debug('updating families');
+//      userRef.child('families').update(family, cont);
+//    });
+//
+//    updateMembers
+//      .then(updateAdmins)
+//      .then(updateFamilies)
+//      .then(() => {
+//        this._$log.debug(`family created - returning key ${familyRef.key()}`);
+//        resolve(familyRef.key());
+//      })
+//      .catch(() => reject);
+//
+//  });
+//
+//}
