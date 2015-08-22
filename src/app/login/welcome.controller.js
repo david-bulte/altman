@@ -201,16 +201,10 @@ class WelcomeController {
   notNow() {
     "use strict";
 
-    let ref = new Firebase('https://altman.firebaseio.com');
-    let authData = ref.getAuth();
-
-    this._familiesService.createFamily({name: getName(authData)}).then((key) => {
+    this._familiesService.addFamily().then(() => {
       this._$log.debug('family created now redirecting to weekmenu...');
       this._$location.path('/weekmenu');
     });
-
-    //todo setupFamily should be promises
-    //then redirect
   }
 
   sendInvitations() {
