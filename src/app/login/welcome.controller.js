@@ -21,7 +21,7 @@ class WelcomeController {
      }
      */
     this.invites = [];
-    this.family = {};
+    this.family;
     this.members = [{email: undefined, fresh: true}];
     this.userData;
 
@@ -118,18 +118,48 @@ class WelcomeController {
 
   }
 
-  //todo move this to service
   setupFamily() {
-    "use strict";
-
-    this._familiesService.createFamily(this.family.name).then((key) => {
-      this.family.key = key;
-      this._addInvites().then(() => {
-        this._$log.debug('Invites created - now redirecting to weekmenu');
-        this._$location.path('/weekmenu');
+    this._familiesService.addFamily().then((familyKey) => {
+      console.log(familyKey);
+      //todo chaining promises
+      this._familiesService.getFamily(familyKey).then((family) => {
+        this._model(family);
+        this._$timeout(() => this.family = family);
       });
     });
   }
+
+  //todo cf families.controller, maybe move to directive?
+  _model(family) {
+    let createdBy = family.members.filter((member) => member.key === family.createdBy)[0];
+    this._$log.debug('createdBy', createdBy);
+    if (createdBy !== undefined) {
+      family._createdBy_ = createdBy;
+      createdBy._creator_ = true;
+    }
+    //todo review (this.user not set yet)
+    //family.active = family.key === this.user.activeFamily;
+
+    family.invites.push({email : undefined});
+  }
+
+  done() {
+    this._$location.path('/weekmenu');
+  }
+
+  //
+  ////todo move this to service
+  //setupFamily() {
+  //  "use strict";
+  //
+  //  this._familiesService.createFamily(this.family.name).then((key) => {
+  //    this.family.key = key;
+  //    this._addInvites().then(() => {
+  //      this._$log.debug('Invites created - now redirecting to weekmenu');
+  //      this._$location.path('/weekmenu');
+  //    });
+  //  });
+  //}
 
   /**
    * cf. http://davidwalsh.name/async-generators
@@ -150,7 +180,7 @@ class WelcomeController {
       function* main() {
         for (let member of self.members) {
           if (!member.fresh) {
-            yield addMember({email : member.email});
+            yield addMember({email: member.email});
           }
         }
         resolve();
@@ -174,7 +204,7 @@ class WelcomeController {
     let ref = new Firebase('https://altman.firebaseio.com');
     let authData = ref.getAuth();
 
-    this._familiesService.createFamily({name : getName(authData)}).then((key) => {
+    this._familiesService.createFamily({name: getName(authData)}).then((key) => {
       this._$log.debug('family created now redirecting to weekmenu...');
       this._$location.path('/weekmenu');
     });
@@ -200,6 +230,33 @@ class WelcomeController {
 
   }
 
+  updateName(family) {
+    this._familiesService.updateName(family.key, family.name).then(() => {
+      //todo toast
+    });
+  }
+
+  sendInvite(family, invite) {
+    if (invite.key === undefined) {
+      this._familiesService.addInvite(family.key, invite.email).then((key) => {
+        this._$timeout(() => {
+          invite.key = key;
+          family.invites.push({email: undefined});
+        });
+      });
+    }
+
+    //todo send mail
+  }
+
+  removeInvite(family, invite) {
+    //todo toast
+    this._familiesService.deleteInvite(family.key, invite.key).then(() => {
+      let idx = family.invites.indexOf(invite);
+      this._$timeout(() => family.invites.splice(idx, 1));
+    });
+  }
+
 }
 
 function getUserData(authData) {
@@ -207,9 +264,9 @@ function getUserData(authData) {
 
   switch (authData.provider) {
     case 'google':
-      return {displayName : authData.google.displayName, email : authData.google.email, key : authData.uid };
+      return {displayName: authData.google.displayName, email: authData.google.email, key: authData.uid};
     case 'facebook':
-      return {displayName : authData.facebook.displayName, email : authData.facebook.email, key : authData.uid };
+      return {displayName: authData.facebook.displayName, email: authData.facebook.email, key: authData.uid};
   }
 
 }
@@ -249,31 +306,6 @@ export default WelcomeController;
 //  });
 //
 //});
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 //let ref = new Firebase('https://altman.firebaseio.com/families/');
