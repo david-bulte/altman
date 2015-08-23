@@ -60,6 +60,7 @@ class DishesService {
         for (let user of users) {
           yield getDishes(user.key, dishes);
         }
+        //todo also get all starred items from other families
         resolve(dishes);  //note: this is a 'live' result, when new dishes are created by someone of the family, this
                           // dish will be added! It is up to the controller to do some extra filtering on it.
       }

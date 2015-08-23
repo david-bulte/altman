@@ -9,7 +9,7 @@ class ToolbarDirective {
       scope: {
         toolbarTitle: '=',
         toolbarFilterEnabled: '=',
-        toolbarFilter: '='
+        toolbarFilter: '&'
       },
       controller: ToolbarController,
       controllerAs: 'toolbar',
@@ -25,7 +25,7 @@ export default ToolbarDirective;
 
 class ToolbarController {
 
-  constructor ($log, $mdSidenav, $mdUtil) {
+  constructor($log, $mdSidenav, $mdUtil) {
     'ngInject';
 
     this.toggleSidebar = buildToggler('left');
@@ -35,15 +35,19 @@ class ToolbarController {
      * report completion in console
      */
     function buildToggler(navID) {
-      var debounceFn =  $mdUtil.debounce(function(){
+      var debounceFn = $mdUtil.debounce(function () {
         $mdSidenav(navID)
           .toggle()
           .then(function () {
             $log.debug("toggle " + navID + " is done");
           });
-      },300);
+      }, 300);
       return debounceFn;
     }
+  }
+
+  filter() {
+    this.toolbarFilter({query : this.query});
   }
 
 }

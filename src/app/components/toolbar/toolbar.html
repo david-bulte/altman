@@ -9,8 +9,9 @@
     </h2>
     <span flex></span>
     <md-input-container ng-show="toolbar.toolbarFilterEnabled">
-      <!--todo sytle-->
-      <input ng-model="toolbar.toolbarFilter" type="text" style="color: white; border-color: white">
+      <!--todo style-->
+      <input ng-model="toolbar.query" type="text" style="color: white; border-color: white"
+             ng-model-options="{updateOn: 'blur'}" ng-change="toolbar.filter()">
     </md-input-container>
     <md-button class="md-icon-button" aria-label="Search" ng-show="toolbar.toolbarFilterEnabled">
       <md-icon md-svg-icon="assets/images/icons/ic_search_white_24px.svg"></md-icon>

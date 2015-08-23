@@ -14,10 +14,6 @@ class DishesController {
     //todo
     this.sections = ['groenten & fruit', 'zuivel', 'vlees', 'droge voeding', 'ontbijt', 'diepvries', 'varia'];
 
-    //$scope.$watch('dishes.filter', (query) => {
-    //  this._getDishes(query);
-    //});
-
     this._init();
   }
 
@@ -111,6 +107,11 @@ class DishesController {
     }
   }
 
+  filter(query) {
+    for (let dish of this.dishes) {
+      dish.filteredOut = !dish.name.startsWith(query);
+    }
+  }
 
   //filterDishes(query) {
   //  "use strict";
