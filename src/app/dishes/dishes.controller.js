@@ -75,6 +75,12 @@ class DishesController {
   }
 
   removeIngredient(dish, ingredient) {
+    this._dishesService.removeIngredient(dish.key, ingredient.name).then(() => {
+      this._$timeout(() => {
+        let idx = dish.ingredients.indexOf(ingredient);
+        dish.ingredients.splice(idx, 1);
+      });
+    })
   }
 
   updateIngredient(dish, ingredient) {

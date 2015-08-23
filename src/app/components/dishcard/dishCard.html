@@ -16,6 +16,8 @@
         <div flex layout="row">
 
           <md-list-item>
+            <md-checkbox ng-model="ctrl.selected[ingredient.name]" ng-change="ctrl.selectIngredient(ctrl.dish, ingredient)">
+            </md-checkbox>
             <md-input-container flex="60" md-no-float>
               <input placeholder="+ add ingredient" ng-model="ingredient.name"
                      ng-change="ctrl.updateIngredient({dish : ctrl.dish, ingredient : ingredient})"
@@ -45,8 +47,9 @@
   </md-card-content>
 
   <div class="md-actions" layout="row" layout-align="end center">
-    <md-button ng-show="!dish.addedToWeekMenu" ng-click="ctrl.addToWeekMenu({dish : dish})">Add to weekmenu</md-button>
-    <md-button ng-show="dish.addedToWeekMenu" ng-click="ctrl.removeFromWeekMenu({dish : dish})">Remove from weekmenu
+    <md-button ng-show="ctrl.removeButtonVisible" ng-click="ctrl.removeIngredients()">Remove</md-button>
+    <md-button ng-show="!dish.addedToWeekMenu" ng-click="ctrl.addToWeekMenu({dish : ctrl.dish})">Add to weekmenu</md-button>
+    <md-button ng-show="dish.addedToWeekMenu" ng-click="ctrl.removeFromWeekMenu({dish : ctrl.dish})">Remove from weekmenu
     </md-button>
     <md-button ng-click="ctrl.removeDish({dish : dish})">Remove</md-button>
   </div>

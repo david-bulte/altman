@@ -32,10 +32,23 @@ export default DishCardDirective;
 
 class DishCardController {
 
-  constructor () {
+  constructor ($scope) {
     'ngInject';
+
+    this.selected = {};
+    this.removeButtonVisible = false;
   }
 
+  selectIngredient(dish, ingredient) {
+    let selected = Object.values(this.selected).filter((selected) => selected === true);
+    this.removeButtonVisible = selected.length > 0;
+  }
 
-
+  removeIngredients(dish) {
+    for (let ingredient of this.dish.ingredients) {
+      if (this.selected[ingredient.name] === true) {
+        this.removeIngredient({dish : this.dish, ingredient : ingredient});
+      }
+    }
+  }
 }
