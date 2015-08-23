@@ -47,6 +47,8 @@
   </md-card-content>
 
   <div class="md-actions" layout="row" layout-align="end center">
+    <md-button ng-show="!ctrl.dish.starred" ng-click="ctrl.toggleStar({dish : ctrl.dish})">Star</md-button>
+    <md-button ng-show="ctrl.dish.starred" ng-click="ctrl.toggleStar({dish : ctrl.dish})">Unstar</md-button>
     <md-button ng-show="ctrl.removeButtonVisible" ng-click="ctrl.removeIngredients()">Remove</md-button>
     <md-button ng-show="!dish.addedToWeekMenu" ng-click="ctrl.addToWeekMenu({dish : ctrl.dish})">Add to weekmenu</md-button>
     <md-button ng-show="dish.addedToWeekMenu" ng-click="ctrl.removeFromWeekMenu({dish : ctrl.dish})">Remove from weekmenu

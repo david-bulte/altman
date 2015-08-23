@@ -1,9 +1,10 @@
 class DishesController {
 
-  constructor(DishesService, WeekMenuService, $mdDialog, $mdToast, $location, $scope, $timeout) {
+  constructor(DishesService, UserService, WeekMenuService, $mdDialog, $mdToast, $location, $scope, $timeout) {
     'ngInject';
 
     this._dishesService = DishesService;
+    this._userService = UserService;
     this._weekMenuService = WeekMenuService;
     this._dialog = $mdDialog;
     this._toast = $mdToast;
@@ -13,10 +14,18 @@ class DishesController {
     //todo
     this.sections = ['groenten & fruit', 'zuivel', 'vlees', 'droge voeding', 'ontbijt', 'diepvries', 'varia'];
 
-    $scope.$watch('dishes.filter', (query) => {
-      this._getDishes(query);
-    });
+    //$scope.$watch('dishes.filter', (query) => {
+    //  this._getDishes(query);
+    //});
 
+    this._init();
+  }
+
+  _init() {
+    this._userService.getCurrentUser().then((user) => {
+      this.user = user;
+      this._getDishes();
+    });
   }
 
   _getDishes(query) {
@@ -30,6 +39,7 @@ class DishesController {
   }
 
   _model(dish) {
+
     let ingredients = [];
     if (dish.ingredients !== undefined) {
       for (let ingredientName of Object.keys(dish.ingredients)) {
@@ -45,6 +55,8 @@ class DishesController {
     }
     dish.ingredients = ingredients;
     dish.ingredients.push({name: undefined, amount: undefined, section: undefined});
+
+    dish.starred = this.user.starred && this.user.starred[dish.key] === true;
   }
 
   setupDish() {
@@ -65,6 +77,9 @@ class DishesController {
   }
 
   toggleStar(dish) {
+    this._userService.updateStar(this.user.key, dish.key, !dish.starred).then(() => {
+      this._$timeout(() => dish.starred = !dish.starred);
+    })
   }
 
   addIngredient(dish, ingredient) {
