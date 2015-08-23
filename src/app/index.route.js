@@ -34,7 +34,7 @@ function routerConfig ($routeProvider) {
     .when('/dishes', {
       templateUrl: 'app/dishes/dishes.html',
       controller: 'DishesController',
-      controllerAs: 'dishes'
+      controllerAs: 'dishesCtrl'
     })
     .when('/families', {
       templateUrl: 'app/family/families.html',

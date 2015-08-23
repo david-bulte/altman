@@ -20,6 +20,7 @@ import ShoppingListService from './shoppinglist/shoppingList.service.js';
 import UserService from './login/user.service.js';
 import WeekMenuService from './weekmenu/weekMenu.service.js';
 
+import DishCardDirective from './components/dishcard/dishCard.directive.js';
 import FamilyCardDirective from './components/familycard/familyCard.directive.js';
 import SidebarDirective from './components/sidebar/sidebar.directive.js';
 import ToolbarDirective from './components/toolbar/toolbar.directive.js';
@@ -52,6 +53,7 @@ angular.module('altman', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize', 'ng
   .service('UserService', UserService)
   .service('WeekMenuService', WeekMenuService)
 
-  .directive('familyCard', () => new FamilyCardDirective()) //register directive classes as factories
+  .directive('dishCard', () => new DishCardDirective()) //register directive classes as factories
+  .directive('familyCard', () => new FamilyCardDirective())
   .directive('toolbar', () => new ToolbarDirective())
   .directive('sidebar', () => new SidebarDirective());

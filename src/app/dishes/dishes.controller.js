@@ -1,6 +1,6 @@
 class DishesController {
 
-  constructor(DishesService, WeekMenuService, $mdDialog, $mdToast, $location, $scope) {
+  constructor(DishesService, WeekMenuService, $mdDialog, $mdToast, $location, $scope, $timeout) {
     'ngInject';
 
     this._dishesService = DishesService;
@@ -8,6 +8,8 @@ class DishesController {
     this._dialog = $mdDialog;
     this._toast = $mdToast;
     this._$location = $location;
+    this._$timeout = $timeout;
+    this.dishes = [];
 
     $scope.$watch('dishes.filter', (query) => {
       this._getDishes(query);
@@ -16,11 +18,41 @@ class DishesController {
   }
 
   _getDishes(query) {
-    "use strict";
-    this._dishesService.getDishes(query).then((dishes) => {
-      this.dishes = dishes;
+    //todo filter
+    this._dishesService.getDishes().then((dishes) => {
+      this._$timeout(() => this.dishes = dishes);
     });
   }
+
+  setupDish() {
+    this._dishesService.addDish().then((dishKey) => {
+      //todo return dish and add that to dish collection?
+      //or, interesting: will it be added to the dishes collection automatically?
+      this._getDishes();
+    })
+  }
+
+  updateName(dish) {
+    this._dishesService.updateName(dish.key, dish.name).then(() => {
+      //todo toast
+    })
+  }
+
+  removeDish(dish) {
+  }
+
+  toggleStar(dish) {
+  }
+
+  addIngredient(dish, ingredient) {
+  }
+
+  removeIngredient(dish, ingredient) {
+  }
+
+  updateIngredient(dish, ingredient) {
+  }
+
 
   //filterDishes(query) {
   //  "use strict";

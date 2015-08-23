@@ -219,6 +219,7 @@ class FamiliesService {
 
   }
 
+  //todo pass specification with what to fetch
   getFamilies(userKey) {
     "use strict";
 

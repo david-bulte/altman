@@ -2,35 +2,58 @@
 
 <div layout="column" flex>
 
-  <toolbar toolbar-title="'Dishes'"  toolbar-filter-enabled="true" toolbar-filter="dishes.filter"></toolbar>
+  <toolbar toolbar-title="'Dishes'" toolbar-filter-enabled="true" toolbar-filter="dishes.filter"></toolbar>
+
+  <span ng-show="dishesCtrl.dishes.length == 0">loading</span>
 
   <md-content>
 
-    <md-card ng-repeat="dish in dishes.dishes">
-      <!--<img ng-src="{{imagePath}}" class="md-card-image" alt="Washed Out">-->
-      <md-card-content>
-        <h2 class="md-title">{{dish.name}}</h2>
+    <dish-card dish="dish"
+               update-name="dishesCtrl.updateName(dish)"
+               remove-dish="dishesCtrl.removeDish(dish)"
+               toggle-star="dishesCtrl.toggleStar(dish)"
+               remove-ingredient="dishesCtrl.removeIngredient(dish, ingredient)"
+               add-ingredient="dishesCtrl.addIngredient(dish, ingredient)"
+               update-ingredient="dishesCtrl.updateIngredient(dish, ingredient)"
+               add-to-week-menu="dishesCtrl.addToWeekMenu(dish)"
+               remove-from-week-menu="dishesCtrl.removeFromWeekMenu(dish)"
+               ng-repeat="dish in dishesCtrl.dishes"></dish-card>
 
-        <p>
-          {{dish.notes}}
-        </p>
-
-        <ul>
-          <li ng-repeat="ingredient in dish.ingredients">
-            {{ingredient.amount}} {{ingredient.name}}
-          </li>
-        </ul>
-
-      </md-card-content>
-
-      <div class="md-actions" layout="row" layout-align="end center">
-        <md-button ng-click="dishes.deleteDish($event, dish)">Remove</md-button>
-        <md-button ng-href="#/edit-dish/{{dish.key}}">Edit</md-button>
-        <md-button ng-click="dishes.addDishToWeekMenu(dish)">Add to week menu</md-button>
-        <!--todo flag op dish niveau? evt berekend adh van weekmenu? subclass van Dish? DishVm-->
-        <!--<md-button ng-click="dishes.removeDishFromWeekMenu(dish)">Add to week menu</md-button>-->
-      </div>
-    </md-card>
   </md-content>
 
+  <!--<md-content>-->
+  <!-- -->
+  <!--<md-card ng-repeat="dish in dishes.dishes">-->
+  <!--&lt;!&ndash;<img ng-src="{{imagePath}}" class="md-card-image" alt="Washed Out">&ndash;&gt;-->
+  <!--<md-card-content>-->
+  <!--<h2 class="md-title">{{dish.name}}</h2>-->
+
+  <!--<p>-->
+  <!--{{dish.notes}}-->
+  <!--</p>-->
+
+  <!--<ul>-->
+  <!--<li ng-repeat="ingredient in dish.ingredients">-->
+  <!--{{ingredient.amount}} {{ingredient.name}}-->
+  <!--</li>-->
+  <!--</ul>-->
+
+  <!--</md-card-content>-->
+
+  <!--<div class="md-actions" layout="row" layout-align="end center">-->
+  <!--<md-button ng-click="dishes.deleteDish($event, dish)">Remove</md-button>-->
+  <!--<md-button ng-href="#/edit-dish/{{dish.key}}">Edit</md-button>-->
+  <!--<md-button ng-click="dishes.addDishToWeekMenu(dish)">Add to week menu</md-button>-->
+  <!--&lt;!&ndash;todo flag op dish niveau? evt berekend adh van weekmenu? subclass van Dish? DishVm&ndash;&gt;-->
+  <!--&lt;!&ndash;<md-button ng-click="dishes.removeDishFromWeekMenu(dish)">Add to week menu</md-button>&ndash;&gt;-->
+  <!--</div>-->
+  <!--</md-card>-->
+  <!--</md-content>-->
+
+</div>
+
+<div style="position: fixed; z-index: 30; right: 0; bottom: 0">
+  <md-button class="md-fab" aria-label="Setup new Dish" ng-click="dishesCtrl.setupDish()">
+    <md-icon md-svg-src="assets/images/icons/ic_add_circle_black_24px.svg"></md-icon>
+  </md-button>
 </div>

@@ -1,0 +1,50 @@
+<md-card>
+  <md-card-content>
+
+    <h2>
+      <md-input-container flex="60" md-no-float>
+        <input placeholder="dish name" ng-model="ctrl.dish.name" ng-model-options="{updateOn: 'blur'}"
+               ng-change="ctrl.updateName({dish : ctrl.dish})">
+      </md-input-container>
+    </h2>
+    <!--todo-->
+    <span ng-show="ctrl.dish.starred">(starred)</span>
+
+    <md-list>
+      <md-subheader class="md-no-sticky">ingredients</md-subheader>
+      <md-list-item ng-repeat="ingredient in ctrl.dish.ingredients">
+        <div flex layout="row">
+
+          <md-list-item>
+            <md-input-container flex="60" md-no-float>
+              <input ng-show="ingredient.key == undefined" placeholder="+ add ingredient" ng-model="ingredient.name">
+              <input ng-show="ingredient.key != undefined" ng-model="ingredient.name">
+            </md-input-container>
+            <md-input-container flex="20" md-no-float>
+              <input placeholder="amount" ng-model="ingredient.amount">
+            </md-input-container>
+            <md-input-container flex="20" md-no-float>
+              <input placeholder="section" ng-model="ingredient.section">
+            </md-input-container>
+            <!--todo remove button-->
+          </md-list-item>
+
+          <!--<div layout-align="end">-->
+          <!--<md-button ng-click="ctrl.sendInvite({family : ctrl.family, invite : invite})">remind</md-button>-->
+          <!--<md-button ng-click="ctrl.removeInvite({family : ctrl.family, invite : invite})">remove</md-button>-->
+          <!--</div>-->
+        </div>
+      </md-list-item>
+
+    </md-list>
+
+  </md-card-content>
+
+  <div class="md-actions" layout="row" layout-align="end center">
+    <md-button ng-show="!dish.addedToWeekMenu" ng-click="ctrl.addToWeekMenu({dish : dish})">Add to weekmenu</md-button>
+    <md-button ng-show="dish.addedToWeekMenu" ng-click="ctrl.removeFromWeekMenu({dish : dish})">Remove from weekmenu</md-button>
+    <md-button ng-click="ctrl.removeDish({dish : dish})">Remove</md-button>
+  </div>
+
+
+</md-card>
