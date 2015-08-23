@@ -26,11 +26,10 @@
                      ng-change="ctrl.updateIngredient({dish : ctrl.dish, ingredient : ingredient})"
                      ng-model-options="{updateOn: 'blur'}">
             </md-input-container>
-            <md-input-container flex="20" md-no-float>
-              <input placeholder="section" ng-model="ingredient.section"
-                     ng-change="ctrl.updateIngredient({dish : ctrl.dish, ingredient : ingredient})"
-                     ng-model-options="{updateOn: 'blur'}">
-            </md-input-container>
+            <md-select flex="20" placeholder="section" ng-model="ingredient.section"
+                       ng-change="ctrl.updateIngredient({dish : ctrl.dish, ingredient : ingredient})">
+              <md-option ng-repeat="section in ctrl.sections" value="{{section}}">{{section}}</md-option>
+            </md-select>
             <!--todo remove button-->
           </md-list-item>
 

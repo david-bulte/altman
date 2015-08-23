@@ -8,6 +8,7 @@ class DishCardDirective {
       templateUrl: 'app/components/dishcard/dishCard.html',
       scope: {
         dish: '=',
+        sections: '=',
         updateName: '&',
         removeDish: '&',
         toggleStar: '&',

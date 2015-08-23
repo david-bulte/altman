@@ -10,6 +10,8 @@ class DishesController {
     this._$location = $location;
     this._$timeout = $timeout;
     this.dishes = [];
+    //todo
+    this.sections = ['groenten & fruit', 'zuivel', 'vlees', 'droge voeding', 'ontbijt', 'diepvries', 'varia'];
 
     $scope.$watch('dishes.filter', (query) => {
       this._getDishes(query);

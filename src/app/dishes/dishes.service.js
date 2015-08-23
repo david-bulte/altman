@@ -102,7 +102,7 @@ class DishesService {
     });
   }
 
-  addIngredient(dishKey, {name = '_default_', amount = '_unknown_', section = '_miscellaneous_'}) {
+  addIngredient(dishKey, {name = '_default_', amount = '_unknown_', section = 'varia'}) {
     //todo consider storing product + section separately so as to have autocomplete on section
     return new Promise((resolve) => {
       let ingredientsRef = new Firebase(`https://altman.firebaseio.com/dishes/${dishKey}/ingredients`);
@@ -132,7 +132,8 @@ class DishesService {
   //  });
   //}
 
-  updateIngredient(dishKey, ingredientKey, {name = '_default_', amount = '_unknown_', section = '_miscellaneous_'}) {
+  //todo varia
+  updateIngredient(dishKey, ingredientKey, {name = '_default_', amount = '_unknown_', section = 'varia'}) {
     return new Promise((resolve) => {
       if (ingredientKey !== name) {
         this.removeIngredient(dishKey, ingredientKey)
