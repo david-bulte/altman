@@ -17,14 +17,19 @@
 
           <md-list-item>
             <md-input-container flex="60" md-no-float>
-              <input ng-show="ingredient.key == undefined" placeholder="+ add ingredient" ng-model="ingredient.name">
-              <input ng-show="ingredient.key != undefined" ng-model="ingredient.name">
+              <input placeholder="+ add ingredient" ng-model="ingredient.name"
+                     ng-change="ctrl.updateIngredient({dish : ctrl.dish, ingredient : ingredient})"
+                     ng-model-options="{updateOn: 'blur'}">
             </md-input-container>
             <md-input-container flex="20" md-no-float>
-              <input placeholder="amount" ng-model="ingredient.amount">
+              <input placeholder="amount" ng-model="ingredient.amount"
+                     ng-change="ctrl.updateIngredient({dish : ctrl.dish, ingredient : ingredient})"
+                     ng-model-options="{updateOn: 'blur'}">
             </md-input-container>
             <md-input-container flex="20" md-no-float>
-              <input placeholder="section" ng-model="ingredient.section">
+              <input placeholder="section" ng-model="ingredient.section"
+                     ng-change="ctrl.updateIngredient({dish : ctrl.dish, ingredient : ingredient})"
+                     ng-model-options="{updateOn: 'blur'}">
             </md-input-container>
             <!--todo remove button-->
           </md-list-item>
@@ -42,7 +47,8 @@
 
   <div class="md-actions" layout="row" layout-align="end center">
     <md-button ng-show="!dish.addedToWeekMenu" ng-click="ctrl.addToWeekMenu({dish : dish})">Add to weekmenu</md-button>
-    <md-button ng-show="dish.addedToWeekMenu" ng-click="ctrl.removeFromWeekMenu({dish : dish})">Remove from weekmenu</md-button>
+    <md-button ng-show="dish.addedToWeekMenu" ng-click="ctrl.removeFromWeekMenu({dish : dish})">Remove from weekmenu
+    </md-button>
     <md-button ng-click="ctrl.removeDish({dish : dish})">Remove</md-button>
   </div>
 

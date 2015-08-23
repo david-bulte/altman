@@ -106,10 +106,15 @@ class DishesService {
     //todo consider storing product + section separately so as to have autocomplete on section
     return new Promise((resolve) => {
       let ingredientsRef = new Firebase(`https://altman.firebaseio.com/dishes/${dishKey}/ingredients`);
-      let ingredientRef = ingredientsRef.push();
-      ingredientRef.set({name: name, createdBy: ingredientsRef.getAuth.uid}, () => {
-        resolve(ingredientRef.key());
+      let ingredients = {};
+      ingredients[name] = {amount: amount, section: section};
+      ingredientsRef.update(ingredients, () => {
+        resolve();
       });
+      //let ingredientRef = ingredientsRef.push();
+      //ingredientRef.set({name: name, createdBy: ingredientsRef.getAuth().uid}, () => {
+      //  resolve(ingredientRef.key());
+      //});
     });
   }
 
@@ -120,10 +125,24 @@ class DishesService {
     });
   }
 
+  //updateIngredient(dishKey, ingredientKey, {name = '_default_', amount = '_unknown_', section = '_miscellaneous_'}) {
+  //  return new Promise((resolve) => {
+  //    let ingredientRef = new Firebase(`https://altman.firebaseio.com/dishes/${dishKey}/ingredients/${ingredientKey}`);
+  //    ingredientRef.update({name: name, amount: amount, section : section}, () => resolve());
+  //  });
+  //}
+
   updateIngredient(dishKey, ingredientKey, {name = '_default_', amount = '_unknown_', section = '_miscellaneous_'}) {
     return new Promise((resolve) => {
-      let ingredientRef = new Firebase(`https://altman.firebaseio.com/dishes/${dishKey}/ingredients/${ingredientKey}`);
-      ingredientRef.update({name: name, amount: amount, section : section}, () => resolve());
+      if (ingredientKey !== name) {
+        this.removeIngredient(dishKey, ingredientKey)
+          .then(() => this.addIngredient(dishKey, {name: name, amount: amount, section: section}))
+          .then(() => resolve());
+      }
+      else {
+        let ingredientRef = new Firebase(`https://altman.firebaseio.com/dishes/${dishKey}/ingredients/${ingredientKey}`);
+        ingredientRef.update({name: name, amount: amount, section: section}, () => resolve());
+      }
     });
   }
 

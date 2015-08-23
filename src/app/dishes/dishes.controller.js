@@ -20,8 +20,29 @@ class DishesController {
   _getDishes(query) {
     //todo filter
     this._dishesService.getDishes().then((dishes) => {
+      for (let dish of dishes) {
+        this._model(dish);
+      }
       this._$timeout(() => this.dishes = dishes);
     });
+  }
+
+  _model(dish) {
+    let ingredients = [];
+    if (dish.ingredients !== undefined) {
+      for (let ingredientName of Object.keys(dish.ingredients)) {
+        var ingredient = dish.ingredients[ingredientName];
+        ingredient.name = ingredientName;
+        ingredients.push({
+          name: ingredientName,
+          amount: ingredient.amount,
+          section: ingredient.section,
+          _original_ : ingredient
+        });
+      }
+    }
+    dish.ingredients = ingredients;
+    dish.ingredients.push({name: undefined, amount: undefined, section: undefined});
   }
 
   setupDish() {
@@ -45,12 +66,26 @@ class DishesController {
   }
 
   addIngredient(dish, ingredient) {
+    this._dishesService.addIngredient(dish.key, {name: ingredient.name}).then(() => {
+      ingredient._original_ = {name: ingredient.name};
+      this._$timeout(() => dish.ingredients.push({name: undefined, amount: undefined, section: undefined}));
+    });
   }
 
   removeIngredient(dish, ingredient) {
   }
 
   updateIngredient(dish, ingredient) {
+    //todo update/add refactor
+    if (ingredient._original_ !== undefined) {
+      this._dishesService.updateIngredient(dish.key, ingredient._original_.name, ingredient).then(() => {
+        //this was an update no need to add something new
+      });
+      //this._dishesService.updateIngredient(dish, ingredient);
+    }
+    else {
+      this.addIngredient(dish, ingredient);
+    }
   }
 
 
