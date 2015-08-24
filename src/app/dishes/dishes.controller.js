@@ -45,14 +45,19 @@ class DishesController {
           name: ingredientName,
           amount: ingredient.amount,
           section: ingredient.section,
-          _original_ : ingredient
+          _original_: ingredient
         });
       }
     }
     dish.ingredients = ingredients;
     dish.ingredients.push({name: undefined, amount: undefined, section: undefined});
 
-    dish.starred = this.user.starred && this.user.starred[dish.key] === true;
+    dish.starred = this.user.starred
+      && this.user.starred[dish.key] === true;
+
+    dish.used = dish.usedBy !== undefined
+      && this.user.activeFamily !== undefined
+      && dish.usedBy[this.user.activeFamily] === true;
   }
 
   setupDish() {
@@ -147,17 +152,20 @@ class DishesController {
     });
   }
 
-  addDishToWeekMenu(dish) {
-    "use strict";
-    this._weekMenuService.addDishId(dish.key).then(() => {
-      this.toast(dish.name + ' added to week menu');
+  addToWeekMenu(dish) {
+    var familyKey = this.user.activeFamily;
+    this._weekMenuService.addDish(familyKey, dish.key).then(() => {
+      dish.used = true;
+      this.toast(dish.name + ' added to week menu')
     });
   }
 
-  removeDishFromWeekMenu(dish) {
-    "use strict";
-    this._weekMenuService.removeDishId(dish.id);
-    this.toast(dish.name + ' removed from week menu');
+  removeFromWeekMenu(dish) {
+    var familyKey = this.user.activeFamily;
+    this._weekMenuService.removeDish(familyKey, dish.key).then(() => {
+      dish.used = false;
+      this.toast(dish.name + ' removed from week menu')
+    });
   }
 
   toast(content) {

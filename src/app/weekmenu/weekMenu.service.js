@@ -62,35 +62,44 @@ class WeekMenuService {
 
   }
 
-  addDishId(key) {
-    "use strict";
-
-    let callback = (resolve, reject) => {
-      return (err) => {
-        if (err) {
-          reject();
-        }
-        else {
-          resolve();
-        }
-      };
+  addDish(familyKey, dishKey) {
+    let updateWeekMenus = () => {
+      new Promise((resolve) => {
+        let weekMenuRef = new Firebase(`https://altman.firebaseio.com/weekmenus/${familyKey}`);
+        let dish = {};
+        dish[dishKey] = true;
+        weekMenuRef.update(dish, () => resolve());
+      });
     };
 
-    let updateWeekmenu = new Promise((resolve, reject) => {
-      let ref = new Firebase('https://altman.firebaseio.com/weekmenus/david_bulte/dishes');
-      let dish = {};
-      dish[key] = 1;
-      ref.update(dish, callback(resolve, reject));
-    });
+    let updateDish = () => {
+      new Promise((resolve) => {
+        let usedByRef = new Firebase(`https://altman.firebaseio.com/dishes/${dishKey}/usedBy`);
+        let usedBy = {};
+        usedBy[familyKey] = true;
+        usedByRef.update(usedBy, () => resolve());
+      });
+    };
 
-    //let updateDish = new Promise((resolve, reject) => {
-    //  let ref = new Firebase('https://altman.firebaseio.com/dishes/' + key + '/weekmenus');
-    //  ref.set({david_bulte : 1}, callback(resolve, reject));
-    //});
+    return Promise.all([updateWeekMenus(), updateDish()]);
+  }
 
-    //return Promise.all([updateWeekmenu, updateDish]);
+  removeDish(familyKey, dishKey) {
+    let updateWeekMenus = () => {
+      new Promise((resolve) => {
+        let dishRef = new Firebase(`https://altman.firebaseio.com/weekmenus/${familyKey}/${dishKey}`);
+        dishRef.remove(() => resolve());
+      });
+    };
 
-    return updateWeekmenu;
+    let updateDish = () => {
+      new Promise((resolve) => {
+        let familyRef = new Firebase(`https://altman.firebaseio.com/dishes/${dishKey}/usedBy/${familyKey}`);
+        familyRef.remove(() => resolve());
+      });
+    };
+
+    return Promise.all([updateWeekMenus(), updateDish()]);
   }
 
   removeDishId(key) {
@@ -109,6 +118,23 @@ class WeekMenuService {
       });
     });
   }
+
+  //removeDishId(key) {
+  //  "use strict";
+  //  return new Promise((resolve, reject) => {
+  //    let ref = new Firebase('https://altman.firebaseio.com/weekmenus/david_bulte/dishes');
+  //    let dish = {};
+  //    dish[key] = null;
+  //    ref.update(dish, (err) => {
+  //      if (err) {
+  //        reject();
+  //      }
+  //      else {
+  //        resolve();
+  //      }
+  //    });
+  //  });
+  //}
 
 }
 
