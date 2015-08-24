@@ -1,24 +1,39 @@
 class WeekMenuController {
 
-  constructor(DishesService, WeekMenuService, $mdDialog, $mdToast, $location, $timeout) {
+  constructor(DishesService, UserService, WeekMenuService, $mdDialog, $mdToast, $location, $timeout) {
     'ngInject';
 
     this._dishesService = DishesService;
+    this._userService = UserService;
     this._weekMenuService = WeekMenuService;
     this._dialog = $mdDialog;
     this._toast = $mdToast;
     this._$location = $location;
+    this._$timeout = $timeout;
 
-    this.dishes = [];
-
-    this._weekMenuService.getDishes().then((dishes) => {
-      "use strict";
-      $timeout(() => {
-        this.dishes = dishes;
-      });
-    });
+    //this.dishes = [];
+    //
+    //this._weekMenuService.getDishes().then((dishes) => {
+    //  "use strict";
+    //  $timeout(() => {
+    //    this.dishes = dishes;
+    //  });
+    //});
 
     this.isOpen = false;
+
+    this._init();
+  }
+
+  _init() {
+    this._userService.getCurrentUser().then((user) => {
+      this.user = user;
+      this._getDishes();
+    });
+  }
+
+  _getDishes() {
+    this._weekMenuService.getDishes(this.user.activeFamily).then((dishes) => this._$timeout(() => this.dishes = dishes));
   }
 
   remove(ev, dish) {

@@ -4,62 +4,48 @@ class WeekMenuService {
     'ngInject';
   }
 
-  getDishes() {
-    "use strict";
-
-    let getKeys = () => {
-      return new Promise((resolve) => {
-        let ref = new Firebase('https://altman.firebaseio.com/weekmenus/david_bulte/dishes');
-        ref.once('value', (snapshot) => {
-          let keys = [];
-          let val = snapshot.val();
-          for (let key of Object.keys(val)) {
-            if (val[key] > 0) {
-              keys.push(key);
-            }
-          }
-          resolve(keys);
-        });
-      });
-    };
-
-    let getDish = (key, callback) => {
-      let ref = new Firebase('https://altman.firebaseio.com/dishes/' + key);
-      ref.once('value', (snapshot) => {
-        callback(snapshot.val());
-      });
-    };
-
-    let getDishes = (keys) => {
-
-      let makePromise = (key, result) => {
-        return new Promise((resolve) => {
-          getDish(key, (val) => {
-            val.key = key;
-            result.push(val);
-            resolve();
-          });
-        });
-      };
-
-      return new Promise((resolve) => {
-        var dishes = [];
-        var fs = [];
-        for (let key of keys) {
-          fs.push(makePromise(key, dishes));
-        }
-        Promise.all(fs).then(() => {
-          resolve(dishes);
-        });
-      });
-    };
+  getDishes(familyKey) {
 
     return new Promise((resolve) => {
-      getKeys()
-        .then(getDishes)
-        .then(resolve);
-    });
 
+      let it = main();
+      it.next();
+
+      function getDishKeys() {
+        let dishesRef = new Firebase(`https://altman.firebaseio.com/weekmenus/${familyKey}`);
+        dishesRef.once('value', (snapshot) => {
+          let dishKeys = snapshot.val();
+
+          let filtered = [];
+          for (let [dishKey, included] of Object.entries(dishKeys)) {
+            if (included === true) {
+              filtered.push(dishKey);
+            }
+          }
+
+          it.next(filtered);
+        });
+      }
+
+      function getDish(dishKey) {
+        let dishesRef = new Firebase(`https://altman.firebaseio.com/dishes/${dishKey}`);
+        dishesRef.once('value', (snapshot) => {
+          let dish = snapshot.val();
+          dish.key = snapshot.key();
+          it.next(dish);
+        });
+      }
+
+      function* main() {
+        let dishKeys = yield getDishKeys(); //returns all members of current family
+        let dishes = [];
+        for (let key of dishKeys) {
+          let dish = yield getDish(key);
+          dishes.push(dish);
+        }
+        resolve(dishes);
+      }
+    });
   }
 
   addDish(familyKey, dishKey) {
