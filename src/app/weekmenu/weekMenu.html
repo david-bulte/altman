@@ -6,34 +6,47 @@
 
   <md-content>
 
-    <md-card ng-repeat="dish in weekMenu.dishes">
-      <!--<img ng-src="{{imagePath}}" class="md-card-image" alt="Washed Out">-->
-      <md-card-content>
-        <h2 class="md-title">{{dish.name}}</h2>
+    <dish-card dish="dish"
+               sections="weekMenuCtrl.sections"
+               update-name="weekMenuCtrl.updateName(dish)"
+               toggle-star="weekMenuCtrl.toggleStar(dish)"
+               remove-ingredient="weekMenuCtrl.removeIngredient(dish, ingredient)"
+               add-ingredient="weekMenuCtrl.addIngredient(dish, ingredient)"
+               update-ingredient="weekMenuCtrl.updateIngredient(dish, ingredient)"
+               remove-from-week-menu="weekMenuCtrl.removeFromWeekMenu(dish)"
+               ng-show="dish.filteredOut != true"
+               ng-repeat="dish in weekMenuCtrl.dishes"></dish-card>
 
-        <p>
-          {{dish.notes}}
-        </p>
-
-        <ul>
-          <li ng-repeat="ingredient in dish.ingredients">
-            {{ingredient.amount}} {{ingredient.name}} {{ingredient.section}}
-          </li>
-        </ul>
-
-      </md-card-content>
-
-      <div class="md-actions" layout="row" layout-align="end center">
-        <md-button ng-click="weekMenu.remove($event, dish)">Remove</md-button>
-        <md-button ng-href="#/edit-dish/{{dish.key}}">Edit</md-button>
-      </div>
-    </md-card>
   </md-content>
+
+    <!--<md-card ng-repeat="dish in weekMenu.dishes">-->
+      <!--&lt;!&ndash;<img ng-src="{{imagePath}}" class="md-card-image" alt="Washed Out">&ndash;&gt;-->
+      <!--<md-card-content>-->
+        <!--<h2 class="md-title">{{dish.name}}</h2>-->
+
+        <!--<p>-->
+          <!--{{dish.notes}}-->
+        <!--</p>-->
+
+        <!--<ul>-->
+          <!--<li ng-repeat="ingredient in dish.ingredients">-->
+            <!--{{ingredient.amount}} {{ingredient.name}} {{ingredient.section}}-->
+          <!--</li>-->
+        <!--</ul>-->
+
+      <!--</md-card-content>-->
+
+      <!--<div class="md-actions" layout="row" layout-align="end center">-->
+        <!--<md-button ng-click="weekMenu.remove($event, dish)">Remove</md-button>-->
+        <!--<md-button ng-href="#/edit-dish/{{dish.key}}">Edit</md-button>-->
+      <!--</div>-->
+    <!--</md-card>-->
+  <!--</md-content>-->
 
 </div>
 
 <div style="position: fixed; z-index: 30; right: 0; bottom: 0">
-  <md-fab-speed-dial md-open="weekMenu.isOpen" md-direction="left"
+  <md-fab-speed-dial md-open="weekMenuCtrl.isOpen" md-direction="left"
                      class="md-fling">
     <md-fab-trigger>
       <md-button aria-label="menu" class="md-fab md-warn">
@@ -47,7 +60,7 @@
       <md-button ng-href="#/dishes" aria-label="search dish" class="md-fab md-raised md-mini">
         <md-icon md-svg-src="assets/images/icons/ic_search_black_24px.svg"></md-icon>
       </md-button>
-      <md-button ng-href="#/create-dish" aria-label="create new dish" class="md-fab md-raised md-mini">
+      <md-button class="md-fab" aria-label="Setup new Dish" ng-click="weekMenuCtrl.setupDish()">
         <md-icon md-svg-src="assets/images/icons/ic_add_circle_outline_black_24px.svg"></md-icon>
       </md-button>
     </md-fab-actions>

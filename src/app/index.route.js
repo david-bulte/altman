@@ -4,7 +4,7 @@ function routerConfig ($routeProvider) {
     .when('/', {
       templateUrl: 'app/weekMenu/weekMenu.html',
       controller: 'WeekMenuController',
-      controllerAs: 'weekMenu'
+      controllerAs: 'weekMenuCtrl'
     })
     .when('/login', {
       templateUrl: 'app/login/login.html',

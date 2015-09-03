@@ -80,7 +80,7 @@ class DishesController {
   toggleStar(dish) {
     this._userService.updateStar(this.user.key, dish.key, !dish.starred).then(() => {
       this._$timeout(() => dish.starred = !dish.starred);
-    })
+    });
   }
 
   addIngredient(dish, ingredient) {
