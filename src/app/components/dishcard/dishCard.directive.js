@@ -16,7 +16,9 @@ class DishCardDirective {
         addIngredient: '&',
         updateIngredient: '&',
         addToWeekMenu: '&',
-        removeFromWeekMenu: '&'
+        removeFromWeekMenu: '&',
+        compact: '=',
+        read: '='
       },
       controller: DishCardController,
       controllerAs: 'ctrl',
@@ -32,7 +34,7 @@ export default DishCardDirective;
 
 class DishCardController {
 
-  constructor ($scope) {
+  constructor($scope) {
     'ngInject';
 
     this.selected = {};
@@ -47,7 +49,7 @@ class DishCardController {
   removeIngredients(dish) {
     for (let ingredient of this.dish.ingredients) {
       if (this.selected[ingredient.name] === true) {
-        this.removeIngredient({dish : this.dish, ingredient : ingredient});
+        this.removeIngredient({dish: this.dish, ingredient: ingredient});
       }
     }
   }
