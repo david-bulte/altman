@@ -10,7 +10,12 @@
     <!--todo-->
     <span ng-show="ctrl.dish.starred">(starred)</span>
 
-    <md-list>
+    <md-button class="md-icon-button" aria-label="More" ng-click="ctrl.compact = !ctrl.compact">
+      <md-icon md-svg-icon="assets/images/icons/ic_expand_more_black_18px.svg" ng-show="ctrl.compact"></md-icon>
+      <md-icon md-svg-icon="assets/images/icons/ic_expand_less_black_18px.svg" ng-show="!ctrl.compact"></md-icon>
+    </md-button>
+
+    <md-list ng-show="!ctrl.compact">
       <md-subheader class="md-no-sticky">ingredients</md-subheader>
       <md-list-item ng-repeat="ingredient in ctrl.dish.ingredients">
         <div flex layout="row">
@@ -47,7 +52,10 @@
 
   </md-card-content>
 
-  <div class="md-actions" layout="row" layout-align="end center">
+  <div class="md-actions" layout="row" layout-align="end center" ng-show="!ctrl.compact">
+    <md-button ng-show="ctrl.read" ng-click="ctrl.read = !ctrl.read">Stop Edit</md-button>
+
+    <md-button ng-show="!ctrl.read" ng-click="ctrl.read = !ctrl.read">Edit</md-button>
     <md-button ng-show="!ctrl.dish.starred" ng-click="ctrl.toggleStar({dish : ctrl.dish})">Star</md-button>
     <md-button ng-show="ctrl.dish.starred" ng-click="ctrl.toggleStar({dish : ctrl.dish})">Unstar</md-button>
     <md-button ng-show="ctrl.removeButtonVisible" ng-click="ctrl.removeIngredients()">Remove</md-button>
