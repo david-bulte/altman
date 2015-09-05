@@ -69,7 +69,7 @@ class WeekMenuController {
       }
     }
     dish.ingredients = ingredients;
-    dish.ingredients.push({name: undefined, amount: undefined, section: undefined});
+    //dish.ingredients.push({name: undefined, amount: undefined, section: undefined});
 
     dish.starred = this.user.starred
       && this.user.starred[dish.key] === true;

@@ -18,9 +18,13 @@
                update-ingredient="dishesCtrl.updateIngredient(dish, ingredient)"
                add-to-week-menu="dishesCtrl.addToWeekMenu(dish)"
                remove-from-week-menu="dishesCtrl.removeFromWeekMenu(dish)"
+               can-edit="true"
+               can-delete="true"
                ng-show="dish.filteredOut != true"
                ng-repeat="dish in dishesCtrl.dishes"></dish-card>
   </md-content>
+
+
 
 </div>
 
