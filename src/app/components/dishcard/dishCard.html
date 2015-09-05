@@ -9,11 +9,23 @@
                  ng-model-options="{updateOn: 'blur'}"
                  ng-change="ctrl.updateName({dish : ctrl.dish})">
         </md-input-container>
-        <span ng-switch-when="false">{{ctrl.dish.name}}</span>
+        <span ng-switch-when="false" flex="60">{{ctrl.dish.name}}</span>
       </any>
     </h2>
+
+    <!--&lt;!&ndash;todo polish datepicker&ndash;&gt;-->
+    <!--&lt;!&ndash;where to put date? -> we need a new entity!&ndash;&gt;-->
+    <!--<md-input-container flex="30" md-no-float>-->
+      <!--<input placeholder="date"-->
+             <!--type="date"-->
+             <!--ng-model="ctrl.dish.date">-->
+      <!--&lt;!&ndash;ng-change="ctrl.updateDate({dish : ctrl.dish})">&ndash;&gt;-->
+    <!--</md-input-container>-->
+
     <!--todo-->
     <span ng-show="ctrl.dish.starred">(starred)</span>
+
+
     <md-button class="md-icon-button" aria-label="More" ng-click="ctrl.compactMode = !ctrl.compactMode">
       <md-icon md-svg-icon="assets/images/icons/ic_expand_more_black_18px.svg" ng-show="ctrl.compactMode"></md-icon>
       <md-icon md-svg-icon="assets/images/icons/ic_expand_less_black_18px.svg" ng-show="!ctrl.compactMode"></md-icon>

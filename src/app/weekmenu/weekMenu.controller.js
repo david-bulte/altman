@@ -13,12 +13,12 @@ class WeekMenuController {
     //todo
     this.sections = ['groenten & fruit', 'zuivel', 'vlees', 'droge voeding', 'ontbijt', 'diepvries', 'varia'];
 
-    //this.dishes = [];
+    //this.weekMenuDishes = [];
     //
     //this._weekMenuService.getDishes().then((dishes) => {
     //  "use strict";
     //  $timeout(() => {
-    //    this.dishes = dishes;
+    //    this.weekMenuDishes = dishes;
     //  });
     //});
 
@@ -44,11 +44,12 @@ class WeekMenuController {
   }
 
   _getDishes() {
-    this._weekMenuService.getDishes(this.user.activeFamily).then((dishes) => {
-      for (let dish of dishes) {
-        this._model(dish);
+
+    this._weekMenuService.getWeekMenuDishes(this.user.activeFamily).then((weekMenuDishes) => {
+      for (let weekMenuDish of weekMenuDishes) {
+        this._model(weekMenuDish._dish_);
       }
-      this._$timeout(() => this.dishes = dishes);
+      this._$timeout(() => this.weekMenuDishes = weekMenuDishes);
     });
   }
 
@@ -124,7 +125,7 @@ class WeekMenuController {
     //todo confirm dialog
     var familyKey = this.user.activeFamily;
     this._weekMenuService.removeDish(familyKey, dish.key).then(() => {
-      this._$timeout(() => this.dishes.splice(this.dishes.indexOf(dish), 1));
+      this._$timeout(() => this.weekMenuDishes.splice(this.weekMenuDishes.indexOf(dish), 1));
       this.toast(dish.name + ' removed from week menu')
     });
   }
@@ -142,7 +143,7 @@ class WeekMenuController {
     //cool, because we have an arrow function, 'this' still refers to the class
     this._dialog.show(confirm).then(() => {
       this._weekMenuService.removeDishId(dish.key).then(() => {
-        this.dishes.splice(this.dishes.indexOf(dish), 1);
+        this.weekMenuDishes.splice(this.weekMenuDishes.indexOf(dish), 1);
         this.toast(dish.name + ' removed');
       });
     }, () => {

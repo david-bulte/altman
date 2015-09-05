@@ -7,7 +7,7 @@
   <md-content>
 
     <!--todo canEdit may depend on access rights (can't edit if borrowed from another family-->
-    <dish-card dish="dish"
+    <dish-card dish="weekMenuDish._dish_"
                sections="weekMenuCtrl.sections"
                update-name="weekMenuCtrl.updateName(dish)"
                toggle-star="weekMenuCtrl.toggleStar(dish)"
@@ -17,8 +17,8 @@
                remove-from-week-menu="weekMenuCtrl.removeFromWeekMenu(dish)"
                can-edit="true"
                can-delete="false"
-               ng-show="dish.filteredOut != true"
-               ng-repeat="dish in weekMenuCtrl.dishes"></dish-card>
+               ng-show="weekMenuDish.filteredOut != true"
+               ng-repeat="weekMenuDish in weekMenuCtrl.weekMenuDishes"></dish-card>
 
   </md-content>
 </div>
