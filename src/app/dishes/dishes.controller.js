@@ -63,6 +63,7 @@ class DishesController {
   setupDish() {
     this._dishesService.addDish().then((dishKey) => {
       //todo return dish and add that to dish collection?
+      //also: mark it so that its editMode = true!
       //or, interesting: will it be added to the dishes collection automatically?
       this._getDishes();
     })
