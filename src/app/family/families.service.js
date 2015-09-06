@@ -46,7 +46,49 @@ class FamiliesService {
     });
   }
 
+  getDishes(familyKey) {
+
+    let getDishes = () => {
+      return new Promise((resolve) => {
+        let dishesRef = new Firebase(`https://altman.firebaseio.com/families/${familyKey}/dishes`);
+        dishesRef.on('value', (snapshot) => {
+          var dishes = snapshot.val();
+          resolve(Object.values(dishes));
+        });
+      });
+    };
+
+    let loadDish = (appliedDish) => {
+      return new Promise((resolve) => {
+        let dishesRef = new Firebase(`https://altman.firebaseio.com/dishes/${appliedDish.dish}`);
+        dishesRef.once('value', (snapshot) => {
+          var dish = snapshot.val();
+          dish.key = snapshot.key();
+          appliedDish._dish_ = dish;
+          resolve();
+        });
+      });
+    };
+
+    let loadDishes = (appliedDishes) => {
+      let promises = [];
+      for (let appliedDish of appliedDishes) {
+        promises.push(new Promise((resolve) => {
+          loadDish(appliedDish).then(() => resolve());
+        }));
+      }
+
+      return new Promise((resolve) => {
+        Promise.all(promises).then(() => resolve(appliedDishes))
+      });
+    };
+
+    return getDishes()
+      .then(loadDishes);
+  }
+
   //todo refactor with getFamilies + make it less synchronous
+  //todo also pass parameters with what to load
   getFamily(familyKey) {
 
     var self = this;
@@ -217,6 +259,44 @@ class FamiliesService {
       }
     });
 
+  }
+
+  addDish(familyKey, dishKey) {
+    let updateDishes = () => {
+      return new Promise((resolve) => {
+        let dishesRef = new Firebase(`https://altman.firebaseio.com/families/${familyKey}/dishes`);
+        dishesRef.push({dish: dishKey, comment: '_default_'}, () => resolve());
+      });
+    };
+
+    let updateDish = () => {
+      return new Promise((resolve) => {
+        let usedByRef = new Firebase(`https://altman.firebaseio.com/dishes/${dishKey}/usedBy`);
+        let usedBy = {};
+        usedBy[familyKey] = true;
+        usedByRef.update(usedBy, () => resolve());
+      });
+    };
+
+    return Promise.all([updateDishes(), updateDish()]);
+  }
+
+  removeDish(familyKey, dishKey) {
+    let updateDishes = () => {
+      new Promise((resolve) => {
+        let dishesRef = new Firebase(`https://altman.firebaseio.com/families/${familyKey}/dishes/${dishKey}`);
+        dishesRef.remove(() => resolve());
+      });
+    };
+
+    let updateDish = () => {
+      new Promise((resolve) => {
+        let familyRef = new Firebase(`https://altman.firebaseio.com/dishes/${dishKey}/usedBy/${familyKey}`);
+        familyRef.remove(() => resolve());
+      });
+    };
+
+    return Promise.all([updateDishes(), updateDish()]);
   }
 
   //todo pass specification with what to fetch

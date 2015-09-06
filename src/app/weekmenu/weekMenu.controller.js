@@ -1,26 +1,17 @@
 class WeekMenuController {
 
-  constructor(DishesService, UserService, WeekMenuService, $mdDialog, $mdToast, $location, $timeout) {
+  constructor(DishesService, UserService, FamiliesService, $mdDialog, $mdToast, $location, $timeout) {
     'ngInject';
 
     this._dishesService = DishesService;
     this._userService = UserService;
-    this._weekMenuService = WeekMenuService;
+    this._familiesService = FamiliesService;
     this._dialog = $mdDialog;
     this._toast = $mdToast;
     this._$location = $location;
     this._$timeout = $timeout;
     //todo
     this.sections = ['groenten & fruit', 'zuivel', 'vlees', 'droge voeding', 'ontbijt', 'diepvries', 'varia'];
-
-    //this.weekMenuDishes = [];
-    //
-    //this._weekMenuService.getDishes().then((dishes) => {
-    //  "use strict";
-    //  $timeout(() => {
-    //    this.weekMenuDishes = dishes;
-    //  });
-    //});
 
     this.isOpen = false;
 
@@ -36,7 +27,7 @@ class WeekMenuController {
 
   setupDish() {
     this._dishesService.addDish().then((dishKey) => {
-      this._weekMenuService.addDish(this.user.activeFamily, dishKey).then(() => {
+      this._familiesService.addDish(this.user.activeFamily, dishKey).then(() => {
         //todo return dish and add that to dish collection?
         this._getDishes();
       });
@@ -44,8 +35,7 @@ class WeekMenuController {
   }
 
   _getDishes() {
-
-    this._weekMenuService.getWeekMenuDishes(this.user.activeFamily).then((weekMenuDishes) => {
+    this._familiesService.getDishes(this.user.activeFamily).then((weekMenuDishes) => {
       for (let weekMenuDish of weekMenuDishes) {
         this._model(weekMenuDish._dish_);
       }
@@ -124,32 +114,32 @@ class WeekMenuController {
   removeFromWeekMenu(dish) {
     //todo confirm dialog
     var familyKey = this.user.activeFamily;
-    this._weekMenuService.removeDish(familyKey, dish.key).then(() => {
+    this._familiesService.removeDish(familyKey, dish.key).then(() => {
       this._$timeout(() => this.weekMenuDishes.splice(this.weekMenuDishes.indexOf(dish), 1));
       this.toast(dish.name + ' removed from week menu')
     });
   }
 
-  remove(ev, dish) {
-    "use strict";
-
-    var confirm = this._dialog.confirm()
-      .title('Would you like to remove this dish from your week menu?')
-      .content('Don\'t worry, we won\'t remove it from your dishes collection.')
-      .ok('Remove')
-      .cancel('Cancel')
-      .targetEvent(ev);
-
-    //cool, because we have an arrow function, 'this' still refers to the class
-    this._dialog.show(confirm).then(() => {
-      this._weekMenuService.removeDishId(dish.key).then(() => {
-        this.weekMenuDishes.splice(this.weekMenuDishes.indexOf(dish), 1);
-        this.toast(dish.name + ' removed');
-      });
-    }, () => {
-      //ok
-    });
-  }
+  //remove(ev, dish) {
+  //  "use strict";
+  //
+  //  var confirm = this._dialog.confirm()
+  //    .title('Would you like to remove this dish from your week menu?')
+  //    .content('Don\'t worry, we won\'t remove it from your dishes collection.')
+  //    .ok('Remove')
+  //    .cancel('Cancel')
+  //    .targetEvent(ev);
+  //
+  //  //cool, because we have an arrow function, 'this' still refers to the class
+  //  this._dialog.show(confirm).then(() => {
+  //    this._weekMenuService.removeDishId(dish.key).then(() => {
+  //      this.weekMenuDishes.splice(this.weekMenuDishes.indexOf(dish), 1);
+  //      this.toast(dish.name + ' removed');
+  //    });
+  //  }, () => {
+  //    //ok
+  //  });
+  //}
 
   toast(content) {
     "use strict";

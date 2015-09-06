@@ -1,11 +1,11 @@
 class DishesController {
 
-  constructor(DishesService, UserService, WeekMenuService, $mdDialog, $mdToast, $location, $scope, $timeout) {
+  constructor(DishesService, FamiliesService, UserService, $mdDialog, $mdToast, $location, $timeout) {
     'ngInject';
 
     this._dishesService = DishesService;
+    this._familiesService = FamiliesService;
     this._userService = UserService;
-    this._weekMenuService = WeekMenuService;
     this._dialog = $mdDialog;
     this._toast = $mdToast;
     this._$location = $location;
@@ -155,7 +155,7 @@ class DishesController {
 
   addToWeekMenu(dish) {
     var familyKey = this.user.activeFamily;
-    this._weekMenuService.addDish(familyKey, dish.key).then(() => {
+    this._familiesService.addDish(familyKey, dish.key).then(() => {
       dish.used = true;
       this.toast(dish.name + ' added to week menu')
     });
@@ -163,7 +163,7 @@ class DishesController {
 
   removeFromWeekMenu(dish) {
     var familyKey = this.user.activeFamily;
-    this._weekMenuService.removeDish(familyKey, dish.key).then(() => {
+    this._familiesService.removeDish(familyKey, dish.key).then(() => {
       dish.used = false;
       this.toast(dish.name + ' removed from week menu')
     });
