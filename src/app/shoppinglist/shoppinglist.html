@@ -8,23 +8,17 @@
 
     <md-card ng-repeat="section in shoppingList.sections">
       <md-card-content>
-        <h2 class="md-title">{{section}}</h2>
+        <h2 class="md-title">{{section.name}}</h2>
 
         <ul>
-          <li ng-repeat="ingredient in shoppingList.getIngredients(section)">
-            {{ingredient.amount}} {{ingredient.name}}
+          <li ng-repeat="ingredient in section.ingredients">
+            <span ng-show="ingredient.amount !== '_unknown_'">{{ingredient.amount}}</span>
+            <span ng-show="ingredient.name !== '_unknown_'">{{ingredient.name}}</span>
           </li>
         </ul>
 
       </md-card-content>
 
-      <!--<div class="md-actions" layout="row" layout-align="end center">-->
-        <!--<md-button ng-click="dishes.deleteDish($event, dish)">Remove</md-button>-->
-        <!--<md-button ng-href="#/edit-dish/{{dish.key}}">Edit</md-button>-->
-        <!--<md-button ng-click="dishes.addDishToWeekMenu(dish)">Add to week menu</md-button>-->
-        <!--&lt;!&ndash;todo flag op dish niveau? evt berekend adh van weekmenu? subclass van Dish? DishVm&ndash;&gt;-->
-        <!--&lt;!&ndash;<md-button ng-click="dishes.removeDishFromWeekMenu(dish)">Add to week menu</md-button>&ndash;&gt;-->
-      <!--</div>-->
     </md-card>
   </md-content>
 
