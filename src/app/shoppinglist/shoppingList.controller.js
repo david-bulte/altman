@@ -63,6 +63,14 @@ class ShoppingListController {
 
   }
 
+  removeIngredient(section, ingredient) {
+    section.ingredients.splice(section.ingredients.indexOf(ingredient), 1);
+    let copy = this._unmodel(angular.copy(this.shoppingList));
+    this._shoppingListService.updateShoppingList(copy).then((shoppingList) => {
+    });
+  }
+
+
 }
 
 export default ShoppingListController;
