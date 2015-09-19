@@ -91,6 +91,7 @@ class WeekMenuController {
     })
   }
 
+  //todo wordt dit ooit rechtstreek opgeroepen?
   addIngredient(dish, ingredient) {
     this._dishesService.addIngredient(dish.key, {name: ingredient.name}).then(() => {
       ingredient._original_ = {name: ingredient.name};
