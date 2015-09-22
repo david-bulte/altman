@@ -70,6 +70,11 @@ class ShoppingListController {
     });
   }
 
+  switchIngredient(section, ingredient) {
+    let copy = this._unmodel(angular.copy(this.shoppingList));
+    this._shoppingListService.updateShoppingList(copy).then((shoppingList) => {
+    });
+  }
 
 }
 

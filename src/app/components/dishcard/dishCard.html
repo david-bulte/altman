@@ -57,8 +57,25 @@
                 <md-option ng-repeat="section in ctrl.sections" value="{{section}}">{{section}}</md-option>
               </md-select>
             </md-list-item>
+
+            <!--todo-->
+            <!--<md-list-item ng-switch-when="false" ng-click="ctrl.ingredientClicked()" ng-class="{ingredient-clicked : ingredient.clicked}">-->
+            <!--<md-list-item ng-switch-when="false">-->
+              <!--{{ingredient.name}} | {{ingredient.amount}} <span ng-show="!ctrl.hideSections">| {{ingredient.section}}</span>-->
+            <!--</md-list-item>-->
             <md-list-item ng-switch-when="false">
-              {{ingredient.name}} | {{ingredient.amount}} <span ng-show="!ctrl.hideSections">| {{ingredient.section}}</span>
+              <md-switch class="md-primary" md-no-ink aria-label="Switch Bought"
+                         ng-class="{'switched' : ingredient.switched}"
+                         ng-model="ingredient.switched"
+                         ng-show="ctrl.showSwitch"
+                         ng-change="ctrl.switchIngredient({dish : ctrl.dish, ingredient : ingredient})">
+                <span>
+                  {{ingredient.name}} | {{ingredient.amount}} <span ng-show="!ctrl.hideSections">| {{ingredient.section}}</span>
+                </span>
+              </md-switch>
+              <span ng-show="!ctrl.showSwitch">
+                {{ingredient.name}} | {{ingredient.amount}} <span ng-show="!ctrl.hideSections">| {{ingredient.section}}</span>
+              </span>
             </md-list-item>
           </any>
 
