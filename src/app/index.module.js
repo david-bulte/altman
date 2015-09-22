@@ -7,7 +7,7 @@ import ConfigController from './config/config.controller.js';
 import CreateDishController from './dish/createDish.controller.js';
 import DishController from './dish/dish.controller.js';
 import DishesController from './dishes/dishes.controller.js';
-import ListsController from './family/lists.controller.js';
+import ListsController from './list/lists.controller.js';
 import LoginController from './login/login.controller.js';
 import ShoppingListController from './shoppinglist/shoppingList.controller.js';
 import WeekMenuController from './weekmenu/weekMenu.controller.js';
@@ -15,7 +15,7 @@ import WelcomeController from './login/welcome.controller.js';
 
 import ConfigService from './config/config.service.js';
 import DishesService from './dishes/dishes.service.js';
-import ListsService from './family/lists.service.js';
+import ListsService from './list/lists.service.js';
 import ShoppingListService from './shoppinglist/shoppingList.service.js';
 import UserService from './login/user.service.js';
 import WeekMenuService from './weekmenu/weekMenu.service.js';
