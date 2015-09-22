@@ -1,12 +1,12 @@
 class WelcomeController {
 
-  constructor(FamiliesService, $location, $log, $timeout) {
+  constructor(ListsService, $location, $log, $timeout) {
     'ngInject';
 
     this._$location = $location;
     this._$log = $log;
     this._$timeout = $timeout;
-    this._familiesService = FamiliesService;
+    this._listsService = ListsService;
 
     this.initialized = false;
     this.registered = false;
@@ -98,7 +98,7 @@ class WelcomeController {
   }
 
   acceptInvite(invite) {
-    this._familiesService.acceptInvite(invite.family, this.userData.key, invite.key)
+    this._listsService.acceptInvite(invite.family, this.userData.key, invite.key)
       .then(() => {
         this._$log.debug('Invite accepted - now redirecting to weekmenu');
         this._$timeout(() => this._$location.path('/weekmenu'));
@@ -119,10 +119,10 @@ class WelcomeController {
   }
 
   setupFamily() {
-    this._familiesService.addFamily().then((familyKey) => {
+    this._listsService.addFamily().then((familyKey) => {
       console.log(familyKey);
       //todo chaining promises
-      this._familiesService.getFamily(familyKey).then((family) => {
+      this._listsService.getFamily(familyKey).then((family) => {
         this._model(family);
         this._$timeout(() => this.family = family);
       });
@@ -152,7 +152,7 @@ class WelcomeController {
   //setupFamily() {
   //  "use strict";
   //
-  //  this._familiesService.createFamily(this.family.name).then((key) => {
+  //  this._listsService.createFamily(this.family.name).then((key) => {
   //    this.family.key = key;
   //    this._addInvites().then(() => {
   //      this._$log.debug('Invites created - now redirecting to weekmenu');
@@ -174,7 +174,7 @@ class WelcomeController {
 
       let addMember = (member) => {
         this._$log.debug(`Adding member ${member}`);
-        this._familiesService.addInvite(self.family.key, member.email).then(() => it.next());
+        this._listsService.addInvite(self.family.key, member.email).then(() => it.next());
       };
 
       function* main() {
@@ -201,7 +201,7 @@ class WelcomeController {
   notNow() {
     "use strict";
 
-    this._familiesService.addFamily().then(() => {
+    this._listsService.addFamily().then(() => {
       this._$log.debug('family created now redirecting to weekmenu...');
       this._$location.path('/weekmenu');
     });
@@ -225,14 +225,14 @@ class WelcomeController {
   }
 
   updateName(family) {
-    this._familiesService.updateName(family.key, family.name).then(() => {
+    this._listsService.updateName(family.key, family.name).then(() => {
       //todo toast
     });
   }
 
   sendInvite(family, invite) {
     if (invite.key === undefined) {
-      this._familiesService.addInvite(family.key, invite.email).then((key) => {
+      this._listsService.addInvite(family.key, invite.email).then((key) => {
         this._$timeout(() => {
           invite.key = key;
           family.invites.push({email: undefined});
@@ -245,7 +245,7 @@ class WelcomeController {
 
   removeInvite(family, invite) {
     //todo toast
-    this._familiesService.deleteInvite(family.key, invite.key).then(() => {
+    this._listsService.deleteInvite(family.key, invite.key).then(() => {
       let idx = family.invites.indexOf(invite);
       this._$timeout(() => family.invites.splice(idx, 1));
     });

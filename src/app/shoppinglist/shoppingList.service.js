@@ -1,9 +1,9 @@
 class ShoppingListService {
 
-  constructor(FamiliesService) {
+  constructor(ListsService) {
     'ngInject';
 
-    this._familiesService = FamiliesService;
+    this._listsService = ListsService;
 
     //todo
     this.sections = ['groenten & fruit', 'zuivel', 'vlees', 'droge voeding', 'ontbijt', 'diepvries', 'varia'];
@@ -51,7 +51,7 @@ class ShoppingListService {
   getSections(familyKey) {
 
     return new Promise((resolve) => {
-      this._familiesService.getDishes(familyKey).then((dishes) => {
+      this._listsService.getDishes(familyKey).then((dishes) => {
 
         let shoppingList = {sections : {}, family : familyKey};
 
@@ -87,7 +87,7 @@ class ShoppingListService {
 
   getIngredients(familyKey) {
     return new Promise((resolve) => {
-      this._familiesService.getDishes(familyKey).then((dishes) => {
+      this._listsService.getDishes(familyKey).then((dishes) => {
         let ingredients = [];
         for (let dish of dishes) {
           for (let key of Object.keys(dish.ingredients)) {

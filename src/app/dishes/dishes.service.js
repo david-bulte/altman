@@ -2,10 +2,10 @@ let _cache = new WeakMap();
 
 class DishesService {
 
-  constructor(FamiliesService, UserService, $log, $timeout) {
+  constructor(ListsService, UserService, $log, $timeout) {
     'ngInject';
 
-    this._familiesService = FamiliesService;
+    this._listsService = ListsService;
     this._userService = UserService;
     this._$log = $log;
     this._$timeout = $timeout;
@@ -32,7 +32,7 @@ class DishesService {
       function getMembers() {
         self._userService.getCurrentUser().then((user) => {
           let familyKey = user.activeFamily;
-          self._familiesService.getFamily(familyKey).then((family) => {
+          self._listsService.getFamily(familyKey).then((family) => {
             let members = family.members;
             it.next(members);
           });

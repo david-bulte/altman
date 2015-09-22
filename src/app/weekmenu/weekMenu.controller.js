@@ -1,11 +1,11 @@
 class WeekMenuController {
 
-  constructor(DishesService, UserService, FamiliesService, $mdDialog, $mdToast, $location, $timeout) {
+  constructor(DishesService, UserService, ListsService, $mdDialog, $mdToast, $location, $timeout) {
     'ngInject';
 
     this._dishesService = DishesService;
     this._userService = UserService;
-    this._familiesService = FamiliesService;
+    this._listsService = ListsService;
     this._dialog = $mdDialog;
     this._toast = $mdToast;
     this._$location = $location;
@@ -27,7 +27,7 @@ class WeekMenuController {
 
   setupDish() {
     this._dishesService.addDish().then((dishKey) => {
-      this._familiesService.addDish(this.user.activeFamily, dishKey).then(() => {
+      this._listsService.addDish(this.user.activeFamily, dishKey).then(() => {
         //todo return dish and add that to dish collection?
         this._getDishes();
       });
@@ -35,7 +35,7 @@ class WeekMenuController {
   }
 
   _getDishes() {
-    this._familiesService.getDishes(this.user.activeFamily).then((weekMenuDishes) => {
+    this._listsService.getDishes(this.user.activeFamily).then((weekMenuDishes) => {
       for (let weekMenuDish of weekMenuDishes) {
         this._model(weekMenuDish._dish_);
       }
@@ -115,7 +115,7 @@ class WeekMenuController {
   removeFromWeekMenu(dish) {
     //todo confirm dialog
     var familyKey = this.user.activeFamily;
-    this._familiesService.removeDish(familyKey, dish.key).then(() => {
+    this._listsService.removeDish(familyKey, dish.key).then(() => {
       this._$timeout(() => this.weekMenuDishes.splice(this.weekMenuDishes.indexOf(dish), 1));
       this.toast(dish.name + ' removed from week menu')
     });

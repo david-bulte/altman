@@ -1,9 +1,9 @@
-class FamiliesController {
+class ListsController {
 
-  constructor(FamiliesService, UserService, $log, $mdDialog, $mdToast, $location, $timeout) {
+  constructor(ListsService, UserService, $log, $mdDialog, $mdToast, $location, $timeout) {
     'ngInject';
 
-    this._familiesService = FamiliesService;
+    this._listsService = ListsService;
     this._userService = UserService;
     this._$log = $log;
     this._dialog = $mdDialog;
@@ -23,7 +23,7 @@ class FamiliesController {
 
   _getFamilies() {
     var self = this;
-    this._familiesService.getFamilies(this.user.key).then((families) => {
+    this._listsService.getFamilies(this.user.key).then((families) => {
       for (let family of families) {
         self._model(family);
       }
@@ -44,14 +44,14 @@ class FamiliesController {
   }
 
   setupFamily() {
-    this._familiesService.addFamily().then((family) => {
+    this._listsService.addFamily().then((family) => {
       //todo just add new family iso reloading all
       this._getFamilies();
     });
   }
 
   updateName(family) {
-    this._familiesService.updateName(family.key, family.name).then(() => {
+    this._listsService.updateName(family.key, family.name).then(() => {
       //todo toast
     });
   }
@@ -61,7 +61,7 @@ class FamiliesController {
   }
 
   setActive(family) {
-    this._familiesService.setActive(family.key).then(() => {
+    this._listsService.setActive(family.key).then(() => {
       this.user.activeFamily = family.key;
       //todo should we reload?
       this._getFamilies();
@@ -70,7 +70,7 @@ class FamiliesController {
 
   sendInvite(family, invite) {
     if (invite.key === undefined) {
-      this._familiesService.addInvite(family.key, invite.email).then((key) => {
+      this._listsService.addInvite(family.key, invite.email).then((key) => {
         this._$timeout(() => {
           invite.key = key;
           family.invites.push({email : undefined});
@@ -83,7 +83,7 @@ class FamiliesController {
 
   removeInvite(family, invite) {
     //todo toast
-    this._familiesService.deleteInvite(family.key, invite.key).then(() => {
+    this._listsService.deleteInvite(family.key, invite.key).then(() => {
       let idx = family.invites.indexOf(invite);
       this._$timeout(() => family.invites.splice(idx, 1));
     });
@@ -91,7 +91,7 @@ class FamiliesController {
 
   removeMember(family, member) {
     //todo toast
-    this._familiesService.deleteMember(family.key, member.key).then(() => {
+    this._listsService.deleteMember(family.key, member.key).then(() => {
       let idx = family.members.indexOf(member);
       this._$timeout(() => family.members.splice(idx, 1));
     });
@@ -104,4 +104,4 @@ class FamiliesController {
 
 }
 
-export default FamiliesController;
+export default ListsController;

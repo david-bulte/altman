@@ -1,0 +1,29 @@
+<sidebar sidebar-title="'Grocies'"></sidebar>
+
+<div layout="column" flex>
+
+  <toolbar toolbar-title="'Families'"></toolbar>
+
+  <md-content>
+
+    <family-card family="family"
+                 update-name="listsCtrl.updateName(family)"
+                 remove-member="listsCtrl.removeMember(family, member)"
+                 send-invite="listsCtrl.sendInvite(family, invite)"
+                 remove-invite="listsCtrl.removeInvite(family, invite)"
+                 ng-repeat="family in listsCtrl.families"></family-card>
+
+    <div class="md-actions" layout="row" layout-align="end center">
+      <md-button ng-click="listsCtrl.setActive(family)">Make family active</md-button>
+      <md-button ng-click="listsCtrl.removeMe(family)">Remove me from family</md-button>
+    </div>
+    </md-card>
+  </md-content>
+
+</div>
+
+<div style="position: fixed; z-index: 30; right: 0; bottom: 0">
+  <md-button class="md-fab" aria-label="Setup new Family" ng-click="listsCtrl.setupFamily()">
+    <md-icon md-svg-src="assets/images/icons/ic_add_circle_black_24px.svg"></md-icon>
+  </md-button>
+</div>

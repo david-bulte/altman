@@ -7,7 +7,7 @@ import ConfigController from './config/config.controller.js';
 import CreateDishController from './dish/createDish.controller.js';
 import DishController from './dish/dish.controller.js';
 import DishesController from './dishes/dishes.controller.js';
-import FamiliesController from './family/lists.controller.js';
+import ListsController from './family/lists.controller.js';
 import LoginController from './login/login.controller.js';
 import ShoppingListController from './shoppinglist/shoppingList.controller.js';
 import WeekMenuController from './weekmenu/weekMenu.controller.js';
@@ -15,7 +15,7 @@ import WelcomeController from './login/welcome.controller.js';
 
 import ConfigService from './config/config.service.js';
 import DishesService from './dishes/dishes.service.js';
-import FamiliesService from './family/families.service.js';
+import ListsService from './family/lists.service.js';
 import ShoppingListService from './shoppinglist/shoppingList.service.js';
 import UserService from './login/user.service.js';
 import WeekMenuService from './weekmenu/weekMenu.service.js';
@@ -40,7 +40,7 @@ angular.module('altman', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize', 'ng
   .controller('CreateDishController', CreateDishController)
   .controller('DishController', DishController)
   .controller('DishesController', DishesController)
-  .controller('FamiliesController', FamiliesController)
+  .controller('ListsController', ListsController)
   .controller('LoginController', LoginController)
   .controller('ShoppingListController', ShoppingListController)
   .controller('WeekMenuController', WeekMenuController)
@@ -48,7 +48,7 @@ angular.module('altman', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize', 'ng
 
   .service('ConfigService', ConfigService)
   .service('DishesService', DishesService)
-  .service('FamiliesService', FamiliesService)
+  .service('ListsService', ListsService)
   .service('ShoppingListService', ShoppingListService)
   .service('UserService', UserService)
   .service('WeekMenuService', WeekMenuService)

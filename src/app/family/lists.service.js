@@ -1,4 +1,4 @@
-class FamiliesService {
+class ListsService {
 
   constructor($log, $timeout) {
     'ngInject';
@@ -508,7 +508,7 @@ function promisify(callback) {
 
 }
 
-export default FamiliesService;
+export default ListsService;
 
 
 
