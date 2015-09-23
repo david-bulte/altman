@@ -1,21 +1,21 @@
-<sidebar sidebar-title="'Grocies'"></sidebar>
+<sidebar sidebar-title="'Altman'"></sidebar>
 
 <div layout="column" flex>
 
-  <toolbar toolbar-title="'Families'"></toolbar>
+  <toolbar toolbar-title="'Lists'"></toolbar>
 
   <md-content>
 
-    <family-card family="family"
+    <family-card family="list"
                  update-name="listsCtrl.updateName(family)"
                  remove-member="listsCtrl.removeMember(family, member)"
                  send-invite="listsCtrl.sendInvite(family, invite)"
                  remove-invite="listsCtrl.removeInvite(family, invite)"
-                 ng-repeat="family in listsCtrl.families"></family-card>
+                 ng-repeat="list in listsCtrl.lists"></family-card>
 
     <div class="md-actions" layout="row" layout-align="end center">
-      <md-button ng-click="listsCtrl.setActive(family)">Make family active</md-button>
-      <md-button ng-click="listsCtrl.removeMe(family)">Remove me from family</md-button>
+      <md-button ng-click="listsCtrl.setActive(family)">Make list active</md-button>
+      <md-button ng-click="listsCtrl.removeMe(family)">Remove me from list</md-button>
     </div>
     </md-card>
   </md-content>

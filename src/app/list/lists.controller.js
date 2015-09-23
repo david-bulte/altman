@@ -23,11 +23,11 @@ class ListsController {
 
   _getFamilies() {
     var self = this;
-    this._listsService.getFamilies(this.user.key).then((families) => {
-      for (let family of families) {
-        self._model(family);
+    this._listsService.getFamilies(this.user.key).then((lists) => {
+      for (let list of lists) {
+        self._model(list);
       }
-      this._$timeout(() => this.families = families);
+      this._$timeout(() => this.lists = lists);
     });
   }
 

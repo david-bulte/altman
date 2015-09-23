@@ -8,7 +8,7 @@ function runBlock($log, $location, $rootScope) {
 
     if (authData) {
 
-      $log.debug("User already authenticated :", authData);
+      $log.debug('User already authenticated :', authData);
 
       let userRef = new Firebase('https://altman.firebaseio.com/users/' + authData.uid);
       userRef.once('value', (snapshot) => {
