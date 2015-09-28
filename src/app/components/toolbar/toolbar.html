@@ -1,4 +1,3 @@
-
 <md-toolbar class="">
   <div class="md-toolbar-tools md-primary">
     <md-button class="md-icon-button" hide-gt-sm aria-label="Settings" ng-click="toolbar.toggleSidebar()">
@@ -8,13 +7,49 @@
       <span>#{{toolbar.toolbarTitle}}</span>
     </h2>
     <span flex></span>
-    <md-input-container ng-show="toolbar.toolbarFilterEnabled">
-      <!--todo style-->
-      <input ng-model="toolbar.query" type="text" style="color: white; border-color: white"
-             ng-model-options="{updateOn: 'blur'}" ng-change="toolbar.filter()">
-    </md-input-container>
-    <md-button class="md-icon-button" aria-label="Search" ng-show="toolbar.toolbarFilterEnabled">
-      <md-icon md-svg-icon="assets/images/icons/ic_search_white_24px.svg"></md-icon>
-    </md-button>
+
+    <md-menu>
+      <md-button class="md-icon-button" aria-label="Notifications" ng-click="$mdOpenMenu($event)">
+        <md-icon md-svg-icon="assets/images/icons/ic_menu_white_24px.svg"
+                 class="toolbar-menu"
+                 ng-class="{'notify' : toolbar.notifications.length > 0}"></md-icon>
+      </md-button>
+      <md-menu-content width="4">
+        <md-menu-item>
+          <md-button ng-click="ctrl.announceClick($index)">
+            <md-icon md-svg-icon="call:no-sim"></md-icon>
+            todo
+          </md-button>
+        </md-menu-item>
+        <md-menu-item>
+          <md-button ng-click="ctrl.announceClick($index)">
+            <md-icon md-svg-icon="call:no-sim"></md-icon>
+            todo
+          </md-button>
+        </md-menu-item>
+        <md-menu-item>
+          <md-button ng-click="ctrl.announceClick($index)">
+            <md-icon md-svg-icon="call:no-sim"></md-icon>
+            todo
+          </md-button>
+        </md-menu-item>
+        <md-menu-divider></md-menu-divider>
+        <md-menu-item ng-repeat="notification in toolbar.notifications">
+          <md-button ng-click="notification.callback()">
+            <md-icon md-svg-icon="call:no-sim"></md-icon>
+            <span class="notification">{{notification.message}}</span>
+          </md-button>
+        </md-menu-item>
+      </md-menu-content>
+    </md-menu>
+
+    <!--todo-->
+    <!--<md-input-container ng-show="toolbar.toolbarFilterEnabled">-->
+    <!--<input ng-model="toolbar.query" type="text" style="color: white; border-color: white"-->
+    <!--ng-model-options="{updateOn: 'blur'}" ng-change="toolbar.filter()">-->
+    <!--</md-input-container>-->
+    <!--<md-button class="md-icon-button" aria-label="Search" ng-show="toolbar.toolbarFilterEnabled">-->
+    <!--<md-icon md-svg-icon="assets/images/icons/ic_search_white_24px.svg"></md-icon>-->
+    <!--</md-button>-->
   </div>
 </md-toolbar>

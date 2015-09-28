@@ -25,12 +25,12 @@
                      ng-click="welcome.setupFamily()">
             Setup family
           </md-button>
-          <family-card family="welcome.family"
+          <list-card family="welcome.family"
                        update-name="welcome.updateName(family)"
                        send-invite="welcome.sendInvite(family, invite)"
                        remove-invite="welcome.removeInvite(family, invite)"
                        ng-show="welcome.family != undefined">
-          </family-card>
+          </list-card>
           <span ng-show="welcome.family != undefined">test</span>
           <md-button class="md-raised" aria-label="Setup family"
                      ng-click="welcome.done()">

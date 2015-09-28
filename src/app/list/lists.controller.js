@@ -15,91 +15,80 @@ class ListsController {
   }
 
   _init() {
-    this._userService.getCurrentUser().then((user) => {
-      this.user = user;
-      this._getFamilies();
+    this._userService.getCurrentUser()
+      .then(user => this.user = user)
+      .then(user => this._getLists(user));
+  }
+
+  _getLists(user) {
+    this._listsService.getLists(user.key).then((lists) => {
+      this._$timeout(this.lists = lists.map(list => list.viewModel(user)));
     });
   }
 
-  _getFamilies() {
-    var self = this;
-    this._listsService.getFamilies(this.user.key).then((lists) => {
-      for (let list of lists) {
-        self._model(list);
-      }
-      this._$timeout(() => this.lists = lists);
+  updateName(list) {
+    this._listsService.updateName(list.key, list.name).then(() => {
+      this._$log.info('list name updated');
     });
   }
 
-  _model(family) {
-    let createdBy = family.members.filter((member) => member.key === family.createdBy)[0];
-    this._$log.debug('createdBy', createdBy);
-    if (createdBy !== undefined) {
-      family._createdBy_ = createdBy;
-      createdBy._creator_ = true;
-    }
-    family.active = family.key === this.user.activeFamily;
-
-    family.invites.push({email : undefined});
-  }
-
-  setupFamily() {
-    this._listsService.addFamily().then((family) => {
-      //todo just add new family iso reloading all
-      this._getFamilies();
+  createInvite(list, invite) {
+    return new Promise((resolve, reject) => {
+      this._listsService.addInvite(list.key, invite.email).then((invite) => {
+        this._$timeout(() => {
+          list._invites_.push(invite);
+          this.remindInvite(list, invite);
+          resolve();
+        });
+      });
     });
   }
 
-  updateName(family) {
-    this._listsService.updateName(family.key, family.name).then(() => {
-      //todo toast
+  removeInvite(list, invite) {
+    this._listsService.deleteInvite(list.key, invite.key).then(() => {
+      let idx = list._invites_.indexOf(invite);
+      this._$timeout(() => list._invites_.splice(idx, 1));
     });
   }
 
-  toggleAdmin(family, member) {
+  remindInvite(list, invite) {
     //todo
   }
 
-  setActive(family) {
-    this._listsService.setActive(family.key).then(() => {
-      this.user.activeFamily = family.key;
-      //todo should we reload?
-      this._getFamilies();
-    });
-  }
-
-  sendInvite(family, invite) {
-    if (invite.key === undefined) {
-      this._listsService.addInvite(family.key, invite.email).then((key) => {
-        this._$timeout(() => {
-          invite.key = key;
-          family.invites.push({email : undefined});
-        });
+  setActive(list) {
+    this._listsService.setActive(list.key).then(() => {
+      this._$timeout(() => {
+        this.user.activeFamily = list.key;
+        this.lists.forEach(list => list._active_ = list.key === this.user.activeFamily);
       });
-    }
-
-    //todo send mail
-  }
-
-  removeInvite(family, invite) {
-    //todo toast
-    this._listsService.deleteInvite(family.key, invite.key).then(() => {
-      let idx = family.invites.indexOf(invite);
-      this._$timeout(() => family.invites.splice(idx, 1));
     });
   }
 
-  removeMember(family, member) {
-    //todo toast
-    this._listsService.deleteMember(family.key, member.key).then(() => {
-      let idx = family.members.indexOf(member);
-      this._$timeout(() => family.members.splice(idx, 1));
+  removeMember(list, member) {
+    this._listsService.deleteMember(list.key, member.key).then(() => {
+      let idx = list._members_.indexOf(member);
+      this._$timeout(() => list._members_.splice(idx, 1));
     });
   }
 
-  removeMe(family) {
+  createList() {
+    this._listsService.createList().then((list) => {
+      //todo just add new family iso reloading all
+      this._getLists(this.user);
+    });
+  }
+
+
+
+  //todo
+
+  removeMe(list) {
     //todo kan dit als je enige admin bent?
-    this.removeMember(family, this.user);
+    this.removeMember(list, this.user);
+  }
+
+  toggleAdmin(list, member) {
+    //todo
   }
 
 }

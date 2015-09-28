@@ -1,13 +1,148 @@
+import List from './list.js';
+import Invite from '../invites/invite.js';
+
 class ListsService {
 
-  constructor($log, $timeout) {
+  constructor(InvitesService, UserService, $log, $timeout) {
     'ngInject';
 
+    this._invitesService = InvitesService;
+    this._userService = UserService;
     this._$log = $log;
     this._$timeout = $timeout;
   }
 
-  addFamily(name) {
+  /**
+   * todo pass specification with what to eagerly fetch
+   * @param userKey
+   * @returns {Promise}
+   */
+  getLists(userKey) {
+
+    let getListKeys = (userKey) => {
+      return new Promise((resolve, reject) => {
+        let listsRef = new Firebase(`https://altman.firebaseio.com/users/${userKey}/families`);
+        listsRef.once('value', (snapshot) => {
+          if (snapshot != null) {
+            resolve(Object.keys(snapshot.val()));
+          }
+        });
+      });
+    };
+
+    let getList = (listKey) => {
+      return new Promise((resolve, reject) => {
+        let listRef = new Firebase(`https://altman.firebaseio.com/families/${listKey}`);
+        listRef.once('value', (snapshot) => {
+          var list = List.fromSnapshot(snapshot);
+          this._$log.info('list: ', list);
+          resolve(list);
+        });
+      });
+    };
+
+    let loadMembers = (list) => {
+
+      list._members_ = [];
+
+      let getUser = (userKey) => {
+        return new Promise((resolve, reject) => {
+          this._userService.getUser(userKey).then(user => {
+            list._members_.push(user);
+            resolve();
+          });
+        });
+      };
+
+      return new Promise((resolve, reject)=> {
+        if (list.members === undefined) {
+          resolve(list)
+        }
+        else {
+          Promise.all(Object.keys(list.members).map(getUser))
+            .then(() => resolve(list))
+        }
+      });
+    };
+
+    let loadInvites = (list) => {
+
+      list._invites_ = [];
+
+      let getInvite = (inviteKey) => {
+        return new Promise((resolve, reject) => {
+          this._invitesService.getInvite(inviteKey).then(invite => {
+            list._invites_.push(invite);
+            resolve();
+          });
+        });
+      };
+
+      return new Promise((resolve, reject)=> {
+        if (list.invites === undefined) {
+          resolve(list)
+        }
+        else {
+          Promise.all(Object.keys(list.invites).map(getInvite))
+            .then(resolve(list))
+        }
+      });
+    };
+
+    return new Promise((resolve, reject) => {
+      getListKeys(userKey)
+        .then((listKeys) => {
+          return Promise.all(listKeys.map(getList));
+        })
+        .then((lists) => {
+          return Promise.all(lists.map(loadMembers));
+        })
+        .then((lists) => {
+          return Promise.all(lists.map(loadInvites));
+        })
+        //todo Lists.map((list) => List.fromJson())
+        .then((lists) => resolve(lists))
+        .catch((err) => reject(err));
+    });
+
+  }
+
+  /**
+   *
+   * @param listKey
+   * @param email
+   * @returns {Promise}
+   */
+  addInvite(listKey, email) {
+    return new Promise((resolve, reject) => {
+
+      let invite = {family: listKey, email: email};
+
+      let invitesRef = new Firebase(`https://altman.firebaseio.com/invites`);
+      let inviteRef = invitesRef.push(invite);
+      invite.key = inviteRef.key();
+
+      let listInvitesRef = new Firebase(`https://altman.firebaseio.com/families/${listKey}/invites`);
+      let invites = {};
+      invites[inviteRef.key()] = true;
+      listInvitesRef.update(invites, (err) => {
+        if (!err) {
+          resolve(Invite.fromJson(invite));
+        }
+        else {
+          reject();
+        }
+      });
+    });
+  }
+
+  /**
+   *
+   * @param listKey
+   * @param inviteKey
+   * @returns {Promise}
+   */
+  deleteInvite(listKey, inviteKey) {
 
     var self = this;
 
@@ -16,35 +151,120 @@ class ListsService {
       let it = main();
       it.next();
 
-      function createFamily(name = '_default_', createdBy = '') {
-        let familiesRef = new Firebase('https://altman.firebaseio.com/families');
-        let familyRef = familiesRef.push({name: name, createdBy: createdBy});
-        setTimeout(() => it.next(familyRef.key()), 0);  //calling it.next should be in another 'thread'
+      function deleteInvite() {
+        self._$log.debug(`deleteInvite ${inviteKey}`);
+        let inviteRef = new Firebase(`https://altman.firebaseio.com/invites/${inviteKey}`);
+        inviteRef.remove(() => it.next());
       }
 
-      function addAdmin(familyKey, userKey) {
-        let adminsRef = new Firebase(`https://altman.firebaseio.com/families/${familyKey}/admins`);
+      function updateList() {
+        self._$log.debug(`updateList ${listKey}`);
+        let inviteRef = new Firebase(`https://altman.firebaseio.com/families/${listKey}/invites/${inviteKey}`);
+        inviteRef.remove(() => it.next());
+      }
+
+      function* main() {
+        yield deleteInvite();
+        yield updateList();
+        resolve();
+      }
+    });
+  }
+
+  /**
+   *
+   * @param listKey
+   * @returns {Promise}
+   */
+  setActive(listKey) {
+    return new Promise((resolve) => {
+      let ref = new Firebase('https://altman.firebaseio.com');
+      let authData = ref.getAuth();
+
+      let userRef = new Firebase(`https://altman.firebaseio.com/users/${authData.uid}`);
+      userRef.update({activeFamily: listKey}, () => resolve());
+    });
+  }
+
+  /**
+   *
+   * @param listKey
+   * @param userKey
+   * @returns {Promise}
+   */
+  deleteMember(listKey, userKey) {
+
+    var self = this;
+
+    return new Promise((resolve) => {
+
+      let it = main();
+      it.next();
+
+      function updateUser() {
+        self._$log.debug(`updateUser ${userKey}`);
+        let familyRef = new Firebase(`https://altman.firebaseio.com/user/${userKey}/families/${listKey}`);
+        familyRef.remove(() => it.next());
+      }
+
+      function updateList() {
+        self._$log.debug(`updateList ${listKey}`);
+        let memberRef = new Firebase(`https://altman.firebaseio.com/families/${listKey}/members/${userKey}`);
+        memberRef.remove(() => it.next());
+      }
+
+      function* main() {
+        yield updateUser();
+        yield updateList();
+        resolve();
+      }
+    });
+  }
+
+  /**
+   * todo return created List
+   * @param name
+   * @returns {Promise}
+   */
+  createList(name) {
+
+    var self = this;
+
+    return new Promise((resolve) => {
+
+      let it = main();
+      it.next();
+
+      function createList(name = '_default_', createdBy = '') {
+        let listsRef = new Firebase('https://altman.firebaseio.com/families');
+        let listRef = listsRef.push({name: name, createdBy: createdBy});
+        setTimeout(() => it.next(listRef.key()), 0);  //calling it.next should be in another 'thread'
+      }
+
+      function addAdmin(listKey, userKey) {
+        let adminsRef = new Firebase(`https://altman.firebaseio.com/families/${listKey}/admins`);
         let admins = {};
         admins[userKey] = true;
         adminsRef.update(admins, () => it.next());
       }
 
-      function addMember(familyKey, userKey) {
-        self.addMember(familyKey, userKey).then(() => it.next());
+      function addMember(listKey, userKey) {
+        self.addMember(listKey, userKey).then(() => it.next());
       }
 
       function* main() { //we pass in a param on the first yield
         let ref = new Firebase('https://altman.firebaseio.com');
         var userKey = ref.getAuth().uid;
 
-        let familyKey = yield createFamily(name, userKey);
-        yield addAdmin(familyKey, userKey);
-        yield addMember(familyKey, userKey);
+        let listKey = yield createList(name, userKey);
+        yield addAdmin(listKey, userKey);
+        yield addMember(listKey, userKey);
 
-        resolve(familyKey);
+        resolve(listKey);
       }
     });
   }
+
 
   getDishes(familyKey) {
 
@@ -79,7 +299,7 @@ class ListsService {
       }
 
       return new Promise((resolve) => {
-        Promise.all(promises).then(() => resolve(appliedDishes))
+        Promise.all(promises).then(() => resolve(appliedDishes));
       });
     };
 
@@ -150,26 +370,6 @@ class ListsService {
     });
   }
 
-  addInvite(familyKey, email) {
-    return new Promise((resolve, reject) => {
-
-      let invitesRef = new Firebase(`https://altman.firebaseio.com/invites`);
-      let inviteRef = invitesRef.push({family: familyKey, email: email});
-
-      let familyInvitesRef = new Firebase(`https://altman.firebaseio.com/families/${familyKey}/invites`);
-      let invites = {};
-      invites[inviteRef.key()] = true;
-      familyInvitesRef.update(invites, (err) => {
-        if (!err) {
-          resolve(inviteRef.key());
-        }
-        else {
-          reject();
-        }
-      });
-    });
-  }
-
   addMember(familyKey, userKey) {
 
     var self = this;
@@ -201,35 +401,6 @@ class ListsService {
         resolve();
       }
 
-    });
-  }
-
-  deleteInvite(familyKey, inviteKey) {
-
-    var self = this;
-
-    return new Promise((resolve) => {
-
-      let it = main();
-      it.next();
-
-      function deleteInvite() {
-        self._$log.debug(`deleteInvite ${inviteKey}`);
-        let inviteRef = new Firebase(`https://altman.firebaseio.com/invites/${inviteKey}`);
-        inviteRef.remove(() => it.next());
-      }
-
-      function updateFamily() {
-        self._$log.debug(`updateFamily ${familyKey}`);
-        let inviteRef = new Firebase(`https://altman.firebaseio.com/families/${familyKey}/invites/${inviteKey}`);
-        inviteRef.remove(() => it.next());
-      }
-
-      function* main() {
-        yield deleteInvite();
-        yield updateFamily();
-        resolve();
-      }
     });
   }
 
@@ -300,91 +471,93 @@ class ListsService {
   }
 
   //todo pass specification with what to fetch
-  getFamilies(userKey) {
-    "use strict";
 
-    var self = this;
-
-    return new Promise((resolve) => {
-
-      let it;
-
-      let familiesRef = new Firebase(`https://altman.firebaseio.com/users/${userKey}/families`);
-      familiesRef.once('value', (snapshot) => {
-        let keys = Object.keys(snapshot.val());
-        it = loadFamilies(keys);
-        it.next();
-      });
-
-      let loadFamily = (familyKey, families) => {
-        this._$log.debug(`Loading family ${familyKey}`);
-        let familyRef = new Firebase(`https://altman.firebaseio.com/families/${familyKey}`);
-        familyRef.once('value', (snapshot) => {
-          var family = snapshot.val();
-          family.key = familyKey;
-          families.push(family);
-          it.next();
-        });
-      };
-
-      let loadUser = (userKey, users) => {
-        self._$log.debug(`Loading user ${userKey}`);
-        let userRef = new Firebase(`https://altman.firebaseio.com/users/${userKey}`);
-        userRef.once('value', (snapshot) => {
-          let user = snapshot.val();
-          user.key = userKey;
-          users.push(user);
-          it.next();
-        });
-      };
-
-      let loadInvite = (inviteKey, invites) => {
-        self._$log.debug(`Loading invite ${inviteKey}`);
-        let inviteRef = new Firebase(`https://altman.firebaseio.com/invites/${inviteKey}`);
-        inviteRef.once('value', (snapshot) => {
-          let invite = snapshot.val();
-          invite.key = inviteKey;
-          invites.push(invite);
-          it.next();
-        });
-      };
-
-      function* loadFamilies(keys) {
-        let families = [];
-
-        //first load families
-        for (let key of keys) {
-          yield loadFamily(key, families);
-        }
-
-        //now load members of each family
-        for (let family of families) {
-          let members = [];
-          if (family.members !== undefined) {
-            for (let key of Object.keys(family.members)) {
-              yield loadUser(key, members);
-            }
-          }
-          family.members = members;
-        }
-
-        //now load invites of each family
-        for (let family of families) {
-          let invites = [];
-          if (family.invites !== undefined) {
-            for (let key of Object.keys(family.invites)) {
-              yield loadInvite(key, invites);
-            }
-          }
-          family.invites = invites;
-        }
-
-        resolve(families);
-      }
-
-    });
-
-  }
+  ////todo pass specification with what to fetch
+  //getLists(userKey) {
+  //  "use strict";
+  //
+  //  var self = this;
+  //
+  //  return new Promise((resolve) => {
+  //
+  //    let it;
+  //
+  //    let familiesRef = new Firebase(`https://altman.firebaseio.com/users/${userKey}/families`);
+  //    familiesRef.once('value', (snapshot) => {
+  //      let keys = Object.keys(snapshot.val());
+  //      it = loadFamilies(keys);
+  //      it.next();
+  //    });
+  //
+  //    let loadFamily = (familyKey, families) => {
+  //      this._$log.debug(`Loading family ${familyKey}`);
+  //      let familyRef = new Firebase(`https://altman.firebaseio.com/families/${familyKey}`);
+  //      familyRef.once('value', (snapshot) => {
+  //        var family = snapshot.val();
+  //        family.key = familyKey;
+  //        families.push(family);
+  //        it.next();
+  //      });
+  //    };
+  //
+  //    let loadUser = (userKey, users) => {
+  //      self._$log.debug(`Loading user ${userKey}`);
+  //      let userRef = new Firebase(`https://altman.firebaseio.com/users/${userKey}`);
+  //      userRef.once('value', (snapshot) => {
+  //        let user = snapshot.val();
+  //        user.key = userKey;
+  //        users.push(user);
+  //        it.next();
+  //      });
+  //    };
+  //
+  //    let loadInvite = (inviteKey, invites) => {
+  //      self._$log.debug(`Loading invite ${inviteKey}`);
+  //      let inviteRef = new Firebase(`https://altman.firebaseio.com/invites/${inviteKey}`);
+  //      inviteRef.once('value', (snapshot) => {
+  //        let invite = snapshot.val();
+  //        invite.key = inviteKey;
+  //        invites.push(invite);
+  //        it.next();
+  //      });
+  //    };
+  //
+  //    function* loadFamilies(keys) {
+  //      let families = [];
+  //
+  //      //first load families
+  //      for (let key of keys) {
+  //        yield loadFamily(key, families);
+  //      }
+  //
+  //      //now load members of each family
+  //      for (let family of families) {
+  //        let members = [];
+  //        if (family.members !== undefined) {
+  //          for (let key of Object.keys(family.members)) {
+  //            yield loadUser(key, members);
+  //          }
+  //        }
+  //        family.members = members;
+  //      }
+  //
+  //      //now load invites of each family
+  //      for (let family of families) {
+  //        let invites = [];
+  //        if (family.invites !== undefined) {
+  //          for (let key of Object.keys(family.invites)) {
+  //            yield loadInvite(key, invites);
+  //          }
+  //        }
+  //        family.invites = invites;
+  //      }
+  //
+  //      resolve(families);
+  //    }
+  //
+  //  });
+  //
+  //}
 
   removeMember(familyKey, memberKey) {
     return new Promise((resolve) => {
@@ -396,35 +569,6 @@ class ListsService {
           resolve();
         });
       });
-    });
-  }
-
-  deleteMember(familyKey, userKey) {
-
-    var self = this;
-
-    return new Promise((resolve) => {
-
-      let it = main();
-      it.next();
-
-      function updateUser() {
-        self._$log.debug(`updateUser ${userKey}`);
-        let familyRef = new Firebase(`https://altman.firebaseio.com/user/${userKey}/families/${familyKey}`);
-        familyRef.remove(() => it.next());
-      }
-
-      function updateFamily() {
-        self._$log.debug(`updateFamily ${familyKey}`);
-        let memberRef = new Firebase(`https://altman.firebaseio.com/families/${familyKey}/members/${userKey}`);
-        memberRef.remove(() => it.next());
-      }
-
-      function* main() {
-        yield updateUser();
-        yield updateFamily();
-        resolve();
-      }
     });
   }
 
@@ -467,16 +611,6 @@ class ListsService {
         resolve(result);
       }
 
-    });
-  }
-
-  setActive(familyKey) {
-    return new Promise((resolve) => {
-      let ref = new Firebase('https://altman.firebaseio.com');
-      let authData = ref.getAuth();
-
-      let userRef = new Firebase(`https://altman.firebaseio.com/users/${authData.uid}`);
-      userRef.update({activeFamily: familyKey}, () => resolve());
     });
   }
 

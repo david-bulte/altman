@@ -25,10 +25,21 @@ export default ToolbarDirective;
 
 class ToolbarController {
 
-  constructor($log, $mdSidenav, $mdUtil) {
+  constructor(NotificationsService, $log, $mdSidenav, $mdUtil, $scope) {
     'ngInject';
 
+    //this.notifications = [];
     this.toggleSidebar = buildToggler('left');
+
+    //this._notificationsTicket = NotificationsService.on('notification', (notification) => {
+    //  this.notifications.push(notification);
+    //});
+    //
+    //$scope.$on("$destroy", () => {
+    //  NotificationsService.off(this._notificationsTicket);
+    //});
+
+    this.notifications = NotificationsService.notifications;
 
     /**
      * Build handler to open/close a SideNav; when animation finishes
@@ -47,7 +58,7 @@ class ToolbarController {
   }
 
   filter() {
-    this.toolbarFilter({query : this.query});
+    this.toolbarFilter({query: this.query});
   }
 
 }

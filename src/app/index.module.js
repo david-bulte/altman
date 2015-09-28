@@ -15,13 +15,15 @@ import WelcomeController from './login/welcome.controller.js';
 
 import ConfigService from './config/config.service.js';
 import DishesService from './dishes/dishes.service.js';
+import InvitesService from './invites/invites.service.js';
 import ListsService from './list/lists.service.js';
+import NotificationsService from './notifications/notifications.service.js';
 import ShoppingListService from './shoppinglist/shoppingList.service.js';
 import UserService from './login/user.service.js';
 import WeekMenuService from './weekmenu/weekMenu.service.js';
 
 import DishCardDirective from './components/dishcard/dishCard.directive.js';
-import FamilyCardDirective from './components/familycard/familyCard.directive.js';
+import ListCardDirective from './components/listcard/listCard.directive.js';
 import SidebarDirective from './components/sidebar/sidebar.directive.js';
 import ToolbarDirective from './components/toolbar/toolbar.directive.js';
 
@@ -48,12 +50,14 @@ angular.module('altman', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize', 'ng
 
   .service('ConfigService', ConfigService)
   .service('DishesService', DishesService)
+  .service('InvitesService', InvitesService)
   .service('ListsService', ListsService)
+  .service('NotificationsService', NotificationsService)
   .service('ShoppingListService', ShoppingListService)
   .service('UserService', UserService)
   .service('WeekMenuService', WeekMenuService)
 
   .directive('dishCard', () => new DishCardDirective()) //register directive classes as factories
-  .directive('familyCard', () => new FamilyCardDirective())
+  .directive('listCard', () => new ListCardDirective())
   .directive('toolbar', () => new ToolbarDirective())
   .directive('sidebar', () => new SidebarDirective());

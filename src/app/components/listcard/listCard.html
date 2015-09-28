@@ -1,0 +1,57 @@
+<md-card>
+  <md-card-content>
+
+    <h2>
+      <md-input-container flex="60" md-no-float>
+        <input placeholder="list name" ng-model="ctrl.list.name" ng-model-options="{updateOn: 'blur'}"
+               ng-change="ctrl.updateName({list : ctrl.list})">
+      </md-input-container>
+    </h2>
+    <span ng-show="ctrl.list._active_">(active)</span>
+
+    <md-list>
+      <md-subheader class="md-no-sticky">members - {{ctrl.list._members_.length}}</md-subheader>
+      <md-list-item ng-repeat="member in ctrl.list._members_">
+        <div flex layout="row">
+          <p flex="60">{{ member.name }} {{member.email}} {{member._creator_}}</p>
+          <div layout-align="end">
+            <!--todo check-->
+            <md-checkbox class="md-secondary" ng-model="member.admin"
+                         ng-click="member.admin = !member.admin">
+              Admin
+            </md-checkbox>
+            <md-button flex ng-click="ctrl.removeMember({list : ctrl.list, member : member})">remove</md-button>
+          </div>
+        </div>
+      </md-list-item>
+
+      <md-divider></md-divider>
+
+      <md-subheader class="md-no-sticky">invites</md-subheader>
+      <md-list-item ng-repeat="invite in ctrl.list._invites_">
+        <div flex layout="row">
+          <span flex="60" ng-show="invite.key != undefined">{{ invite.email }} (last sent: {{invite.lastSent}})</span>
+          <div layout-align="end">
+            <md-button ng-click="ctrl.remindInvite({list : ctrl.list, invite : invite})">remind</md-button>
+            <md-button ng-click="ctrl.removeInvite({list : ctrl.list, invite : invite})">remove</md-button>
+          </div>
+        </div>
+      </md-list-item>
+      <md-list-item>
+        <div flex layout="row">
+          <md-input-container flex="60" md-no-float>
+            <input placeholder="+ add invite" ng-model="ctrl.newInvite.email" ng-blur="ctrl.createInviteLocal()">
+          </md-input-container>
+        </div>
+      </md-list-item>
+
+    </md-list>
+
+  </md-card-content>
+
+  <div class="md-actions" layout="row" layout-align="end center">
+    <md-button ng-click="ctrl.setActive({list : ctrl.list})">Make list active</md-button>
+    <md-button ng-click="ctrl.removeMe({list : ctrl.list})">Remove me from list</md-button>
+  </div>
+
+</md-card>
