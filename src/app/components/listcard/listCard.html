@@ -7,15 +7,15 @@
                ng-change="ctrl.updateName({list : ctrl.list})">
       </md-input-container>
     </h2>
-    <span ng-show="ctrl.list._active_">(active)</span>
+    <span ng-show="ctrl.list.active">(active)</span>
 
     <md-list>
-      <md-subheader class="md-no-sticky">members - {{ctrl.list._members_.length}}</md-subheader>
-      <md-list-item ng-repeat="member in ctrl.list._members_">
+      <md-subheader class="md-no-sticky">members - {{ctrl.list.members.length}}</md-subheader>
+      <md-list-item ng-repeat="member in ctrl.list.members">
         <div flex layout="row">
-          <p flex="60">{{ member.name }} {{member.email}} {{member._creator_}}</p>
+          <p flex="60">{{ member.name }} {{member.email}}</p>
           <div layout-align="end">
-            <!--todo check-->
+            <!--todo set admin-->
             <md-checkbox class="md-secondary" ng-model="member.admin"
                          ng-click="member.admin = !member.admin">
               Admin
@@ -28,7 +28,7 @@
       <md-divider></md-divider>
 
       <md-subheader class="md-no-sticky">invites</md-subheader>
-      <md-list-item ng-repeat="invite in ctrl.list._invites_">
+      <md-list-item ng-repeat="invite in ctrl.list.invites">
         <div flex layout="row">
           <span flex="60" ng-show="invite.key != undefined">{{ invite.email }} (last sent: {{invite.lastSent}})</span>
           <div layout-align="end">

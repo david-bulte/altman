@@ -21,8 +21,9 @@ class ListsController {
   }
 
   _getLists(user) {
-    this._listsService.getLists(user.key).then((lists) => {
-      this._$timeout(this.lists = lists.map(list => list.viewModel(user)));
+    this._listsService.getLists(user).then((lists) => {
+      this._$timeout(this.lists = lists);
+      //this._$timeout(this.lists = lists.map(list => list.viewModel(user)));
     });
   }
 
@@ -36,7 +37,7 @@ class ListsController {
     return new Promise((resolve, reject) => {
       this._listsService.addInvite(list.key, invite.email).then((invite) => {
         this._$timeout(() => {
-          list._invites_.push(invite);
+          list.invites.push(invite);
           this.remindInvite(list, invite);
           resolve();
         });
@@ -46,8 +47,8 @@ class ListsController {
 
   removeInvite(list, invite) {
     this._listsService.deleteInvite(list.key, invite.key).then(() => {
-      let idx = list._invites_.indexOf(invite);
-      this._$timeout(() => list._invites_.splice(idx, 1));
+      let idx = list.invites.indexOf(invite);
+      this._$timeout(() => list.invites.splice(idx, 1));
     });
   }
 
@@ -59,7 +60,7 @@ class ListsController {
     this._listsService.setActive(list.key).then(() => {
       this._$timeout(() => {
         this.user.activeFamily = list.key;
-        this.lists.forEach(list => list._active_ = list.key === this.user.activeFamily);
+        this.lists.forEach(list => list.active = list.key === this.user.activeFamily);
       });
     });
   }

@@ -14,10 +14,10 @@ class ListsService {
 
   /**
    * todo pass specification with what to eagerly fetch
-   * @param userKey
+   * @param user
    * @returns {Promise}
    */
-  getLists(userKey) {
+  getLists(user) {
 
     let getListKeys = (userKey) => {
       return new Promise((resolve, reject) => {
@@ -34,32 +34,30 @@ class ListsService {
       return new Promise((resolve, reject) => {
         let listRef = new Firebase(`https://altman.firebaseio.com/families/${listKey}`);
         listRef.once('value', (snapshot) => {
-          var list = List.fromSnapshot(snapshot);
-          this._$log.info('list: ', list);
-          resolve(list);
+          resolve(List.fromSnapshot(snapshot));
         });
       });
     };
 
     let loadMembers = (list) => {
 
-      list._members_ = [];
-
       let getUser = (userKey) => {
         return new Promise((resolve, reject) => {
-          this._userService.getUser(userKey).then(user => {
-            list._members_.push(user);
+          this._userService.getUser(userKey).then(member => {
+            let admins = list._firebaseo_.admins || {};
+            member.admin = admins[member.key] === true;
+            list.members.push(member);
             resolve();
           });
         });
       };
 
       return new Promise((resolve, reject)=> {
-        if (list.members === undefined) {
+        if (list._firebaseo_.members === undefined) {
           resolve(list)
         }
         else {
-          Promise.all(Object.keys(list.members).map(getUser))
+          Promise.all(Object.keys(list._firebaseo_.members).map(getUser))
             .then(() => resolve(list))
         }
       });
@@ -67,30 +65,36 @@ class ListsService {
 
     let loadInvites = (list) => {
 
-      list._invites_ = [];
-
       let getInvite = (inviteKey) => {
         return new Promise((resolve, reject) => {
           this._invitesService.getInvite(inviteKey).then(invite => {
-            list._invites_.push(invite);
+            list.invites.push(invite);
             resolve();
           });
         });
       };
 
       return new Promise((resolve, reject)=> {
-        if (list.invites === undefined) {
+        if (list._firebaseo_.invites === undefined) {
           resolve(list)
         }
         else {
-          Promise.all(Object.keys(list.invites).map(getInvite))
+          Promise.all(Object.keys(list._firebaseo_.invites).map(getInvite))
             .then(resolve(list))
         }
       });
     };
 
+    let setActive = (list) => {
+
+      return new Promise((resolve, reject) => {
+        list.active = list.key === user.activeFamily;
+        resolve(list);
+      });
+    };
+
     return new Promise((resolve, reject) => {
-      getListKeys(userKey)
+      getListKeys(user.key)
         .then((listKeys) => {
           return Promise.all(listKeys.map(getList));
         })
@@ -99,6 +103,9 @@ class ListsService {
         })
         .then((lists) => {
           return Promise.all(lists.map(loadInvites));
+        })
+        .then((lists) => {
+          return Promise.all(lists.map(setActive));
         })
         //todo Lists.map((list) => List.fromJson())
         .then((lists) => resolve(lists))
