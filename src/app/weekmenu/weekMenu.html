@@ -17,6 +17,8 @@
                remove-from-week-menu="weekMenuCtrl.removeFromWeekMenu(dish)"
                can-edit="true"
                can-delete="false"
+               starred="weekMenuCtrl.isStarred(weekMenuDish._dish_)"
+               used="weekMenuCtrl.isUsed(weekMenuDish._dish_)"
                ng-show="weekMenuDish.filteredOut != true"
                ng-repeat="weekMenuDish in weekMenuCtrl.weekMenuDishes"></dish-card>
 

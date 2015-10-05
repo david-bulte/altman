@@ -30,12 +30,19 @@ class UserService {
     });
   }
 
-  updateStar(userKey, dishKey, star) {
+  /**
+   * Stars or unstars a dish
+   * @param userKey
+   * @param dishKey
+   * @param newVal
+   * @returns {Promise}
+   */
+  updateStar(userKey, dishKey, newVal) {
     return new Promise((resolve) => {
       let starredRef = new Firebase(`https://altman.firebaseio.com/users/${userKey}/starred`);
       let starred = {};
-      starred[dishKey] = star;
-      starredRef.update(starred, () => resolve());
+      starred[dishKey] = newVal;
+      starredRef.update(starred, () => resolve(newVal));
     });
   }
 

@@ -1,3 +1,5 @@
+import Dish from './dish.js';
+
 let _cache = new WeakMap();
 
 class DishesService {
@@ -13,58 +15,60 @@ class DishesService {
     _cache.set(this, []);
   }
 
+  _getMembers(listKey) {
+    return new Promise((resolve, reject) => {
+      this._listsService.getLists(null, listKey).then((lists) => {
+        resolve(lists.length > 0 ? lists[0].members : []);
+      });
+    });
+  }
+
+  /**
+   * Returns dishes created all members of user's active family
+   * @param user
+   * @returns {Promise}
+   */
+  getDishes(user) {
+    return new Promise((resolve, reject) => {
+      let getMembers = this._getMembers.bind(this);
+      getMembers(user.activeFamily)
+        .then((members) => {
+          return Promise.all(members.map((user) => {
+            return user.key;
+          }))
+        })
+        .then((userKeys) => {
+          return Promise.all(userKeys.map(_getDishes))
+        })
+        .then((dishesLists) => { //multiple lists, 1 per member
+          let result = [];
+          for (let list of dishesLists) {
+            result = result.concat(list);
+          }
+          resolve(result);
+        });
+    });
+  }
+
+  /**
+   * Updates the name of the given dish
+   * @param dishKey
+   * @param name
+   * @returns {Promise}
+   */
+  updateName(dishKey, name) {
+    return new Promise((resolve) => {
+      let dishRef = new Firebase(`https://altman.firebaseio.com/dishes/${dishKey}`);
+      dishRef.update({name: name}, () => resolve());
+    });
+  }
+
+
   static _model(snapshot) {
     "use strict";
     let obj = snapshot.val();
     obj.key = snapshot.key();
     return obj;
-  }
-
-  getDishes() {
-
-    var self = this;
-
-    return new Promise((resolve) => {
-
-      let it = main();
-      it.next();
-
-      function getMembers() {
-        self._userService.getCurrentUser().then((user) => {
-          let familyKey = user.activeFamily;
-          self._listsService.getFamily(familyKey).then((family) => {
-            let members = family.members;
-            it.next(members);
-          });
-        });
-      }
-
-      function getDishes(userKey, dishes) {
-        let dishesRef = new Firebase("https://altman.firebaseio.com/dishes");
-        //todo investigate child_added for 'live collection'
-        dishesRef.orderByChild('createdBy').equalTo(userKey).once('value', (snapshot) => {
-          self._$log.debug('getDishes.value', snapshot.val());
-          snapshot.forEach(function (data) {
-            var dish = data.val();
-            dish.key = data.key();
-            dishes.push(dish);
-          });
-          it.next();
-        });
-      }
-
-      function* main() {
-        //todo could be rewritten so as to only retrieve keys
-        let users = yield getMembers(); //returns all members of current family
-        let dishes = [];
-        for (let user of users) {
-          yield getDishes(user.key, dishes);
-        }
-        //todo also get all starred items from other families
-        resolve(dishes);  //note: this is a 'live' result, when new dishes are created by someone of the family, this
-                          // dish will be added! It is up to the controller to do some extra filtering on it.
-      }
-    });
   }
 
   getDish(key) {
@@ -96,29 +100,31 @@ class DishesService {
     });
   }
 
-  updateName(dishKey, name) {
-    return new Promise((resolve) => {
-      let dishRef = new Firebase(`https://altman.firebaseio.com/dishes/${dishKey}`);
-      dishRef.update({name: name}, () => resolve());
-    });
-  }
-
+  /**
+   *
+   * @param dishKey
+   * @param name
+   * @param amount
+   * @param section
+   * @returns {Promise}
+   */
   addIngredient(dishKey, {name = '_default_', amount = '_unknown_', section = 'varia'}) {
-    //todo consider storing product + section separately so as to have autocomplete on section
     return new Promise((resolve) => {
       let ingredientsRef = new Firebase(`https://altman.firebaseio.com/dishes/${dishKey}/ingredients`);
       let ingredients = {};
-      ingredients[name] = {amount: amount, section: section};
+      ingredients[name] = {name : name, amount: amount, section: section};
       ingredientsRef.update(ingredients, () => {
         resolve();
       });
-      //let ingredientRef = ingredientsRef.push();
-      //ingredientRef.set({name: name, createdBy: ingredientsRef.getAuth().uid}, () => {
-      //  resolve(ingredientRef.key());
-      //});
     });
   }
 
+  /**
+   *
+   * @param dishKey
+   * @param ingredientKey
+   * @returns {Promise}
+   */
   removeIngredient(dishKey, ingredientKey) {
     return new Promise((resolve) => {
       let ingredientRef = new Firebase(`https://altman.firebaseio.com/dishes/${dishKey}/ingredients/${ingredientKey}`);
@@ -126,14 +132,15 @@ class DishesService {
     });
   }
 
-  //updateIngredient(dishKey, ingredientKey, {name = '_default_', amount = '_unknown_', section = '_miscellaneous_'}) {
-  //  return new Promise((resolve) => {
-  //    let ingredientRef = new Firebase(`https://altman.firebaseio.com/dishes/${dishKey}/ingredients/${ingredientKey}`);
-  //    ingredientRef.update({name: name, amount: amount, section : section}, () => resolve());
-  //  });
-  //}
-
-  //todo varia
+  /**
+   *
+   * @param dishKey
+   * @param ingredientKey
+   * @param name
+   * @param amount
+   * @param section
+   * @returns {Promise}
+   */
   updateIngredient(dishKey, ingredientKey, {name = '_default_', amount = '_unknown_', section = 'varia'}) {
     return new Promise((resolve) => {
       if (ingredientKey !== name) {
@@ -205,6 +212,19 @@ class DishesService {
     });
   }
 
+}
+
+function _getDishes(userKey) {
+  return new Promise((resolve, reject) => {
+    let dishesRef = new Firebase('https://altman.firebaseio.com/dishes');
+    dishesRef.orderByChild('createdBy').equalTo(userKey).once('value', (snapshot) => {
+      let dishes = [];
+      snapshot.forEach(function (data) {
+        dishes.push(Dish.fromSnapshot(data));
+      });
+      resolve(dishes);
+    });
+  });
 }
 
 export default DishesService;

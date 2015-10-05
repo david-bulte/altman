@@ -25,6 +25,26 @@ class WeekMenuController {
     });
   }
 
+  //todo cf dishes.controller
+  isStarred(dish) {
+    return false;
+    //return this.user.starred && this.user.starred[dish.key] === true;
+  }
+
+  //todo cf dishes.controller
+  toggleStar(dish) {
+    let newVal = !this.isStarred(dish);
+    this._userService.updateStar(this.user.key, dish.key, newVal).then((newVal) => {
+      this._$timeout(() => this.user.starred[dish.key] = newVal);
+    });
+  }
+
+  //todo cf dishes.controller
+  isUsed(dish) {
+    return false;
+    //return this.user.activeFamily !== undefined && dish.usedBy.indexOf(this.user.activeFamily) >= 0;
+  }
+
   setupDish() {
     this._dishesService.addDish().then((dishKey) => {
       this._listsService.addDish(this.user.activeFamily, dishKey).then(() => {
@@ -76,11 +96,11 @@ class WeekMenuController {
     })
   }
 
-  toggleStar(dish) {
-    this._userService.updateStar(this.user.key, dish.key, !dish.starred).then(() => {
-      this._$timeout(() => dish.starred = !dish.starred);
-    });
-  }
+  //toggleStar(dish) {
+  //  this._userService.updateStar(this.user.key, dish.key, !dish.starred).then(() => {
+  //    this._$timeout(() => dish.starred = !dish.starred);
+  //  });
+  //}
 
   removeIngredient(dish, ingredient) {
     this._dishesService.removeIngredient(dish.key, ingredient.name).then(() => {

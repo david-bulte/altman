@@ -23,7 +23,7 @@
     <!--</md-input-container>-->
 
     <!--todo-->
-    <span ng-show="!ctrl.hideStar && ctrl.dish.starred">(starred)</span>
+    <span ng-show="!ctrl.hideStar && ctrl.starred">(starred)</span>
 
     <md-button class="md-icon-button" aria-label="More" ng-click="ctrl.compactMode = !ctrl.compactMode" ng-show="!ctrl.hideCompact">
       <md-icon md-svg-icon="assets/images/icons/ic_expand_more_black_18px.svg" ng-show="ctrl.compactMode"></md-icon>
@@ -89,11 +89,11 @@
   <div class="md-actions" layout="row" layout-align="end center" ng-show="!ctrl.compactMode">
     <md-button ng-show="ctrl.canEdit && ctrl.editMode" ng-click="ctrl.toggleEditMode()">Stop Edit</md-button>
     <md-button ng-show="ctrl.canEdit && !ctrl.editMode" ng-click="ctrl.toggleEditMode()">Edit</md-button>
-    <md-button ng-show="!ctrl.hideStar && !ctrl.dish.starred" ng-click="ctrl.toggleStar({dish : ctrl.dish})">Star</md-button>
-    <md-button ng-show="!ctrl.hideStar && ctrl.dish.starred" ng-click="ctrl.toggleStar({dish : ctrl.dish})">Unstar</md-button>
+    <md-button ng-show="!ctrl.hideStar && !ctrl.starred" ng-click="ctrl.toggleStar({dish : ctrl.dish})">Star</md-button>
+    <md-button ng-show="!ctrl.hideStar && ctrl.starred" ng-click="ctrl.toggleStar({dish : ctrl.dish})">Unstar</md-button>
     <md-button ng-show="ctrl.canRemoveIngredient" ng-click="ctrl.removeIngredients()">Remove Ingredients</md-button>
-    <md-button ng-show="!ctrl.hideAddRemoveWeekMenu && !ctrl.dish.used" ng-click="ctrl.addToWeekMenu({dish : ctrl.dish})">Add to weekmenu</md-button>
-    <md-button ng-show="!ctrl.hideAddRemoveWeekMenu && ctrl.dish.used" ng-click="ctrl.removeFromWeekMenu({dish : ctrl.dish})">Remove from weekmenu</md-button>
+    <md-button ng-show="!ctrl.hideAddRemoveWeekMenu && !ctrl.used" ng-click="ctrl.addToWeekMenu({dish : ctrl.dish})">Add to weekmenu</md-button>
+    <md-button ng-show="!ctrl.hideAddRemoveWeekMenu && ctrl.used" ng-click="ctrl.removeFromWeekMenu({dish : ctrl.dish})">Remove from weekmenu</md-button>
     <md-button ng-show="ctrl.canDelete" ng-click="ctrl.removeDish({dish : dish})">Remove</md-button>
   </div>
 

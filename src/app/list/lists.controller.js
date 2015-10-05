@@ -23,7 +23,6 @@ class ListsController {
   _getLists(user) {
     this._listsService.getLists(user).then((lists) => {
       this._$timeout(this.lists = lists);
-      //this._$timeout(this.lists = lists.map(list => list.viewModel(user)));
     });
   }
 

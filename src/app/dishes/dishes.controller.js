@@ -18,46 +18,80 @@ class DishesController {
   }
 
   _init() {
-    this._userService.getCurrentUser().then((user) => {
-      this.user = user;
-      this._getDishes();
+    this._userService.getCurrentUser()
+      .then(user => this.user = user)
+      .then(this._getDishes.bind(this));
+  }
+
+  _getDishes(user) {
+    this._dishesService.getDishes(user).then((dishes) => {
+      this._$timeout(this.dishes = dishes);
     });
   }
 
-  _getDishes(query) {
-    //todo filter
-    this._dishesService.getDishes().then((dishes) => {
-      for (let dish of dishes) {
-        this._model(dish);
-      }
-      this._$timeout(() => this.dishes = dishes);
+  isStarred(dish) {
+    return this.user.starred && this.user.starred[dish.key] === true;
+  }
+
+  toggleStar(dish) {
+    let newVal = !this.isStarred(dish);
+    this._userService.updateStar(this.user.key, dish.key, newVal).then((newVal) => {
+      this._$timeout(() => this.user.starred[dish.key] = newVal);
     });
   }
 
-  _model(dish) {
+  addToWeekMenu(dish) {
+    var listKey = this.user.activeFamily;
+    this._listsService.addDish(listKey, dish.key).then(() => {
+      dish.usedBy.push(listKey);
+      this.toast(dish.name + ' added to week menu')
+    });
+  }
 
-    let ingredients = [];
-    if (dish.ingredients !== undefined) {
-      for (let ingredientName of Object.keys(dish.ingredients)) {
-        var ingredient = dish.ingredients[ingredientName];
-        ingredient.name = ingredientName;
-        ingredients.push({
-          name: ingredientName,
-          amount: ingredient.amount,
-          section: ingredient.section,
-          _original_: ingredient
-        });
-      }
+  removeFromWeekMenu(dish) {
+    var listKey = this.user.activeFamily;
+    this._listsService.removeDish(listKey, dish.key).then(() => {
+      dish.usedBy.splice(dish.usedBy.indexOf(listKey), 1);
+      this.toast(dish.name + ' removed from week menu')
+    });
+  }
+
+  isUsed(dish) {
+    return this.user.activeFamily !== undefined && dish.usedBy.indexOf(this.user.activeFamily) >= 0;
+  }
+
+  updateName(dish) {
+    this._dishesService.updateName(dish.key, dish.name).then(() => {
+      this.toast(dish.name + ' updated')
+    })
+  }
+
+  addIngredient(dish, ingredient) {
+    this._dishesService.addIngredient(dish.key, {name: ingredient.name}).then(() => {
+      this._$timeout(() => {
+        ingredient.key = ingredient.name;
+        dish.ingredients.push({name: undefined, amount: undefined, section: undefined})
+      });
+    });
+  }
+
+  removeIngredient(dish, ingredient) {
+    this._dishesService.removeIngredient(dish.key, ingredient.key).then(() => {
+      this._$timeout(() => {
+        dish.ingredients.splice(dish.ingredients.indexOf(ingredient), 1);
+      });
+    })
+  }
+
+  updateIngredient(dish, ingredient) {
+    if (ingredient.key !== undefined) {
+      this._dishesService.updateIngredient(dish.key, ingredient.key, ingredient).then(() => {
+        //this was an update no need to add something new
+      });
     }
-    dish.ingredients = ingredients;
-    //dish.ingredients.push({name: undefined, amount: undefined, section: undefined});
-
-    dish.starred = this.user.starred
-      && this.user.starred[dish.key] === true;
-
-    dish.used = dish.usedBy !== undefined
-      && this.user.activeFamily !== undefined
-      && dish.usedBy[this.user.activeFamily] === true;
+    else {
+      this.addIngredient(dish, ingredient);
+    }
   }
 
   setupDish() {
@@ -69,48 +103,8 @@ class DishesController {
     })
   }
 
-  updateName(dish) {
-    this._dishesService.updateName(dish.key, dish.name).then(() => {
-      //todo toast
-    })
-  }
-
   removeDish(dish) {
-  }
-
-  toggleStar(dish) {
-    this._userService.updateStar(this.user.key, dish.key, !dish.starred).then(() => {
-      this._$timeout(() => dish.starred = !dish.starred);
-    });
-  }
-
-  addIngredient(dish, ingredient) {
-    this._dishesService.addIngredient(dish.key, {name: ingredient.name}).then(() => {
-      ingredient._original_ = {name: ingredient.name};
-      this._$timeout(() => dish.ingredients.push({name: undefined, amount: undefined, section: undefined}));
-    });
-  }
-
-  removeIngredient(dish, ingredient) {
-    this._dishesService.removeIngredient(dish.key, ingredient.name).then(() => {
-      this._$timeout(() => {
-        let idx = dish.ingredients.indexOf(ingredient);
-        dish.ingredients.splice(idx, 1);
-      });
-    })
-  }
-
-  updateIngredient(dish, ingredient) {
-    //todo update/add refactor
-    if (ingredient._original_ !== undefined) {
-      this._dishesService.updateIngredient(dish.key, ingredient._original_.name, ingredient).then(() => {
-        //this was an update no need to add something new
-      });
-      //this._dishesService.updateIngredient(dish, ingredient);
-    }
-    else {
-      this.addIngredient(dish, ingredient);
-    }
+    //todo
   }
 
   filter(query) {
@@ -150,22 +144,6 @@ class DishesController {
         })
     }, () => {
       //ok
-    });
-  }
-
-  addToWeekMenu(dish) {
-    var familyKey = this.user.activeFamily;
-    this._listsService.addDish(familyKey, dish.key).then(() => {
-      dish.used = true;
-      this.toast(dish.name + ' added to week menu')
-    });
-  }
-
-  removeFromWeekMenu(dish) {
-    var familyKey = this.user.activeFamily;
-    this._listsService.removeDish(familyKey, dish.key).then(() => {
-      dish.used = false;
-      this.toast(dish.name + ' removed from week menu')
     });
   }
 

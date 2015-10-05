@@ -28,7 +28,9 @@ class DishCardDirective {
         compactMode: '=',
         editMode: '=',
         canEdit: '=',
-        canDelete: '='
+        canDelete: '=',
+        starred: '=',
+        used: '='
       },
       controller: DishCardController,
       controllerAs: 'ctrl',
@@ -73,7 +75,7 @@ class DishCardController {
     }
     else {
       _.remove(this.dish.ingredients, function(ingredient) {
-        return ingredient._original_ === undefined;
+        return ingredient.key === undefined;
       });
     }
   }
