@@ -1,5 +1,6 @@
-import List from './list.js';
+import Dish from '../dishes/dish.js';
 import Invite from '../invites/invite.js';
+import List from './list.js';
 
 class ListsService {
 
@@ -257,46 +258,29 @@ class ListsService {
     return Promise.all([updateDishes(), updateDish()]);
   }
 
-  getDishes(familyKey) {
-
-    let getDishes = () => {
-      return new Promise((resolve) => {
-        let dishesRef = new Firebase(`https://altman.firebaseio.com/families/${familyKey}/dishes`);
-        dishesRef.on('value', (snapshot) => {
-          var dishes = snapshot.val();
-          resolve(dishes ? Object.values(dishes) : []);
-        });
-      });
-    };
-
-    let loadDish = (appliedDish) => {
-      return new Promise((resolve) => {
-        let dishesRef = new Firebase(`https://altman.firebaseio.com/dishes/${appliedDish.dish}`);
-        dishesRef.once('value', (snapshot) => {
-          var dish = snapshot.val();
-          dish.key = snapshot.key();
-          appliedDish._dish_ = dish;
-          resolve();
-        });
-      });
-    };
-
-    let loadDishes = (appliedDishes) => {
-      let promises = [];
-      for (let appliedDish of appliedDishes) {
-        promises.push(new Promise((resolve) => {
-          loadDish(appliedDish).then(() => resolve());
-        }));
-      }
-
-      return new Promise((resolve) => {
-        Promise.all(promises).then(() => resolve(appliedDishes));
-      });
-    };
-
-    return getDishes()
-      .then(loadDishes);
+  //todo this could be incorporated by getLists
+  /**
+   *
+   * @param listKey
+   * @returns {Promise}
+   */
+  getDishes(listKey) {
+    return new Promise((resolve, reject) => {
+      _getDishKeys(listKey)
+        .then(_getDishes)
+        .then((dishes) => resolve(dishes))
+        .catch((err) => reject(err));
+    });
   }
+
+
+
+
+
+
+
+
+
 
   //todo refactor with getFamilies + make it less synchronous
   //todo also pass parameters with what to load
@@ -507,6 +491,31 @@ function _getList(listKey) {
     let listRef = new Firebase(`https://altman.firebaseio.com/families/${listKey}`);
     listRef.once('value', (snapshot) => {
       resolve(List.fromSnapshot(snapshot));
+    });
+  });
+}
+
+function _getDishKeys(listKey) {
+  return new Promise((resolve, reject) => {
+    let dishesRef = new Firebase(`https://altman.firebaseio.com/families/${listKey}/dishes`);
+    dishesRef.once('value', (snapshot) => {
+      if (snapshot != null) {
+        //these are *applied* dishes, meaning they have a signature like {comment : 'blabla', dish : '<dishkey>'}
+        resolve(Object.values(snapshot.val()).map((appliedDish) => appliedDish.dish));
+      }
+    });
+  });
+}
+
+function _getDishes(dishKeys) {
+  return Promise.all(dishKeys.map(_getDish));
+}
+
+function _getDish(dishKey) {
+  return new Promise((resolve, reject) => {
+    let dishRef = new Firebase(`https://altman.firebaseio.com/dishes/${dishKey}`);
+    dishRef.once('value', (snapshot) => {
+      resolve(Dish.fromSnapshot(snapshot));
     });
   });
 }

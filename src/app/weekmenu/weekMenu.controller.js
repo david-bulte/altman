@@ -19,11 +19,35 @@ class WeekMenuController {
   }
 
   _init() {
-    this._userService.getCurrentUser().then((user) => {
-      this.user = user;
-      this._getDishes();
+    this._userService.getCurrentUser()
+      .then(user => this.user = user)
+      .then(this._getDishes.bind(this));
+  }
+
+  _getDishes() {
+    //todo refactor : get lists (specify listKey) + specify what to fetch: dishes
+    this._listsService.getDishes(this.user.activeFamily).then((dishes) => {
+      this._$timeout(this.dishes = dishes);
     });
   }
+
+//todo cf dishes.controller
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   //todo cf dishes.controller
   isStarred(dish) {
@@ -54,41 +78,6 @@ class WeekMenuController {
     })
   }
 
-  _getDishes() {
-    this._listsService.getDishes(this.user.activeFamily).then((weekMenuDishes) => {
-      for (let weekMenuDish of weekMenuDishes) {
-        this._model(weekMenuDish._dish_);
-      }
-      this._$timeout(() => this.weekMenuDishes = weekMenuDishes);
-    });
-  }
-
-  //todo streamline with dishes.controller
-  _model(dish) {
-
-    let ingredients = [];
-    if (dish.ingredients !== undefined) {
-      for (let ingredientName of Object.keys(dish.ingredients)) {
-        var ingredient = dish.ingredients[ingredientName];
-        ingredient.name = ingredientName;
-        ingredients.push({
-          name: ingredientName,
-          amount: ingredient.amount,
-          section: ingredient.section,
-          _original_: ingredient
-        });
-      }
-    }
-    dish.ingredients = ingredients;
-    //dish.ingredients.push({name: undefined, amount: undefined, section: undefined});
-
-    dish.starred = this.user.starred
-      && this.user.starred[dish.key] === true;
-
-    dish.used = dish.usedBy !== undefined
-      && this.user.activeFamily !== undefined
-      && dish.usedBy[this.user.activeFamily] === true;
-  }
 
   updateName(dish) {
     this._dishesService.updateName(dish.key, dish.name).then(() => {
@@ -136,7 +125,7 @@ class WeekMenuController {
     //todo confirm dialog
     var familyKey = this.user.activeFamily;
     this._listsService.removeDish(familyKey, dish.key).then(() => {
-      this._$timeout(() => this.weekMenuDishes.splice(this.weekMenuDishes.indexOf(dish), 1));
+      this._$timeout(() => this.dishes.splice(this.dishes.indexOf(dish), 1));
       this.toast(dish.name + ' removed from week menu')
     });
   }
@@ -154,7 +143,7 @@ class WeekMenuController {
   //  //cool, because we have an arrow function, 'this' still refers to the class
   //  this._dialog.show(confirm).then(() => {
   //    this._weekMenuService.removeDishId(dish.key).then(() => {
-  //      this.weekMenuDishes.splice(this.weekMenuDishes.indexOf(dish), 1);
+  //      this.dishes.splice(this.dishes.indexOf(dish), 1);
   //      this.toast(dish.name + ' removed');
   //    });
   //  }, () => {
