@@ -34,6 +34,12 @@ class Dish {
     return dish;
   }
 
+  static fromRef(ref) {
+    let dish = new Dish();
+    dish.key = ref.key();
+    return dish;
+  }
+
 }
 
 export default Dish;

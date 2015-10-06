@@ -63,40 +63,16 @@ class DishesService {
     });
   }
 
-
-  static _model(snapshot) {
-    "use strict";
-    let obj = snapshot.val();
-    obj.key = snapshot.key();
-    return obj;
-  }
-
-  getDish(key) {
-    return new Promise((resolve) => {
-      let ref = new Firebase("https://altman.firebaseio.com/dishes/" + key);
-      ref.on("value", (snapshot) => {
-        let dish = DishesService._model(snapshot);
-        this._$timeout(() => {
-          resolve(dish);
-        });
-      });
-    });
-  }
-
-  addDish(name = '_default_') {
+  /**
+   * @returns {Promise}
+   */
+  createDish() {
     return new Promise((resolve) => {
       let dishesRef = new Firebase('https://altman.firebaseio.com/dishes');
       let dishRef = dishesRef.push();
-      dishRef.set({name: name, createdBy: dishesRef.getAuth().uid}, () => {
-        resolve(dishRef.key());
+      dishRef.set({createdBy: dishesRef.getAuth().uid}, () => {
+        resolve(Dish.fromRef(dishRef));
       });
-    });
-  }
-
-  removeDish(dishKey) {
-    return new Promise((resolve) => {
-      let dishRef = new Firebase(`https://altman.firebaseio.com/dishes/${dishKey}`);
-      dishRef.remove(() => resolve());
     });
   }
 
@@ -152,6 +128,40 @@ class DishesService {
         let ingredientRef = new Firebase(`https://altman.firebaseio.com/dishes/${dishKey}/ingredients/${ingredientKey}`);
         ingredientRef.update({name: name, amount: amount, section: section}, () => resolve());
       }
+    });
+  }
+
+
+
+
+
+
+
+
+
+  static _model(snapshot) {
+    "use strict";
+    let obj = snapshot.val();
+    obj.key = snapshot.key();
+    return obj;
+  }
+
+  getDish(key) {
+    return new Promise((resolve) => {
+      let ref = new Firebase("https://altman.firebaseio.com/dishes/" + key);
+      ref.on("value", (snapshot) => {
+        let dish = DishesService._model(snapshot);
+        this._$timeout(() => {
+          resolve(dish);
+        });
+      });
+    });
+  }
+
+  removeDish(dishKey) {
+    return new Promise((resolve) => {
+      let dishRef = new Firebase(`https://altman.firebaseio.com/dishes/${dishKey}`);
+      dishRef.remove(() => resolve());
     });
   }
 

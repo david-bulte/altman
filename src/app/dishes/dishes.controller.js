@@ -10,6 +10,7 @@ class DishesController {
     this._toast = $mdToast;
     this._$location = $location;
     this._$timeout = $timeout;
+
     this.dishes = [];
     //todo
     this.sections = ['groenten & fruit', 'zuivel', 'vlees', 'droge voeding', 'ontbijt', 'diepvries', 'varia'];
@@ -94,12 +95,11 @@ class DishesController {
     }
   }
 
-  setupDish() {
-    this._dishesService.addDish().then((dishKey) => {
-      //todo return dish and add that to dish collection?
-      //also: mark it so that its editMode = true!
-      //or, interesting: will it be added to the dishes collection automatically?
-      this._getDishes();
+  createDish() {
+    this._dishesService.createDish().then((dish) => {
+      this._$timeout(() => {
+        this.dishes.unshift(dish)
+      });
     })
   }
 
