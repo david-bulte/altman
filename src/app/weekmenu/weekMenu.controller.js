@@ -57,33 +57,68 @@ class WeekMenuController {
     });
   }
 
+  updateName(dish) {
+    this._dishesService.updateName(dish.key, dish.name).then(() => {
+      this.toast(dish.name + ' updated')
+    })
+  }
 
+  addIngredient(dish, ingredient) {
+    this._dishesService.addIngredient(dish.key, {name: ingredient.name}).then(() => {
+      this._$timeout(() => {
+        ingredient.key = ingredient.name;
+        dish.ingredients.push({name: undefined, amount: undefined, section: undefined})
+      });
+    });
+  }
 
+  removeIngredient(dish, ingredient) {
+    this._dishesService.removeIngredient(dish.key, ingredient.key).then(() => {
+      this._$timeout(() => {
+        dish.ingredients.splice(dish.ingredients.indexOf(ingredient), 1);
+      });
+    })
+  }
 
+  updateIngredient(dish, ingredient) {
+    if (ingredient.key !== undefined) {
+      this._dishesService.updateIngredient(dish.key, ingredient.key, ingredient).then(() => {
+        //this was an update no need to add something new
+      });
+    }
+    else {
+      this.addIngredient(dish, ingredient);
+    }
+  }
 
-
-
-
-
-
-
-
-
-  setupDish() {
-    this._dishesService.addDish().then((dishKey) => {
-      this._listsService.addDish(this.user.activeFamily, dishKey).then(() => {
-        //todo return dish and add that to dish collection?
-        this._getDishes();
+  createDish() {
+    this._dishesService.createDish().then((dish) => {
+      this._listsService.addDish(this.user.activeFamily, dish.key).then(() => {
+        this._$timeout(() => {
+          this.dishes.unshift(dish)
+        });
       });
     })
   }
 
 
-  updateName(dish) {
-    this._dishesService.updateName(dish.key, dish.name).then(() => {
-      //todo toast
-    })
-  }
+
+
+
+
+
+
+
+
+  //setupDish() {
+  //  this._dishesService.addDish().then((dishKey) => {
+  //    this._listsService.addDish(this.user.activeFamily, dishKey).then(() => {
+  //      //todo return dish and add that to dish collection?
+  //      this._getDishes();
+  //    });
+  //  })
+  //}
+
 
   //toggleStar(dish) {
   //  this._userService.updateStar(this.user.key, dish.key, !dish.starred).then(() => {
@@ -91,35 +126,35 @@ class WeekMenuController {
   //  });
   //}
 
-  removeIngredient(dish, ingredient) {
-    this._dishesService.removeIngredient(dish.key, ingredient.name).then(() => {
-      this._$timeout(() => {
-        let idx = dish.ingredients.indexOf(ingredient);
-        dish.ingredients.splice(idx, 1);
-      });
-    })
-  }
+  //removeIngredient(dish, ingredient) {
+  //  this._dishesService.removeIngredient(dish.key, ingredient.name).then(() => {
+  //    this._$timeout(() => {
+  //      let idx = dish.ingredients.indexOf(ingredient);
+  //      dish.ingredients.splice(idx, 1);
+  //    });
+  //  })
+  //}
 
-  //todo wordt dit ooit rechtstreek opgeroepen?
-  addIngredient(dish, ingredient) {
-    this._dishesService.addIngredient(dish.key, {name: ingredient.name}).then(() => {
-      ingredient._original_ = {name: ingredient.name};
-      this._$timeout(() => dish.ingredients.push({name: undefined, amount: undefined, section: undefined}));
-    });
-  }
+  ////todo wordt dit ooit rechtstreek opgeroepen?
+  //addIngredient(dish, ingredient) {
+  //  this._dishesService.addIngredient(dish.key, {name: ingredient.name}).then(() => {
+  //    ingredient._original_ = {name: ingredient.name};
+  //    this._$timeout(() => dish.ingredients.push({name: undefined, amount: undefined, section: undefined}));
+  //  });
+  //}
 
-  updateIngredient(dish, ingredient) {
-    //todo update/add refactor
-    if (ingredient._original_ !== undefined) {
-      this._dishesService.updateIngredient(dish.key, ingredient._original_.name, ingredient).then(() => {
-        //this was an update no need to add something new
-      });
-      //this._dishesService.updateIngredient(dish, ingredient);
-    }
-    else {
-      this.addIngredient(dish, ingredient);
-    }
-  }
+  //updateIngredient(dish, ingredient) {
+  //  //todo update/add refactor
+  //  if (ingredient._original_ !== undefined) {
+  //    this._dishesService.updateIngredient(dish.key, ingredient._original_.name, ingredient).then(() => {
+  //      //this was an update no need to add something new
+  //    });
+  //    //this._dishesService.updateIngredient(dish, ingredient);
+  //  }
+  //  else {
+  //    this.addIngredient(dish, ingredient);
+  //  }
+  //}
 
   //removeFromWeekMenu(dish) {
   //  //todo confirm dialog
