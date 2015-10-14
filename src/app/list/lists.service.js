@@ -218,7 +218,9 @@ class ListsService {
     let updateDishes = () => {
       return new Promise((resolve) => {
         let dishesRef = new Firebase(`https://altman.firebaseio.com/families/${listKey}/dishes`);
-        dishesRef.push({dish: dishKey, comment: '_default_'}, () => resolve());
+        let dishes = {};
+        dishes[dishKey] = true;
+        dishesRef.update(dishes, () => resolve());
       });
     };
 
@@ -272,14 +274,6 @@ class ListsService {
         .catch((err) => reject(err));
     });
   }
-
-
-
-
-
-
-
-
 
 
   //todo refactor with getFamilies + make it less synchronous
@@ -475,7 +469,7 @@ function _getListKeys(userKey) {
   return new Promise((resolve, reject) => {
     let listsRef = new Firebase(`https://altman.firebaseio.com/users/${userKey}/families`);
     listsRef.once('value', (snapshot) => {
-      if (snapshot != null) {
+      if (snapshot.val() != null) {
         resolve(Object.keys(snapshot.val()));
       }
     });
@@ -499,9 +493,15 @@ function _getDishKeys(listKey) {
   return new Promise((resolve, reject) => {
     let dishesRef = new Firebase(`https://altman.firebaseio.com/families/${listKey}/dishes`);
     dishesRef.once('value', (snapshot) => {
-      if (snapshot != null) {
-        //these are *applied* dishes, meaning they have a signature like {comment : 'blabla', dish : '<dishkey>'}
-        resolve(Object.values(snapshot.val()).map((appliedDish) => appliedDish.dish));
+      var dishKeys = [];
+      var dishes = snapshot.val();
+      if (dishes != null) {
+        for (let dishKey of Object.keys(dishes)) {
+          if (dishes[dishKey] === true) {
+            dishKeys.push(dishKey);
+          }
+        }
+        resolve(dishKeys);
       }
     });
   });

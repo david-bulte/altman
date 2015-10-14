@@ -32,30 +32,11 @@ class WeekMenuController {
   }
 
 //todo cf dishes.controller
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  //todo cf dishes.controller
   isStarred(dish) {
-    return false;
-    //return this.user.starred && this.user.starred[dish.key] === true;
+    return this.user.starred && this.user.starred[dish.key] === true;
   }
 
-  //todo cf dishes.controller
+//todo cf dishes.controller
   toggleStar(dish) {
     let newVal = !this.isStarred(dish);
     this._userService.updateStar(this.user.key, dish.key, newVal).then((newVal) => {
@@ -65,9 +46,28 @@ class WeekMenuController {
 
   //todo cf dishes.controller
   isUsed(dish) {
-    return false;
-    //return this.user.activeFamily !== undefined && dish.usedBy.indexOf(this.user.activeFamily) >= 0;
+    return this.user.activeFamily !== undefined && dish.usedBy.indexOf(this.user.activeFamily) >= 0;
   }
+
+  removeFromWeekMenu(dish) {
+    var listKey = this.user.activeFamily;
+    this._listsService.removeDish(listKey, dish.key).then(() => {
+      this.dishes.splice(dish, 1);
+      this.toast(dish.name + ' removed from week menu')
+    });
+  }
+
+
+
+
+
+
+
+
+
+
+
+
 
   setupDish() {
     this._dishesService.addDish().then((dishKey) => {
@@ -121,14 +121,14 @@ class WeekMenuController {
     }
   }
 
-  removeFromWeekMenu(dish) {
-    //todo confirm dialog
-    var familyKey = this.user.activeFamily;
-    this._listsService.removeDish(familyKey, dish.key).then(() => {
-      this._$timeout(() => this.dishes.splice(this.dishes.indexOf(dish), 1));
-      this.toast(dish.name + ' removed from week menu')
-    });
-  }
+  //removeFromWeekMenu(dish) {
+  //  //todo confirm dialog
+  //  var familyKey = this.user.activeFamily;
+  //  this._listsService.removeDish(familyKey, dish.key).then(() => {
+  //    this._$timeout(() => this.dishes.splice(this.dishes.indexOf(dish), 1));
+  //    this.toast(dish.name + ' removed from week menu')
+  //  });
+  //}
 
   //remove(ev, dish) {
   //  "use strict";
