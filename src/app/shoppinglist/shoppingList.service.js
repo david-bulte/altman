@@ -1,3 +1,5 @@
+import ShoppingList from './shoppingList.js';
+
 class ShoppingListService {
 
   constructor(ListsService) {
@@ -9,63 +11,94 @@ class ShoppingListService {
     this.sections = ['groenten & fruit', 'zuivel', 'vlees', 'droge voeding', 'ontbijt', 'diepvries', 'varia'];
   }
 
-  getShoppingList(familyKey) {
+  /**
+   * Gets or creates shoppingList
+   * @param listKey
+   * @returns {Promise}
+   */
+  getShoppingList(listKey) {
+    var self = this;
+
     return new Promise((resolve) => {
-
-      let shoppingListRef = new Firebase(`https://altman.firebaseio.com/families/${familyKey}/shoppingList`);
-      shoppingListRef.once('value', (snapshot) => {
-        var shoppingList = snapshot.val();
-        if (shoppingList !== null) {
-          console.log('shoppingList', shoppingList);
-          resolve(shoppingList);
-        }
-        else {
-          this._createShoppingList(familyKey).then((shoppingList) => resolve(shoppingList));
-        }
-      });
-
-    });
-  }
-
-  _createShoppingList(familyKey) {
-    return new Promise((resolve) => {
-      this.getSections(familyKey).then((shoppingList) => {
-        let shoppingListRef = new Firebase(`https://altman.firebaseio.com/families/${familyKey}/shoppingList`);
-        shoppingListRef.update(shoppingList, () => {
-          resolve(shoppingList)
+      this._getShoppingList(listKey).then(
+        (shoppingList) => {
+          if (shoppingList !== null) {
+            resolve(shoppingList);
+          }
+          else {
+            return self._createShoppingList();
+          }
         });
+    });
+  }
+
+  /**
+   * get shoppinglist
+   * @param listKey
+   * @returns {Promise}
+   * @private
+   */
+  _getShoppingList(listKey) {
+    return new Promise((resolve, reject) => {
+      let shoppingListRef = new Firebase(`https://altman.firebaseio.com/families/${listKey}/shoppingList`);
+      shoppingListRef.once('value', (snapshot) => {
+        let shoppingList = ShoppingList.fromSnapshot(snapshot);
+        resolve(shoppingList);
       });
     });
   }
 
-  updateShoppingList(shoppingList) {
-    //todo get rid of $$hashkey, cf.http://stackoverflow.com/questions/18826320/what-is-the-hashkey-added-to-my-json-stringify-result
-    shoppingList = JSON.parse(angular.toJson(shoppingList));
-    console.log('updating', shoppingList);
-    return new Promise((resolve) => {
+  /**
+   * create shopping list
+   * @param listKey
+   * @returns {*}
+   * @private
+   */
+  _createShoppingList(listKey) {
+    return this._composeShoppingList(listKey)
+      .then(this._saveShoppingList)
+      .then(() => listKey)
+      .then(this._getShoppingList);
+  }
+
+  /**
+   * saves shopping list
+   * @param shoppingList
+   * @returns {Promise}
+   * @private
+   */
+  _saveShoppingList(shoppingList) {
+    return new Promise((resolve, reject) => {
       let shoppingListRef = new Firebase(`https://altman.firebaseio.com/families/${shoppingList.family}/shoppingList`);
-      shoppingListRef.update(shoppingList, () => resolve(shoppingList));
+      shoppingListRef.update(shoppingList, () => {
+        resolve(ShoppingList.fromRef(shoppingListRef));
+      });
     });
   }
 
-  getSections(familyKey) {
-
+  /**
+   * composes shopping list
+   * @param listKey
+   * @returns {Promise}
+   * @private
+   */
+  _composeShoppingList(listKey) {
     return new Promise((resolve) => {
-      this._listsService.getDishes(familyKey).then((dishes) => {
+      this._listsService.getDishes(listKey).then((dishes) => {
 
-        let shoppingList = {sections : {}, family : familyKey};
+        let shoppingList = {sections: {}, family: listKey};
 
         for (let dish of dishes) {
-          if (dish._dish_.ingredients !== undefined) {
-            for (let key of Object.keys(dish._dish_.ingredients)) {
-              let ingredient = dish._dish_.ingredients[key];
+          if (dish.ingredients !== undefined) {
+            for (let key of Object.keys(dish.ingredients)) {
+              let ingredient = dish.ingredients[key];
               let sectionName = ingredient.section !== undefined ? ingredient.section : '_undefined_';
               let section = shoppingList.sections[sectionName];
               if (section === undefined) {
                 section = {name: sectionName, ingredients: []};
                 shoppingList.sections[sectionName] = section;
               }
-              ingredient.dish = dish._dish_.name;
+              ingredient.dish = dish.name;
               section.ingredients.push(ingredient);
             }
           }
@@ -84,6 +117,23 @@ class ShoppingListService {
       });
     });
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   getIngredients(familyKey) {
     return new Promise((resolve) => {
@@ -111,6 +161,17 @@ class ShoppingListService {
       })
     });
   }
+
+  updateShoppingList(shoppingList) {
+    //todo get rid of $$hashkey, cf.http://stackoverflow.com/questions/18826320/what-is-the-hashkey-added-to-my-json-stringify-result
+    shoppingList = JSON.parse(angular.toJson(shoppingList));
+    console.log('updating', shoppingList);
+    return new Promise((resolve) => {
+      let shoppingListRef = new Firebase(`https://altman.firebaseio.com/families/${shoppingList.family}/shoppingList`);
+      shoppingListRef.update(shoppingList, () => resolve(shoppingList));
+    });
+  }
+
 
   joinIngredients(leftIngredient, rightIngredient, amount) {
     "use strict";

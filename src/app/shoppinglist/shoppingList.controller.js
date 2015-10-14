@@ -12,31 +12,36 @@ class ShoppingListController {
   }
 
   _init() {
-    this._userService.getCurrentUser().then((user) => {
-      this.user = user;
-      this._shoppingListService.getShoppingList(user.activeFamily).then((shoppingList) => {
-        this._$timeout(() => {
-          this._model(shoppingList);
-          this.shoppingList = shoppingList;
-          this.sections = Object.values(shoppingList.sections);
-        });
-      });
-      //this._getSections();
-    });
+    this._userService.getCurrentUser()
+      .then(user => this.user = user)
+      .then(this._getShoppingList.bind(this));
   }
 
-  _model(shoppingList) {
-    console.log('>>> before', shoppingList);
-    for (let section of Object.values(shoppingList.sections)) {
-      if (section.ingredients === undefined) {
-        section.ingredients = [];
-      }
-      for (let ingredient of section.ingredients) {
-        ingredient._original_ = ingredient;
-      }
-    }
-    console.log('>>> after', shoppingList);
+  _getShoppingList() {
+      this._shoppingListService.getShoppingList(this.user.activeFamily).then((shoppingList) => {
+        console.log(shoppingList);
+        console.log(shoppingList);
+        console.log(shoppingList);
+        //this._$timeout(() => {
+        //  //this._model(shoppingList);
+        //  this.shoppingList = shoppingList;
+        //  this.sections = Object.values(shoppingList.sections);
+        //});
+      });
   }
+
+  //_model(shoppingList) {
+  //  console.log('>>> before', shoppingList);
+  //  for (let section of Object.values(shoppingList.sections)) {
+  //    if (section.ingredients === undefined) {
+  //      section.ingredients = [];
+  //    }
+  //    for (let ingredient of section.ingredients) {
+  //      ingredient._original_ = ingredient;
+  //    }
+  //  }
+  //  console.log('>>> after', shoppingList);
+  //}
 
   //todo ???
   _unmodel(shoppingList) {
