@@ -26,7 +26,9 @@ class ShoppingListService {
             resolve(shoppingList);
           }
           else {
-            return self._createShoppingList();
+            self._createShoppingList(listKey).then((shoppingList) => {
+              resolve(shoppingList);
+            });
           }
         });
     });
@@ -99,6 +101,8 @@ class ShoppingListService {
                 shoppingList.sections[sectionName] = section;
               }
               ingredient.dish = dish.name;
+              //todo better create json iso array!!!
+              //where key = dishKey + ingredientKey
               section.ingredients.push(ingredient);
             }
           }
@@ -118,6 +122,13 @@ class ShoppingListService {
     });
   }
 
+  updateIngredient(listKey, sectionKey, ingredientKey, ingredient) {
+    return new Promise((resolve) => {
+      //let ingredientRef = new Firebase(`https://altman.firebaseio.com/families/${listKey}/shoppingList/sections/${sectionKey}/ingredients/${ingredientKey}`);
+      let ingredientRef = new Firebase(`https://altman.firebaseio.com/families/${listKey}/shoppingList/sections/${sectionKey}/ingredients/0`);
+      ingredientRef.update(ingredient, () => resolve(ingredient));
+    });
+  }
 
 
 

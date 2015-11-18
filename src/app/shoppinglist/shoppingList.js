@@ -5,7 +5,7 @@ class ShoppingList {
     this.key;
     this.name;
     this.usedBy = [];
-    this.ingredients = [];
+    //this.ingredients = [];
   }
 
   static fromSnapshot(snapshot) {
@@ -18,16 +18,33 @@ class ShoppingList {
     shoppingList._firebaseo_ = snapshot.val();
     shoppingList.key = snapshot.key();
     shoppingList.name = shoppingList._firebaseo_.name;
-    shoppingList.sections = shoppingList._firebaseo_.sections;
+    //shoppingList.sections = shoppingList._firebaseo_.sections;
+    shoppingList.sections = {};
 
     var sections = shoppingList._firebaseo_.sections;
     if (sections) {
       for (let section of Object.values(sections)) {
-        if (section.ingredients === undefined) {
-          section.ingredients = [];
+        let copy = shoppingList.sections[section.name];
+        if (copy === undefined) {
+          copy = {name: section.name, ingredients: []};
+          shoppingList.sections[section.name] = copy;
         }
-        for (let ingredient of section.ingredients) {
-          ingredient._firebaseo_ = ingredient;
+        //if (section.ingredients === undefined) {
+        //  section.ingredients = [];
+        //}
+        if (section.ingredients) {
+          //todo index, key ingredient???
+          for (let ingredient of section.ingredients) {
+            copy.ingredients.push({
+              amount: ingredient.amount,
+              dish: ingredient.dish,
+              key: ingredient.key,
+              name: ingredient.name,
+              switched: ingredient.switched,
+              section: ingredient.section,
+              _firebaseo_: ingredient
+            });
+          }
         }
       }
     }

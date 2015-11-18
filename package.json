@@ -1,7 +1,9 @@
 {
   "name": "april",
   "version": "0.0.0",
-  "dependencies": {},
+  "dependencies": {
+    "wrench": "^1.5.8"
+  },
   "scripts": {
     "test": "gulp test"
   },

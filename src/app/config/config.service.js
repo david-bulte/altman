@@ -4,6 +4,9 @@
 
 let _config = new WeakMap();
 
+const DEFAULT_SECTIONS = ['groenten & fruit', 'zuivel', 'vlees', 'droge voeding', 'ontbijt', 'diepvries', 'varia'];
+
+
 class ConfigService {
 
   constructor($firebaseObject) {
@@ -22,8 +25,8 @@ class ConfigService {
       _config.get(self).$loaded()
         .then((config) => {
           resolve({
-            sections : config.sections ? Array.from(config.sections) : [],
-            tags : config.tags ? Array.from(config.tags) : []
+            sections: config.sections ? Array.from(config.sections) : [],
+            tags: config.tags ? Array.from(config.tags) : []
           });
         })
         .catch(reject);
@@ -42,6 +45,16 @@ class ConfigService {
     let config = _config.get(this);
     config.tags = tags;
     config.$save();
+  }
+
+  getSections() {
+    return new Promise((resolve) => {
+      let sectionsRef = new Firebase(`https://altman.firebaseio.com/configs/david_bulte/sections`);
+      sectionsRef.once('value', (snapshot) => {
+        var sections = snapshot.val();
+        resolve((sections && sections.length > 0) ? sections : DEFAULT_SECTIONS);
+      });
+    });
   }
 
 }

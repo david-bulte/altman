@@ -5,6 +5,7 @@
       <any ng-switch="ctrl.canEdit">
         <md-input-container flex="60" md-no-float ng-switch-when="true">
           <input placeholder="dish name"
+                 flex="auto"
                  ng-model="ctrl.dish.name"
                  ng-model-options="{updateOn: 'blur'}"
                  ng-change="ctrl.updateName({dish : ctrl.dish})">
@@ -16,85 +17,73 @@
     <!--&lt;!&ndash;todo polish datepicker&ndash;&gt;-->
     <!--&lt;!&ndash;where to put date? -> we need a new entity!&ndash;&gt;-->
     <!--<md-input-container flex="30" md-no-float>-->
-      <!--<input placeholder="date"-->
-             <!--type="date"-->
-             <!--ng-model="ctrl.dish.date">-->
-      <!--&lt;!&ndash;ng-change="ctrl.updateDate({dish : ctrl.dish})">&ndash;&gt;-->
+    <!--<input placeholder="date"-->
+    <!--type="date"-->
+    <!--ng-model="ctrl.dish.date">-->
+    <!--&lt;!&ndash;ng-change="ctrl.updateDate({dish : ctrl.dish})">&ndash;&gt;-->
     <!--</md-input-container>-->
 
-    key = {{ctrl.dish.key}}
     <!--todo-->
     <span ng-show="!ctrl.hideStar && ctrl.starred">(starred)</span>
 
-    <md-button class="md-icon-button" aria-label="More" ng-click="ctrl.compactMode = !ctrl.compactMode" ng-show="!ctrl.hideCompact">
+    <md-button class="md-icon-button" aria-label="More" ng-click="ctrl.compactMode = !ctrl.compactMode"
+               ng-show="!ctrl.hideCompact">
       <md-icon md-svg-icon="assets/images/icons/ic_expand_more_black_18px.svg" ng-show="ctrl.compactMode"></md-icon>
       <md-icon md-svg-icon="assets/images/icons/ic_expand_less_black_18px.svg" ng-show="!ctrl.compactMode"></md-icon>
     </md-button>
 
     <md-list ng-show="!ctrl.compactMode">
       <md-subheader class="md-no-sticky">ingredients</md-subheader>
-      <md-list-item ng-repeat="ingredient in ctrl.dish.ingredients">
-        <div flex layout="row">
-
-          <any ng-switch="ctrl.editMode">
-            <md-list-item ng-switch-when="true">
-              <md-checkbox ng-model="ctrl.selected[ingredient.name]"
-                           ng-change="ctrl.selectIngredient(ctrl.dish, ingredient)">
-              </md-checkbox>
-              <md-input-container flex="60" md-no-float>
-                <input placeholder="+ add ingredient" ng-model="ingredient.name"
-                       ng-change="ctrl.updateIngredient({dish : ctrl.dish, ingredient : ingredient})"
-                       ng-model-options="{updateOn: 'blur'}">
-              </md-input-container>
-              <md-input-container flex="20" md-no-float>
-                <input placeholder="amount" ng-model="ingredient.amount"
-                       ng-change="ctrl.updateIngredient({dish : ctrl.dish, ingredient : ingredient})"
-                       ng-model-options="{updateOn: 'blur'}">
-              </md-input-container>
-              <md-select flex="20" placeholder="section"
-                         ng-model="ingredient.section"
-                         ng-show="!ctrl.hideSections"
-                         ng-change="ctrl.updateIngredient({dish : ctrl.dish, ingredient : ingredient})">
-                <md-option ng-repeat="section in ctrl.sections" value="{{section}}">{{section}}</md-option>
-              </md-select>
-            </md-list-item>
-
-            <!--todo-->
-            <!--<md-list-item ng-switch-when="false" ng-click="ctrl.ingredientClicked()" ng-class="{ingredient-clicked : ingredient.clicked}">-->
-            <!--<md-list-item ng-switch-when="false">-->
-              <!--{{ingredient.name}} | {{ingredient.amount}} <span ng-show="!ctrl.hideSections">| {{ingredient.section}}</span>-->
-            <!--</md-list-item>-->
-            <md-list-item ng-switch-when="false">
-              <md-switch class="md-primary" md-no-ink aria-label="Switch Bought"
-                         ng-class="{'switched' : ingredient.switched}"
-                         ng-model="ingredient.switched"
-                         ng-show="ctrl.showSwitch"
-                         ng-change="ctrl.switchIngredient({dish : ctrl.dish, ingredient : ingredient})">
-                <span>
-                  {{ingredient.name}} | {{ingredient.amount}} <span ng-show="!ctrl.hideSections">| {{ingredient.section}}</span>
-                </span>
-              </md-switch>
-              <span ng-show="!ctrl.showSwitch">
-                {{ingredient.name}} | {{ingredient.amount}} <span ng-show="!ctrl.hideSections">| {{ingredient.section}}</span>
-              </span>
-            </md-list-item>
-          </any>
-
-        </div>
+      <md-list-item ng-repeat="ingredient in ctrl.dish.ingredients"
+                    ng-class="{'selected' : ingredient == ctrl.selected}"
+                    ng-click="ctrl.selectIngredient(ingredient)">
+        <span class="selector">&nbsp;</span>
+        <md-input-container md-no-float>
+          <input placeholder="+ add ingredient"
+                 ng-model="ingredient.name"
+                 ng-disabled="!ctrl.canEdit"
+                 ng-change="ctrl.updateIngredient({dish : ctrl.dish, ingredient : ingredient})"
+                 ng-model-options="{updateOn: 'blur'}">
+        </md-input-container>
+        <md-input-container md-no-float>
+          <input placeholder="amount"
+                 ng-model="ingredient.amount"
+                 ng-disabled="!ctrl.canEdit"
+                 ng-change="ctrl.updateIngredient({dish : ctrl.dish, ingredient : ingredient})"
+                 ng-model-options="{updateOn: 'blur'}">
+        </md-input-container>
+        <md-select placeholder="section"
+                   style="margin-top:-7px"
+                   ng-disabled="!ctrl.canEdit"
+                   ng-model="ingredient.section"
+                   ng-show="!ctrl.hideSections"
+                   ng-change="ctrl.updateIngredient({dish : ctrl.dish, ingredient : ingredient})">
+          <md-option ng-repeat="section in ctrl.sections" value="{{section}}">{{section}}</md-option>
+        </md-select>
+        <md-button class="md-icon-button md-accent"
+                   aria-label="Remove"
+                   ng-show="ingredient == ctrl.selected && ctrl.canDelete"
+                   ng-click="ctrl.removeIngredient({dish: ctrl.dish, ingredient : ingredient})">
+          <md-icon
+            style="margin-top:-20px"
+            md-svg-icon="assets/images/icons/ic_remove_circle_outline_black_18px.svg"></md-icon>
+        </md-button>
       </md-list-item>
-
     </md-list>
 
   </md-card-content>
 
   <div class="md-actions" layout="row" layout-align="end center" ng-show="!ctrl.compactMode">
-    <md-button ng-show="ctrl.canEdit && ctrl.editMode" ng-click="ctrl.toggleEditMode()">Stop Edit</md-button>
-    <md-button ng-show="ctrl.canEdit && !ctrl.editMode" ng-click="ctrl.toggleEditMode()">Edit</md-button>
     <md-button ng-show="!ctrl.hideStar && !ctrl.starred" ng-click="ctrl.toggleStar({dish : ctrl.dish})">Star</md-button>
-    <md-button ng-show="!ctrl.hideStar && ctrl.starred" ng-click="ctrl.toggleStar({dish : ctrl.dish})">Unstar</md-button>
+    <md-button ng-show="!ctrl.hideStar && ctrl.starred" ng-click="ctrl.toggleStar({dish : ctrl.dish})">Unstar
+    </md-button>
     <md-button ng-show="ctrl.canRemoveIngredient" ng-click="ctrl.removeIngredients()">Remove Ingredients</md-button>
-    <md-button ng-show="!ctrl.hideAddRemoveWeekMenu && !ctrl.used" ng-click="ctrl.addToWeekMenu({dish : ctrl.dish})">Add to weekmenu</md-button>
-    <md-button ng-show="!ctrl.hideAddRemoveWeekMenu && ctrl.used" ng-click="ctrl.removeFromWeekMenu({dish : ctrl.dish})">Remove from weekmenu</md-button>
+    <md-button ng-show="!ctrl.hideAddRemoveWeekMenu && !ctrl.used" ng-click="ctrl.addToWeekMenu({dish : ctrl.dish})">Add
+      to weekmenu
+    </md-button>
+    <md-button ng-show="!ctrl.hideAddRemoveWeekMenu && ctrl.used"
+               ng-click="ctrl.removeFromWeekMenu({dish : ctrl.dish})">Remove from weekmenu
+    </md-button>
     <md-button ng-show="ctrl.canDelete" ng-click="ctrl.removeDish({dish : dish})">Remove</md-button>
   </div>
 

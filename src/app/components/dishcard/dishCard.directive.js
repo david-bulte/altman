@@ -46,38 +46,16 @@ export default DishCardDirective;
 
 class DishCardController {
 
-  constructor($scope) {
-    'ngInject';
-
-    this.selected = {};
+  constructor() {
     this.canEdit = this.canEdit !== undefined && this.canEdit;
-    this.editMode = this.editMode !== undefined && this.editMode;
-    this.canRemoveIngredient = false;
-  }
-
-  selectIngredient(dish, ingredient) {
-    let selected = Object.values(this.selected).filter((selected) => selected === true);
-    this.canRemoveIngredient = selected.length > 0;
-  }
-
-  removeIngredients(dish) {
-    for (let ingredient of this.dish.ingredients) {
-      if (this.selected[ingredient.name] === true) {
-        this.removeIngredient({dish: this.dish, ingredient: ingredient});
-      }
-    }
-  }
-
-  toggleEditMode() {
-    this.editMode = !this.editMode;
-    if (this.editMode) {
+    //this.editMode = this.editMode !== undefined && this.editMode;
+    if (this.canEdit) {
       this.dish.ingredients.push({name: undefined, amount: undefined, section: undefined});
     }
-    else {
-      _.remove(this.dish.ingredients, function(ingredient) {
-        return ingredient.key === undefined;
-      });
-    }
+  }
+
+  selectIngredient(ingredient) {
+    this.selected = ingredient;
   }
 
 }

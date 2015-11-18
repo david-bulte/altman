@@ -24,6 +24,7 @@ import WeekMenuService from './weekmenu/weekMenu.service.js';
 
 import DishCardDirective from './components/dishcard/dishCard.directive.js';
 import ListCardDirective from './components/listcard/listCard.directive.js';
+import SectionCardDirective from './components/section/sectionCard.directive.js';
 import SidebarDirective from './components/sidebar/sidebar.directive.js';
 import ToolbarDirective from './components/toolbar/toolbar.directive.js';
 
@@ -60,4 +61,5 @@ angular.module('altman', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize', 'ng
   .directive('dishCard', () => new DishCardDirective()) //register directive classes as factories
   .directive('listCard', () => new ListCardDirective())
   .directive('toolbar', () => new ToolbarDirective())
+  .directive('sectionCard', () => new SectionCardDirective())
   .directive('sidebar', () => new SidebarDirective());

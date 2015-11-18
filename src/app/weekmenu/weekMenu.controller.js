@@ -1,8 +1,9 @@
 class WeekMenuController {
 
-  constructor(DishesService, UserService, ListsService, $mdDialog, $mdToast, $location, $timeout) {
+  constructor(ConfigService, DishesService, UserService, ListsService, $mdDialog, $mdToast, $location, $timeout) {
     'ngInject';
 
+    this._configService = ConfigService;
     this._dishesService = DishesService;
     this._userService = UserService;
     this._listsService = ListsService;
@@ -10,18 +11,18 @@ class WeekMenuController {
     this._toast = $mdToast;
     this._$location = $location;
     this._$timeout = $timeout;
-    //todo
-    this.sections = ['groenten & fruit', 'zuivel', 'vlees', 'droge voeding', 'ontbijt', 'diepvries', 'varia'];
-
     this.isOpen = false;
 
-    this._init();
-  }
-
-  _init() {
     this._userService.getCurrentUser()
       .then(user => this.user = user)
+      .then(this._getSections.bind(this))
       .then(this._getDishes.bind(this));
+  }
+
+  _getSections() {
+    this._configService.getSections(this.user.activeFamily).then((sections) => {
+      this._$timeout(this.sections = sections);
+    });
   }
 
   _getDishes() {

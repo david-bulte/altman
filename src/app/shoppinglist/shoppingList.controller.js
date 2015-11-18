@@ -19,67 +19,66 @@ class ShoppingListController {
 
   _getShoppingList() {
       this._shoppingListService.getShoppingList(this.user.activeFamily).then((shoppingList) => {
-        console.log(shoppingList);
-        console.log(shoppingList);
-        console.log(shoppingList);
-        //this._$timeout(() => {
-        //  //this._model(shoppingList);
-        //  this.shoppingList = shoppingList;
-        //  this.sections = Object.values(shoppingList.sections);
-        //});
+        this._$timeout(() => {
+          //this._model(shoppingList);
+          this.shoppingList = shoppingList;
+          console.log('shoppingList', shoppingList);
+          this.sections = Object.values(shoppingList.sections);
+        });
       });
   }
 
-  //_model(shoppingList) {
-  //  console.log('>>> before', shoppingList);
+  switchIngredient(section, ingredient) {
+    console.log(section);
+    console.log(ingredient);
+    //let copy = this._unmodel(angular.copy(this.shoppingList));
+    this._shoppingListService.updateIngredient(this.user.activeFamily, section.name, ingredient.key, {switched : ingredient.switched}).then((ingredient) => {
+      //todo toast
+    });
+  }
+
+  removeIngredient(section, ingredient) {
+    //todo
+    //section.ingredients.splice(section.ingredients.indexOf(ingredient), 1);
+    //let copy = this._unmodel(angular.copy(this.shoppingList));
+    //this._shoppingListService.updateShoppingList(copy).then((shoppingList) => {
+    //});
+  }
+
+  addIngredient(section, ingredient) {
+    //todo
+  }
+
+  updateIngredient(section, ingredient) {
+  //  let isCreate = ingredient._original_ === undefined;
+  //  let copy = this._unmodel(angular.copy(this.shoppingList));
+  //  this._shoppingListService.updateShoppingList(copy).then((shoppingList) => {
+  //    if (isCreate) {
+  //      ingredient._original_ = ingredient;
+  //      this._$timeout(() => section.ingredients.push({name: undefined, amount: undefined, section: undefined}));
+  //    }
+  //  });
+  //
+  }
+
+  //update-ingredient="shoppingListCtrl.updateIngredient(section, ingredient)"
+  //  switch-ingredient="shoppingListCtrl.switchIngredient(section, ingredient)"
+  //ng-repeat="section in shoppingListCtrl.sections"></section-card>
+
+  //todo ???
+  //_unmodel(shoppingList) {
   //  for (let section of Object.values(shoppingList.sections)) {
   //    if (section.ingredients === undefined) {
   //      section.ingredients = [];
   //    }
   //    for (let ingredient of section.ingredients) {
-  //      ingredient._original_ = ingredient;
+  //      delete ingredient._original_;
   //    }
   //  }
-  //  console.log('>>> after', shoppingList);
+  //  return shoppingList;
   //}
 
-  //todo ???
-  _unmodel(shoppingList) {
-    for (let section of Object.values(shoppingList.sections)) {
-      if (section.ingredients === undefined) {
-        section.ingredients = [];
-      }
-      for (let ingredient of section.ingredients) {
-        delete ingredient._original_;
-      }
-    }
-    return shoppingList;
-  }
 
-  updateIngredient(section, ingredient) {
-    let isCreate = ingredient._original_ === undefined;
-    let copy = this._unmodel(angular.copy(this.shoppingList));
-    this._shoppingListService.updateShoppingList(copy).then((shoppingList) => {
-      if (isCreate) {
-        ingredient._original_ = ingredient;
-        this._$timeout(() => section.ingredients.push({name: undefined, amount: undefined, section: undefined}));
-      }
-    });
-
-  }
-
-  removeIngredient(section, ingredient) {
-    section.ingredients.splice(section.ingredients.indexOf(ingredient), 1);
-    let copy = this._unmodel(angular.copy(this.shoppingList));
-    this._shoppingListService.updateShoppingList(copy).then((shoppingList) => {
-    });
-  }
-
-  switchIngredient(section, ingredient) {
-    let copy = this._unmodel(angular.copy(this.shoppingList));
-    this._shoppingListService.updateShoppingList(copy).then((shoppingList) => {
-    });
-  }
 
 }
 

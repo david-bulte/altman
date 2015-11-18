@@ -44,7 +44,7 @@ function routerConfig ($routeProvider) {
     .when('/shoppinglist', {
       templateUrl: 'app/shoppinglist/shoppinglist.html',
       controller: 'ShoppingListController',
-      controllerAs: 'shoppingList'
+      controllerAs: 'shoppingListCtrl'
     })
     .otherwise({
       redirectTo: '/'

@@ -139,6 +139,19 @@ class DishesService {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
   static _model(snapshot) {
     "use strict";
     let obj = snapshot.val();

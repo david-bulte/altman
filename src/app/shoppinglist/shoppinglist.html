@@ -6,34 +6,12 @@
 
   <md-content>
 
-    <dish-card dish="section"
-               hide-compact="true"
-               hide-star="true"
-               hide-sections="true"
-               hide-add-remove-week-menu="true"
-               remove-ingredient="shoppingList.removeIngredient(dish, ingredient)"
-               add-ingredient="shoppingList.addIngredient(dish, ingredient)"
-               update-ingredient="shoppingList.updateIngredient(dish, ingredient)"
-               show-switch="true"
-               switch-ingredient="shoppingList.switchIngredient(dish, ingredient)"
-               can-edit="true"
-               can-delete="false"
-               ng-repeat="section in shoppingList.sections"></dish-card>
-
-    <!--<md-card ng-repeat="section in shoppingList.sections">-->
-    <!--<md-card-content>-->
-    <!--<h2 class="md-title">{{section.name}}</h2>-->
-
-    <!--<ul>-->
-    <!--<li ng-repeat="ingredient in section.ingredients">-->
-    <!--<span ng-show="ingredient.amount !== '_unknown_'">{{ingredient.amount}}</span>-->
-    <!--<span ng-show="ingredient.name !== '_unknown_'">{{ingredient.name}}</span>-->
-    <!--</li>-->
-    <!--</ul>-->
-    <!--</md-list>-->
-
-
-    <!--</md-card-content>-->
+    <section-card section="section"
+               remove-ingredient="shoppingListCtrl.removeIngredient(section, ingredient)"
+               add-ingredient="shoppingListCtrl.addIngredient(section, ingredient)"
+               update-ingredient="shoppingListCtrl.updateIngredient(section, ingredient)"
+               switch-ingredient="shoppingListCtrl.switchIngredient(section, ingredient)"
+               ng-repeat="section in shoppingListCtrl.sections"></section-card>
 
     </md-card>
   </md-content>
