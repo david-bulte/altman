@@ -7,7 +7,7 @@
 
 @import url(http://fonts.googleapis.com/css?family=Roboto+Slab:400,700|Roboto:400,700,700italic,400italic);
 
-$selected-color: green;
+$selected-color: #FD5252;
 
 html {
   font-family: 'Roboto Slab', serif;
@@ -86,6 +86,11 @@ md-list-item.selected .selector {
   height: 45px;
 }
 
+section {
+  border-radius: 4px;
+  margin-bottom: 16px;
+  border: 1px lightgray solid;
+}
 /**
  *  Do not remove this comments bellow. It's the markers used by gulp-inject to inject
  *  all your sass files automatically
