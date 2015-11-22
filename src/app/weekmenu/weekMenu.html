@@ -4,24 +4,29 @@
 
   <toolbar toolbar-title="'Week Menu'"></toolbar>
 
-  <md-content style="margin: 16px; max-width: 864px; box-sizing: border-box;">
+  <md-content style="margin: 16px; box-sizing: border-box;">
 
-    <!--todo canEdit may depend on access rights (can't edit if borrowed from another family-->
-    <dish-card dish="dish"
-               sections="weekMenuCtrl.sections"
-               update-name="weekMenuCtrl.updateName(dish)"
-               toggle-star="weekMenuCtrl.toggleStar(dish)"
-               remove-ingredient="weekMenuCtrl.removeIngredient(dish, ingredient)"
-               add-ingredient="weekMenuCtrl.addIngredient(dish, ingredient)"
-               update-ingredient="weekMenuCtrl.updateIngredient(dish, ingredient)"
-               remove-from-week-menu="weekMenuCtrl.removeFromWeekMenu(dish)"
-               can-edit="true"
-               can-delete="false"
-               starred="weekMenuCtrl.isStarred(dish)"
-               used="weekMenuCtrl.isUsed(dish)"
-               ng-show="dish.filteredOut != true"
-               ng-repeat="dish in weekMenuCtrl.dishes"></dish-card>
 
+    <div ng-repeat="dish in weekMenuCtrl.dishes"
+         style="width:30%; display: inline-block; vertical-align: top; margin-left:5px;margin-right:5px">
+
+      <!--todo canEdit may depend on access rights (can't edit if borrowed from another family-->
+      <dish-card dish="dish"
+                 sections="weekMenuCtrl.sections"
+                 update-name="weekMenuCtrl.updateName(dish)"
+                 toggle-star="weekMenuCtrl.toggleStar(dish)"
+                 remove-ingredient="weekMenuCtrl.removeIngredient(dish, ingredient)"
+                 add-ingredient="weekMenuCtrl.addIngredient(dish, ingredient)"
+                 update-ingredient="weekMenuCtrl.updateIngredient(dish, ingredient)"
+                 remove-from-week-menu="weekMenuCtrl.removeFromWeekMenu(dish)"
+                 can-edit="true"
+                 can-delete="false"
+                 starred="weekMenuCtrl.isStarred(dish)"
+                 used="weekMenuCtrl.isUsed(dish)"
+                 ng-show="dish.filteredOut != true"></dish-card>
+
+
+    </div>
   </md-content>
 </div>
 
