@@ -27,9 +27,14 @@ class WeekMenuController {
 
   _getDishes() {
     //todo refactor : get lists (specify listKey) + specify what to fetch: dishes
-    this._listsService.getDishes(this.user.activeFamily).then((dishes) => {
-      this._$timeout(this.dishes = dishes);
+    this._listsService.getLists(undefined, this.user.activeFamily, {dishes : true}).then((lists) => {
+      if (lists && lists.length > 0) {
+        this._$timeout(this.dishes = lists[0].dishes);
+      }
     });
+    //this._listsService.getDishes(this.user.activeFamily).then((dishes) => {
+    //  this._$timeout(this.dishes = dishes);
+    //});
   }
 
 //todo cf dishes.controller

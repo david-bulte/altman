@@ -13,13 +13,19 @@ class ListsService {
     this._$timeout = $timeout;
   }
 
+  //getLists(user, listKey, spec) {
+  //  return new Promise((resolve, reject) => {
+  //
+  //  });
+  //}
+
   /**
    * todo pass specification with what to eagerly fetch
    * @param user
    * @returns {Promise}
    * @param listKey
    */
-  getLists(user, listKey) {
+  getLists(user, listKey, spec) {
     return new Promise((resolve, reject) => {
 
       let getListKeys = listKey
@@ -33,6 +39,10 @@ class ListsService {
         })
         .then((lists) => {
           return Promise.all(lists.map(_loadInvites.bind(this)));
+        })
+        .then((lists) => {
+          //todo spec
+          return Promise.all(lists.map(_loadDishes.bind(this)));
         })
         .then((lists) => {
           if (user) {
@@ -562,6 +572,19 @@ function _loadInvites(list) {
         .then(resolve(list))
     }
   });
+}
+
+function _loadDishes(list) {
+
+  return new Promise((resolve, reject) => {
+    _getDishKeys(list.key)
+      .then(_getDishes)
+      .then((dishes) => {
+        list.dishes = list.dishes.concat(dishes);
+        resolve(list);
+      });
+  });
+
 }
 
 function _setActive(list, user) {

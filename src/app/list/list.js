@@ -10,6 +10,7 @@ class List {
     this.invites = [];
     this.members = [];
     this.sections = [];
+    this.dishes = [];
   }
 
   static fromSnapshot(snapshot) {
