@@ -86,7 +86,9 @@ class ShoppingListService {
    */
   _composeShoppingList(listKey) {
     return new Promise((resolve) => {
-      this._listsService.getDishes(listKey).then((dishes) => {
+      this._listsService.getListsByListKey(listKey).then((lists) => {
+
+        let dishes = lists && lists.length > 0 ? lists[0].dishes : [];
 
         let shoppingList = {sections: {}, family: listKey};
 

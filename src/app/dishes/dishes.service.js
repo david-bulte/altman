@@ -17,7 +17,7 @@ class DishesService {
 
   _getMembers(listKey) {
     return new Promise((resolve, reject) => {
-      this._listsService.getLists(null, listKey).then((lists) => {
+      this._listsService.getListsByListKey(listKey).then((lists) => {
         resolve(lists.length > 0 ? lists[0].members : []);
       });
     });

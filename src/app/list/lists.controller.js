@@ -21,9 +21,13 @@ class ListsController {
   }
 
   _getLists(user) {
-    this._listsService.getLists(user).then((lists) => {
-      this._$timeout(this.lists = lists);
-    });
+    this._listsService.getListsByUser(user, {members: true, invites: true})
+      .then((lists) => {
+        this._$timeout(this.lists = lists);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 
   updateName(list) {
@@ -77,7 +81,6 @@ class ListsController {
       this._getLists(this.user);
     });
   }
-
 
 
   //todo
