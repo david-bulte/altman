@@ -14,17 +14,15 @@ class ListsService {
     }
 
     getListsByUser(user, spec) {
-        return new Promise((resolve, reject) => {
-            _getListKeys(user.key)
-                .then(_getLists)
-                .then((lists) => {
-                    return Promise.all(lists.map((list) => {
-                        return _setActive(list, user);
-                    }));
-                })
-                .then((lists) => resolve(lists))
-                .catch((err) => reject(err));
-        });
+        return _getListKeys(user.key)
+            .then((listKeys) => {
+                return this.getLists(listKeys, spec);
+            })
+            .then((lists) => {
+                return Promise.all(lists.map((list) => {
+                    return _setActive(list, user);
+                }));
+            });
     }
 
     getListsByListKey(listKey, spec) {
