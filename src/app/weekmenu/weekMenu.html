@@ -2,58 +2,54 @@
 
 <div layout="column" flex>
 
-  <toolbar toolbar-title="'Week Menu'"></toolbar>
+    <toolbar toolbar-title="'Week Menu'"></toolbar>
 
-  <md-content style="margin: 16px; box-sizing: border-box;">
+    <md-content style="margin: 16px; box-sizing: border-box;">
 
+        <!--todo responsive-->
+        <div ng-repeat="dish in weekMenuCtrl.dishes"
+             style="width:30%; display: inline-block; vertical-align: top; margin-left:5px;margin-right:5px">
 
-    <!--todo adapt grid if small!!!-->
+            <!--todo remove method-->
 
-    <!--<card-layout cols-sm="1" colls-md="2" colls-gt="3">-->
-      <!-- -->
-    <!--</card-layout>-->
-
-    <div ng-repeat="dish in weekMenuCtrl.dishes"
-         style="width:30%; display: inline-block; vertical-align: top; margin-left:5px;margin-right:5px">
-
-      <!--todo canEdit may depend on access rights (can't edit if borrowed from another family-->
-      <dish-card dish="dish"
-                 sections="weekMenuCtrl.sections"
-                 update-name="weekMenuCtrl.updateName(dish)"
-                 toggle-star="weekMenuCtrl.toggleStar(dish)"
-                 remove-ingredient="weekMenuCtrl.removeIngredient(dish, ingredient)"
-                 add-ingredient="weekMenuCtrl.addIngredient(dish, ingredient)"
-                 update-ingredient="weekMenuCtrl.updateIngredient(dish, ingredient)"
-                 remove-from-week-menu="weekMenuCtrl.removeFromWeekMenu(dish)"
-                 can-edit="true"
-                 can-delete="false"
-                 starred="weekMenuCtrl.isStarred(dish)"
-                 used="weekMenuCtrl.isUsed(dish)"
-                 ng-show="dish.filteredOut != true"></dish-card>
+            <!--todo canEdit may depend on access rights (can't edit if borrowed from another family-->
+            <dish-card dish="dish"
+                       sections="weekMenuCtrl.sections"
+                       update-name="weekMenuCtrl.updateName(dish)"
+                       toggle-star="weekMenuCtrl.toggleStar(dish)"
+                       remove-ingredient="weekMenuCtrl.removeIngredient(dish, ingredient)"
+                       add-ingredient="weekMenuCtrl.addIngredient(dish, ingredient)"
+                       update-ingredient="weekMenuCtrl.updateIngredient(dish, ingredient)"
+                       remove-from-week-menu="weekMenuCtrl.removeFromWeekMenu(dish)"
+                       can-edit="true"
+                       can-delete="false"
+                       starred="weekMenuCtrl.isStarred(dish)"
+                       used="weekMenuCtrl.isUsed(dish)"
+                       ng-show="dish.filteredOut != true"></dish-card>
 
 
-    </div>
-  </md-content>
+        </div>
+    </md-content>
 </div>
 
 <div style="position: fixed; z-index: 30; right: 0; bottom: 0">
-  <md-fab-speed-dial md-open="weekMenuCtrl.isOpen" md-direction="left"
-                     class="md-fling">
-    <md-fab-trigger>
-      <md-button aria-label="menu" class="md-fab md-warn">
-        <md-icon md-svg-src="assets/images/icons/ic_menu_white_24px.svg"></md-icon>
-      </md-button>
-    </md-fab-trigger>
-    <md-fab-actions>
-      <md-button ng-href="#/shoppinglist" aria-label="shopping list" class="md-fab md-raised md-mini">
-        <md-icon md-svg-src="assets/images/icons/ic_shopping_basket_black_24px.svg"></md-icon>
-      </md-button>
-      <md-button ng-href="#/dishes" aria-label="search dish" class="md-fab md-raised md-mini">
-        <md-icon md-svg-src="assets/images/icons/ic_search_black_24px.svg"></md-icon>
-      </md-button>
-      <md-button class="md-fab" aria-label="Setup new Dish" ng-click="weekMenuCtrl.createDish()">
-        <md-icon md-svg-src="assets/images/icons/ic_add_circle_outline_black_24px.svg"></md-icon>
-      </md-button>
-    </md-fab-actions>
-  </md-fab-speed-dial>
+    <md-fab-speed-dial md-open="weekMenuCtrl.isOpen" md-direction="left"
+                       class="md-fling">
+        <md-fab-trigger>
+            <md-button aria-label="menu" class="md-fab md-warn">
+                <md-icon md-svg-src="assets/images/icons/ic_menu_white_24px.svg"></md-icon>
+            </md-button>
+        </md-fab-trigger>
+        <md-fab-actions>
+            <md-button ng-href="#/shoppinglist" aria-label="shopping list" class="md-fab md-raised md-mini">
+                <md-icon md-svg-src="assets/images/icons/ic_shopping_basket_black_24px.svg"></md-icon>
+            </md-button>
+            <md-button ng-href="#/dishes" aria-label="search dish" class="md-fab md-raised md-mini">
+                <md-icon md-svg-src="assets/images/icons/ic_search_black_24px.svg"></md-icon>
+            </md-button>
+            <md-button class="md-fab" aria-label="Setup new Dish" ng-click="weekMenuCtrl.createDish()">
+                <md-icon md-svg-src="assets/images/icons/ic_add_circle_outline_black_24px.svg"></md-icon>
+            </md-button>
+        </md-fab-actions>
+    </md-fab-speed-dial>
 </div>
