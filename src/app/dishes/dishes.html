@@ -4,7 +4,7 @@
 
     <toolbar toolbar-title="'Dishes'" toolbar-filter-enabled="true" toolbar-filter="dishesCtrl.filter(query)"></toolbar>
 
-    <span ng-show="dishesCtrl.dishes.length == 0">loading</span>
+    <md-progress-linear ng-show="!dishesCtrl.dishes" md-mode="indeterminate"></md-progress-linear>
 
     <md-content style="margin: 16px; box-sizing: border-box;">
 

@@ -1,56 +1,41 @@
-<md-card>
-  <md-card-content>
+<section class="demo-container md-whiteframe-z1">
 
-    <h2>
-        {{ctrl.section.name}}
-    </h2>
+    <md-toolbar class="md-primary">
+        <div class="md-toolbar-tools md-primary" layout-align="space-between center" style="background-color: #F6F6F6">
+            <h2 flex="auto" style="color:black">{{ctrl.section.name}}</h2>
+        </div>
+    </md-toolbar>
 
     <md-list>
-      <md-subheader class="md-no-sticky">ingredients</md-subheader>
-      <md-list-item ng-repeat="ingredient in ctrl.section.ingredients">
-        <div flex layout="row">
-
-          <any ng-switch="ctrl.editMode">
-            <md-list-item ng-switch-when="true">
-              <md-checkbox ng-model="ctrl.selected[ingredient.name]"
-                           ng-change="ctrl.selectIngredient(ctrl.section, ingredient)">
-              </md-checkbox>
-              <md-input-container flex="60" md-no-float>
+        <md-subheader class="md-no-sticky">ingredients</md-subheader>
+        <md-list-item ng-repeat="ingredient in ctrl.section.ingredients"
+                      ng-class="{'selected' : ingredient == ctrl.selected}"
+                      ng-click="ctrl.selectIngredient(ingredient)">
+            <div class="selector">&nbsp;</div>
+            <md-input-container flex="auto" md-no-float>
                 <input placeholder="+ add ingredient" ng-model="ingredient.name"
                        ng-change="ctrl.updateIngredient({section : ctrl.section, ingredient : ingredient})"
                        ng-model-options="{updateOn: 'blur'}">
-              </md-input-container>
-              <md-input-container flex="20" md-no-float>
+            </md-input-container>
+            <md-input-container flex="auto" md-no-float>
                 <input placeholder="amount" ng-model="ingredient.amount"
                        ng-change="ctrl.updateIngredient({section : ctrl.section, ingredient : ingredient})"
                        ng-model-options="{updateOn: 'blur'}">
-              </md-input-container>
-            </md-list-item>
-
-            <md-list-item ng-switch-when="false">
-              <md-switch class="md-primary" md-no-ink aria-label="Switch Bought"
-                         ng-class="{'switched' : ingredient.switched}"
-                         ng-model="ingredient.switched"
-                         ng-change="ctrl.switchIngredient({section : ctrl.section, ingredient : ingredient})">
-                <span>
-                  {{ingredient.name}} | {{ingredient.amount}}
-                </span>
-              </md-switch>
-            </md-list-item>
-          </any>
-
-        </div>
-      </md-list-item>
-
+            </md-input-container>
+            <md-switch class="md-primary" md-no-ink aria-label="Switch Bought" style="margin-top:-5px"
+                       ng-class="{'switched' : ingredient.switched}"
+                       ng-model="ingredient.switched"
+                       ng-change="ctrl.switchIngredient({section : ctrl.section, ingredient : ingredient})">
+            </md-switch>
+        </md-list-item>
     </md-list>
 
-  </md-card-content>
+    <div class="md-actions" layout="row" layout-align="end center" style="height: 40px">
+        <md-button class="md-accent"
+                   ng-show="ctrl.selected"
+                   ng-click="ctrl.removeIngredient({dish: ctrl.section, ingredient : ctrl.selected})">
+            Remove ingredient
+        </md-button>
+    </div>
 
-  <div class="md-actions" layout="row" layout-align="end center" ng-show="!ctrl.compactMode">
-    <md-button ng-show="ctrl.editMode" ng-click="ctrl.toggleEditMode()">Stop Edit</md-button>
-    <md-button ng-show="!ctrl.editMode" ng-click="ctrl.toggleEditMode()">Edit</md-button>
-    <md-button ng-click="ctrl.removeIngredients()">Remove Ingredients</md-button>
-  </div>
-
-
-</md-card>
+</section>

@@ -12,8 +12,6 @@ class DishesController {
         this._$location = $location;
         this._$timeout = $timeout;
 
-        this.dishes = [];
-
         this._userService.getCurrentUser()
             .then(user => this.user = user)
             .then(this._getSections.bind(this))

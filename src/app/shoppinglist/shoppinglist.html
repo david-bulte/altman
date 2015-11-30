@@ -2,18 +2,21 @@
 
 <div layout="column" flex>
 
-  <toolbar toolbar-title="'Shopping List 4'"></toolbar>
+    <toolbar toolbar-title="'Shopping List 4'"></toolbar>
 
-  <md-content>
+    <md-progress-linear ng-show="!shoppingListCtrl.sections" md-mode="indeterminate"></md-progress-linear>
 
-    <section-card section="section"
-               remove-ingredient="shoppingListCtrl.removeIngredient(section, ingredient)"
-               add-ingredient="shoppingListCtrl.addIngredient(section, ingredient)"
-               update-ingredient="shoppingListCtrl.updateIngredient(section, ingredient)"
-               switch-ingredient="shoppingListCtrl.switchIngredient(section, ingredient)"
-               ng-repeat="section in shoppingListCtrl.sections"></section-card>
+    <md-content style="margin: 16px; box-sizing: border-box;">
 
-    </md-card>
-  </md-content>
+        <div ng-repeat="section in shoppingListCtrl.sections"
+             style="width:30%; display: inline-block; vertical-align: top; margin-left:5px;margin-right:5px">
+            <section-card section="section"
+                          remove-ingredient="shoppingListCtrl.removeIngredient(section, ingredient)"
+                          add-ingredient="shoppingListCtrl.addIngredient(section, ingredient)"
+                          update-ingredient="shoppingListCtrl.updateIngredient(section, ingredient)"
+                          switch-ingredient="shoppingListCtrl.switchIngredient(section, ingredient)"></section-card>
+        </div>
+
+    </md-content>
 
 </div>
