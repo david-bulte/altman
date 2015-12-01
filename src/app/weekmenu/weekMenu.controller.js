@@ -8,7 +8,7 @@ class WeekMenuController {
         this._userService = UserService;
         this._listsService = ListsService;
         this._dialog = $mdDialog;
-        this._toast = $mdToast;
+        this._$mdToast = $mdToast;
         this._$location = $location;
         this._$timeout = $timeout;
         this.isOpen = false;
@@ -108,8 +108,8 @@ class WeekMenuController {
 
     toast(content) {
         "use strict";
-        this._toast.show(
-            this._toast.simple()
+        this._$mdToast.show(
+            this._$mdToast.simple()
                 .content(content)
                 .position('bottom left')
                 .hideDelay(3000)

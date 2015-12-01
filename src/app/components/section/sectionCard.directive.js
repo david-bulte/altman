@@ -41,24 +41,4 @@ class SectionCardController {
         this.selected = ingredient;
     }
 
-    //removeIngredients(section) {
-    //    for (let ingredient of this.section.ingredients) {
-    //        if (this.selected[ingredient.name] === true) {
-    //            this.removeIngredient({section: this.section, ingredient: ingredient});
-    //        }
-    //    }
-    //}
-
-    //toggleEditMode() {
-    //  this.editMode = !this.editMode;
-    //  if (this.editMode) {
-    //    this.section.ingredients.push({name: undefined, amount: undefined});
-    //  }
-    //  else {
-    //    _.remove(this.section.ingredients, function(ingredient) {
-    //      return ingredient.key === undefined;
-    //    });
-    //  }
-    //}
-
 }

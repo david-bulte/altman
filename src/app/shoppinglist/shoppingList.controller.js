@@ -1,10 +1,11 @@
 class ShoppingListController {
 
-    constructor(ConfigService, ShoppingListService, UserService, $timeout) {
+    constructor(ConfigService, ShoppingListService, UserService, $mdToast, $timeout) {
         'ngInject';
 
         this._shoppingListService = ShoppingListService;
         this._userService = UserService;
+        this._$mdToast = $mdToast;
         this._$timeout = $timeout;
         this.editMode = false;
 
@@ -23,11 +24,8 @@ class ShoppingListController {
     }
 
     switchIngredient(section, ingredient) {
-        console.log(section);
-        console.log(ingredient);
-        //let copy = this._unmodel(angular.copy(this.shoppingList));
         this._shoppingListService.updateIngredient(this.user.activeFamily, section.name, ingredient.key, {switched: ingredient.switched}).then((ingredient) => {
-            //todo toast
+            this.toast('updated')
         });
     }
 
@@ -55,23 +53,14 @@ class ShoppingListController {
         //
     }
 
-    //update-ingredient="shoppingListCtrl.updateIngredient(section, ingredient)"
-    //  switch-ingredient="shoppingListCtrl.switchIngredient(section, ingredient)"
-    //ng-repeat="section in shoppingListCtrl.sections"></section-card>
-
-    //todo ???
-    //_unmodel(shoppingList) {
-    //  for (let section of Object.values(shoppingList.sections)) {
-    //    if (section.ingredients === undefined) {
-    //      section.ingredients = [];
-    //    }
-    //    for (let ingredient of section.ingredients) {
-    //      delete ingredient._original_;
-    //    }
-    //  }
-    //  return shoppingList;
-    //}
-
+    toast(content) {
+        this._$mdToast.show(
+            this._$mdToast.simple()
+                .content(content)
+                .position('bottom left')
+                .hideDelay(3000)
+        );
+    }
 
 }
 

@@ -112,51 +112,14 @@ class ShoppingListService {
             });
     }
 
-    //_composeShoppingList(listKey) {
-    //    return new Promise((resolve) => {
-    //        this._listsService.getListsByListKey(listKey).then((lists) => {
-    //
-    //            let dishes = lists && lists.length > 0 ? lists[0].dishes : [];
-    //
-    //            let shoppingList = {sections: {}, family: listKey};
-    //
-    //            for (let dish of dishes) {
-    //                if (dish.ingredients !== undefined) {
-    //                    for (let key of Object.keys(dish.ingredients)) {
-    //                        let ingredient = dish.ingredients[key];
-    //                        let sectionName = ingredient.section !== undefined ? ingredient.section : '_undefined_';
-    //                        let section = shoppingList.sections[sectionName];
-    //                        if (section === undefined) {
-    //                            section = {name: sectionName, ingredients: []};
-    //                            shoppingList.sections[sectionName] = section;
-    //                        }
-    //                        ingredient.dish = dish.name;
-    //                        //todo better create json iso array!!!
-    //                        //where key = dishKey + ingredientKey
-    //                        section.ingredients.push(ingredient);
-    //                    }
-    //                }
-    //            }
-    //
-    //            for (let sectionName of this.sections) {
-    //                if (shoppingList.sections[sectionName] === undefined) {
-    //                    shoppingList.sections[sectionName] = {
-    //                        ingredients: [],
-    //                        name: sectionName
-    //                    }
-    //                }
-    //            }
-    //
-    //            resolve(shoppingList);
-    //        });
-    //    });
-    //}
-    //
     updateIngredient(listKey, sectionKey, ingredientKey, ingredient) {
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
+            //todo 0????
             //let ingredientRef = new Firebase(`https://altman.firebaseio.com/families/${listKey}/shoppingList/sections/${sectionKey}/ingredients/${ingredientKey}`);
             let ingredientRef = new Firebase(`https://altman.firebaseio.com/families/${listKey}/shoppingList/sections/${sectionKey}/ingredients/0`);
-            ingredientRef.update(ingredient, () => resolve(ingredient));
+            ingredientRef.update(ingredient, (res) => {
+                resolve(ingredient)
+            });
         });
     }
 
