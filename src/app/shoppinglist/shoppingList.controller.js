@@ -24,33 +24,36 @@ class ShoppingListController {
     }
 
     switchIngredient(section, ingredient) {
-        this._shoppingListService.updateIngredient(this.user.activeFamily, section.name, ingredient.key, {switched: ingredient.switched}).then((ingredient) => {
-            this.toast('updated')
-        });
+        ingredient.switched = true;
+        this._shoppingListService.updateShoppingList(this.shoppingList).then(() => this.toast('updated'));
     }
 
     removeIngredient(section, ingredient) {
-        //todo
-        //section.ingredients.splice(section.ingredients.indexOf(ingredient), 1);
-        //let copy = this._unmodel(angular.copy(this.shoppingList));
-        //this._shoppingListService.updateShoppingList(copy).then((shoppingList) => {
-        //});
+        section.ingredients.splice(section.ingredients.indexOf(ingredient), 1);
+        this._shoppingListService.updateShoppingList(this.shoppingList).then(shoppingList => this.toast('deleted'));
     }
 
     addIngredient(section, ingredient) {
-        //todo
+        this._shoppingListService.updateShoppingList(this.shoppingList).then(() => {
+            this._$timeout(() => {
+                ingredient.key = ingredient.name;
+                section.ingredients.push({name: undefined, amount: undefined, section: undefined})
+            });
+            this.toast('added')
+        });
     }
 
-    updateIngredient(section, ingredient) {
-        //  let isCreate = ingredient._original_ === undefined;
-        //  let copy = this._unmodel(angular.copy(this.shoppingList));
-        //  this._shoppingListService.updateShoppingList(copy).then((shoppingList) => {
-        //    if (isCreate) {
-        //      ingredient._original_ = ingredient;
-        //      this._$timeout(() => section.ingredients.push({name: undefined, amount: undefined, section: undefined}));
-        //    }
-        //  });
-        //
+    updateIngredient(dish, ingredient) {
+        this._shoppingListService.updateShoppingList(this.shoppingList).then(() => this.toast('updated'));
+    }
+
+    updateIngredient(dish, ingredient) {
+        if (ingredient.key !== undefined) {
+            this._shoppingListService.updateShoppingList(this.shoppingList).then(() => this.toast('updated'));
+        }
+        else {
+            this.addIngredient(dish, ingredient);
+        }
     }
 
     toast(content) {

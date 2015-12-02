@@ -11,6 +11,7 @@
         <div ng-repeat="section in shoppingListCtrl.sections"
              style="width:30%; display: inline-block; vertical-align: top; margin-left:5px;margin-right:5px">
             <section-card section="section"
+                          can-edit="true"
                           remove-ingredient="shoppingListCtrl.removeIngredient(section, ingredient)"
                           add-ingredient="shoppingListCtrl.addIngredient(section, ingredient)"
                           update-ingredient="shoppingListCtrl.updateIngredient(section, ingredient)"

@@ -13,7 +13,7 @@ class SectionCardDirective {
                 addIngredient: '&',
                 updateIngredient: '&',
                 switchIngredient: '&',
-                editMode: '='
+                canEdit: '='
             },
             controller: SectionCardController,
             controllerAs: 'ctrl',

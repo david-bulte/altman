@@ -216,7 +216,7 @@ class DishesService {
 function _getDishes(userKey) {
     return new Promise((resolve, reject) => {
         let dishesRef = new Firebase('https://altman.firebaseio.com/dishes');
-        dishesRef.orderByChild('createdBy').equalTo(userKey).once('value', (snapshot) => {
+        dishesRef.orderByChild('createdBy').equalTo(userKey).once('value', snapshot => {
             let dishes = [];
             snapshot.forEach(function (data) {
                 dishes.push(Dish.fromSnapshot(data));
