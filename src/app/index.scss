@@ -79,6 +79,10 @@ md-list-item.selected .selector {
   background-color: $selected-color;
 }
 
+md-list-item.switched input {
+  text-decoration: line-through;
+}
+
 .selector {
   width: 10px;
   margin-right: 10px;

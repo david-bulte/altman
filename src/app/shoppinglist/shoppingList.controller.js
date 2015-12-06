@@ -24,7 +24,9 @@ class ShoppingListController {
     }
 
     switchIngredient(section, ingredient) {
-        ingredient.switched = true;
+        if (ingredient.key === undefined) {
+            return;
+        }
         this._shoppingListService.updateShoppingList(this.shoppingList).then(() => this.toast('updated'));
     }
 
@@ -34,6 +36,10 @@ class ShoppingListController {
     }
 
     addIngredient(section, ingredient) {
+        if (ingredient.name === undefined) {
+            return;
+        }
+
         this._shoppingListService.updateShoppingList(this.shoppingList).then(() => {
             this._$timeout(() => {
                 ingredient.key = ingredient.name;

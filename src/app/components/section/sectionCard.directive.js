@@ -38,7 +38,12 @@ class SectionCardController {
     }
 
     selectIngredient(ingredient) {
-        this.selected = ingredient;
+        if (ingredient.key !== undefined) {
+            this.selected = ingredient;
+        }
+        else {
+            delete this.selected;
+        }
     }
 
 }

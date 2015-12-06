@@ -9,7 +9,7 @@
     <md-list>
         <md-subheader class="md-no-sticky">ingredients</md-subheader>
         <md-list-item ng-repeat="ingredient in ctrl.section.ingredients"
-                      ng-class="{'selected' : ingredient == ctrl.selected}"
+                      ng-class="{'selected' : ingredient == ctrl.selected, 'switched' : ingredient.switched}"
                       ng-click="ctrl.selectIngredient(ingredient)">
             <div class="selector">&nbsp;</div>
             <md-input-container flex="auto" md-no-float>
