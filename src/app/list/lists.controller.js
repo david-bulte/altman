@@ -32,11 +32,15 @@ class ListsController {
         });
     }
 
-    setActive(list) {
+    isActive(list) {
+        return this.user.activeFamily === list.key;
+    }
+
+    toggleActive(list) {
+        //let toggled = list.active
         this._listsService.setActive(list.key).then(() => {
             this._$timeout(() => {
                 this.user.activeFamily = list.key;
-                this.lists.forEach(list => list.active = list.key === this.user.activeFamily);
             });
         });
     }

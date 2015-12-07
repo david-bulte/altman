@@ -20,9 +20,9 @@
                     aria-label="toggle active"
                     ng-show="!ctrl.hideActive"
                     ng-click="ctrl.toggleActive({list : ctrl.list})">
-                <md-icon ng-show="!ctrl.active"
+                <md-icon ng-show="!ctrl.isActive({list : ctrl.list})"
                          md-svg-src="assets/images/icons/ic_star_border_white_18px.svg"></md-icon>
-                <md-icon ng-show="ctrl.active" md-svg-src="assets/images/icons/ic_star_white_18px.svg"></md-icon>
+                <md-icon ng-show="ctrl.isActive({list : ctrl.list})" md-svg-src="assets/images/icons/ic_star_white_18px.svg"></md-icon>
             </md-button>
         </div>
     </md-toolbar>

@@ -13,12 +13,13 @@
              style="width:30%; display: inline-block; vertical-align: top; margin-left:5px;margin-right:5px">
 
             <list-card list="list"
+                       is-active="listsCtrl.isActive(list)"
                        update-name="listsCtrl.updateName(list)"
                        remove-member="listsCtrl.removeMember(list, member)"
                        update-invite="listsCtrl.updateInvite(list, invite)"
                        send-invite="listsCtrl.sendInvite(list, invite)"
                        remove-invite="listsCtrl.removeInvite(list, invite)"
-                       set-active="listsCtrl.setActive(list)"
+                       toggle-active="listsCtrl.toggleActive(list)"
                        remove-me="listsCtrl.removeMe(list)"
                        toggle-admin="listsCtrl.toggleAdmin(list, member)"
                        can-edit="true"></list-card>

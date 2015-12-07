@@ -8,12 +8,13 @@ class ListCardDirective {
             templateUrl: 'app/components/listcard/listCard.html',
             scope: {
                 list: '=',
+                isActive: '&',
                 updateName: '&',
                 removeMember: '&',
                 remindInvite: '&',
                 updateInvite: '&',
                 removeInvite: '&',
-                setActive: '&',
+                toggleActive: '&',
                 toggleAdmin: '&',
                 removeMe: '&',
                 canEdit: '='
