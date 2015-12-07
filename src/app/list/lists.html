@@ -2,22 +2,34 @@
 
 <div layout="column" flex>
 
-  <toolbar toolbar-title="'Lists'"></toolbar>
+    <toolbar toolbar-title="'Lists'"></toolbar>
 
-  <list-card list="list"
-             update-name="listsCtrl.updateName(list)"
-             remove-member="listsCtrl.removeMember(list, member)"
-             create-invite="listsCtrl.createInvite(list, invite)"
-             send-invite="listsCtrl.sendInvite(list, invite)"
-             remove-invite="listsCtrl.removeInvite(list, invite)"
-             set-active="listsCtrl.setActive(list)"
-             remove-me="listsCtrl.removeMe(list)"
-             ng-repeat="list in listsCtrl.lists"></list-card>
+    <md-progress-linear ng-show="!listsCtrl.lists" md-mode="indeterminate"></md-progress-linear>
+
+    <md-content style="margin: 16px; box-sizing: border-box;">
+
+        <!--todo responsive-->
+        <div ng-repeat="list in listsCtrl.lists"
+             style="width:30%; display: inline-block; vertical-align: top; margin-left:5px;margin-right:5px">
+
+            <list-card list="list"
+                       update-name="listsCtrl.updateName(list)"
+                       remove-member="listsCtrl.removeMember(list, member)"
+                       update-invite="listsCtrl.updateInvite(list, invite)"
+                       send-invite="listsCtrl.sendInvite(list, invite)"
+                       remove-invite="listsCtrl.removeInvite(list, invite)"
+                       set-active="listsCtrl.setActive(list)"
+                       remove-me="listsCtrl.removeMe(list)"
+                       toggle-admin="listsCtrl.toggleAdmin(list, member)"
+                       can-edit="true"></list-card>
+        </div>
+
+    </md-content>
 
 </div>
 
 <div style="position: fixed; z-index: 30; right: 0; bottom: 0">
-  <md-button class="md-fab" aria-label="Setup new List" ng-click="listsCtrl.createList()">
-    <md-icon md-svg-src="assets/images/icons/ic_add_circle_black_24px.svg"></md-icon>
-  </md-button>
+    <md-button class="md-fab" aria-label="Setup new List" ng-click="listsCtrl.createList()">
+        <md-icon md-svg-src="assets/images/icons/ic_add_circle_black_24px.svg"></md-icon>
+    </md-button>
 </div>

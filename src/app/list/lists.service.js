@@ -37,6 +37,7 @@ class ListsService {
                     : Promise.resolve(lists);
             })
             .then((lists) => {
+                console.log('get invites 1');
                 return spec.invites
                     ? Promise.all(lists.map(_loadInvites.bind(this)))
                     : Promise.resolve(lists);
@@ -109,6 +110,15 @@ class ListsService {
                 yield updateList();
                 resolve();
             }
+        });
+    }
+
+    setAdmin(listKey, userKey, admin) {
+        return new Promise((resolve, reject) => {
+            let adminsRef = new Firebase(`https://altman.firebaseio.com/families/${listKey}/admins`);
+            let admins = {};
+            admins[userKey] = admin;
+            adminsRef.update(admins, () => resolve());
         });
     }
 
@@ -534,23 +544,14 @@ function _loadMembers(list) {
 
 function _loadInvites(list) {
     let getInvite = (inviteKey) => {
-        return new Promise((resolve, reject) => {
-            this._invitesService.getInvite(inviteKey).then(invite => {
-                list.invites.push(invite);
-                resolve();
-            });
+        return this._invitesService.getInvite(inviteKey).then(invite => {
+            list.invites.push(invite);
         });
     };
 
-    return new Promise((resolve, reject)=> {
-        if (list._firebaseo_.invites === undefined) {
-            resolve(list)
-        }
-        else {
-            Promise.all(Object.keys(list._firebaseo_.invites).map(getInvite.bind(this)))
-                .then(resolve(list))
-        }
-    });
+    return list._firebaseo_.invites === undefined
+        ? Promise.resolve(list)
+        : Promise.all(Object.keys(list._firebaseo_.invites).map(getInvite)).then(() => list);
 }
 
 function _loadDishes(list) {
@@ -593,48 +594,3 @@ function promisify(callback) {
 }
 
 export default ListsService;
-
-
-////deprecated
-//createFamily(name) {
-//  "use strict";
-//
-//  return new Promise((resolve, reject) => {
-//
-//    let ref = new Firebase('https://altman.firebaseio.com/families/');
-//    let auth = ref.getAuth();
-//
-//    let familyRef = ref.push({name: name, createdBy: auth.uid});
-//
-//    let member = {};
-//    member[auth.uid] = true;
-//
-//    let userRef = new Firebase('https://altman.firebaseio.com/users/' + auth.uid);
-//    let family = {};
-//    family[familyRef.key()] = true;
-//
-//    let updateMembers = promisify((cont) => {
-//      this._$log.debug('updating members');
-//      familyRef.child('members').update(member, cont);
-//    });
-//    let updateAdmins = promisify((cont) => {
-//      this._$log.debug('updating admins');
-//      familyRef.child('admins').update(member, cont);
-//    });
-//    let updateFamilies = promisify((cont) => {
-//      this._$log.debug('updating families');
-//      userRef.child('families').update(family, cont);
-//    });
-//
-//    updateMembers
-//      .then(updateAdmins)
-//      .then(updateFamilies)
-//      .then(() => {
-//        this._$log.debug(`family created - returning key ${familyRef.key()}`);
-//        resolve(familyRef.key());
-//      })
-//      .catch(() => reject);
-//
-//  });
-//
-//}

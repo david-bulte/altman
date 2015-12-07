@@ -16,26 +16,26 @@
       </md-button>
       <md-menu-content width="4">
         <md-menu-item>
-          <md-button ng-click="ctrl.announceClick($index)">
+          <md-button aria-label="todo" ng-click="ctrl.announceClick($index)">
             <md-icon md-svg-icon="call:no-sim"></md-icon>
             todo
           </md-button>
         </md-menu-item>
         <md-menu-item>
-          <md-button ng-click="ctrl.announceClick($index)">
+          <md-button aria-label="todo" ng-click="ctrl.announceClick($index)">
             <md-icon md-svg-icon="call:no-sim"></md-icon>
             todo
           </md-button>
         </md-menu-item>
         <md-menu-item>
-          <md-button ng-click="ctrl.announceClick($index)">
+          <md-button aria-label="todo" ng-click="ctrl.announceClick($index)">
             <md-icon md-svg-icon="call:no-sim"></md-icon>
             todo
           </md-button>
         </md-menu-item>
         <md-menu-divider></md-menu-divider>
         <md-menu-item ng-repeat="notification in toolbar.notifications">
-          <md-button ng-click="notification.callback()">
+          <md-button aria-label="todo" ng-click="notification.callback()">
             <md-icon md-svg-icon="call:no-sim"></md-icon>
             <span class="notification">{{notification.message}}</span>
           </md-button>

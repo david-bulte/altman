@@ -1,57 +1,143 @@
-<md-card>
-  <md-card-content>
+<section class="demo-container md-whiteframe-z1">
 
-    <h2>
-      <md-input-container flex="60" md-no-float>
-        <input placeholder="list name" ng-model="ctrl.list.name" ng-model-options="{updateOn: 'blur'}"
-               ng-change="ctrl.updateName({list : ctrl.list})">
-      </md-input-container>
-    </h2>
-    <span ng-show="ctrl.list.active">(active)</span>
+    <md-toolbar class="md-primary">
+        <div class="md-toolbar-tools md-primary" layout-align="space-between center" style="background-color: #F6F6F6">
+            <h2 flex="auto" style="color:black">
+                <any ng-switch="ctrl.canEdit">
+                    <md-input-container md-no-float ng-switch-when="true">
+                        <input placeholder="list name"
+                               style="margin-top:15px"
+                               flex="auto"
+                               ng-model="ctrl.list.name"
+                               ng-model-options="{updateOn: 'blur'}"
+                               ng-change="ctrl.updateName({list : ctrl.list})">
+                    </md-input-container>
+                    <span ng-switch-when="false">{{ctrl.list.name}}</span>
+                </any>
+            </h2>
+            <md-button
+                    class="md-fab md-mini"
+                    aria-label="toggle active"
+                    ng-show="!ctrl.hideActive"
+                    ng-click="ctrl.toggleActive({list : ctrl.list})">
+                <md-icon ng-show="!ctrl.active"
+                         md-svg-src="assets/images/icons/ic_star_border_white_18px.svg"></md-icon>
+                <md-icon ng-show="ctrl.active" md-svg-src="assets/images/icons/ic_star_white_18px.svg"></md-icon>
+            </md-button>
+        </div>
+    </md-toolbar>
 
     <md-list>
-      <md-subheader class="md-no-sticky">members - {{ctrl.list.members.length}}</md-subheader>
-      <md-list-item ng-repeat="member in ctrl.list.members">
-        <div flex layout="row">
-          <p flex="60">{{ member.name }} {{member.email}}</p>
-          <div layout-align="end">
-            <!--todo set admin-->
-            <md-checkbox class="md-secondary" ng-model="member.admin"
-                         ng-click="member.admin = !member.admin">
-              Admin
-            </md-checkbox>
-            <md-button flex ng-click="ctrl.removeMember({list : ctrl.list, member : member})">remove</md-button>
-          </div>
-        </div>
-      </md-list-item>
-
-      <md-divider></md-divider>
-
-      <md-subheader class="md-no-sticky">invites</md-subheader>
-      <md-list-item ng-repeat="invite in ctrl.list.invites">
-        <div flex layout="row">
-          <span flex="60" ng-show="invite.key != undefined">{{ invite.email }} (last sent: {{invite.lastSent}})</span>
-          <div layout-align="end">
-            <md-button ng-click="ctrl.remindInvite({list : ctrl.list, invite : invite})">remind</md-button>
-            <md-button ng-click="ctrl.removeInvite({list : ctrl.list, invite : invite})">remove</md-button>
-          </div>
-        </div>
-      </md-list-item>
-      <md-list-item>
-        <div flex layout="row">
-          <md-input-container flex="60" md-no-float>
-            <input placeholder="+ add invite" ng-model="ctrl.newInvite.email" ng-blur="ctrl.createInviteLocal()">
-          </md-input-container>
-        </div>
-      </md-list-item>
-
+        <md-subheader class="md-no-sticky">members</md-subheader>
+        <md-list-item ng-repeat="member in ctrl.list.members"
+                      ng-class="{'selected' : member == ctrl.selected, 'admin' : member.admin}"
+                      aria-label="select member"
+                      ng-click="ctrl.selectMember(member)">
+            <div class="selector">&nbsp;</div>
+            <md-input-container flex="auto" md-no-float>
+                <input  aria-label="email" disabled ng-model="member.email">
+            </md-input-container>
+            <md-switch class="md-primary" md-no-ink aria-label="Toggle admin" style="margin-top:-5px"
+                       ng-class="{'switched' : member.admin}"
+                       ng-model="member.admin"
+                       ng-change="ctrl.toggleAdmin({list : ctrl.list, member : member})">
+            </md-switch>
+        </md-list-item>
     </md-list>
 
-  </md-card-content>
+    <md-list>
+        <md-subheader class="md-no-sticky">invites</md-subheader>
+        <md-list-item ng-repeat="invite in ctrl.list.invites"
+                      ng-class="{'selected' : invite == ctrl.selected}"
+                      aria-label="select invite"
+                      ng-click="ctrl.selectInvite(invite)">
+            <div class="selector">&nbsp;</div>
+            <md-input-container flex="auto" md-no-float>
+                <input placeholder="+ add invite" ng-model="invite.email"
+                       ng-change="ctrl.updateInvite({list : ctrl.list, invite : invite})"
+                       ng-model-options="{updateOn: 'blur'}">
+            </md-input-container>
+            <!--<md-switch class="md-primary" md-no-ink aria-label="Switch Bought" style="margin-top:-5px"-->
+                       <!--ng-class="{'switched' : ingredient.switched}"-->
+                       <!--ng-model="ingredient.switched"-->
+                       <!--ng-change="ctrl.switchIngredient({section : ctrl.section, ingredient : ingredient})">-->
+            <!--</md-switch>-->
+        </md-list-item>
+    </md-list>
 
-  <div class="md-actions" layout="row" layout-align="end center">
-    <md-button ng-click="ctrl.setActive({list : ctrl.list})">Make list active</md-button>
-    <md-button ng-click="ctrl.removeMe({list : ctrl.list})">Remove me from list</md-button>
-  </div>
+    <div class="md-actions" layout="row" layout-align="end center" style="height: 40px">
+        <md-button class="md-primary md-hue-1"
+                   aria-label="remind invite"
+                   ng-show="ctrl.selected && ctrl.selectedType == 'invite'"
+                   ng-click="ctrl.remindInvite({list : ctrl.list, invite : ctrl.selected})">
+            Remind
+        </md-button>
+        <md-button class="md-accent"
+                   aria-label="remove list"
+                   ng-show="ctrl.selected"
+                   ng-click="ctrl.remove()">
+            Remove {{ctrl.selectedType}}
+        </md-button>
+    </div>
 
-</md-card>
+
+</section>
+
+
+<!--<md-card>-->
+<!--<md-card-content>-->
+
+<!--<h2>-->
+<!--<md-input-container flex="60" md-no-float>-->
+<!--<input placeholder="list name" ng-model="ctrl.list.name" ng-model-options="{updateOn: 'blur'}"-->
+<!--ng-change="ctrl.updateName({list : ctrl.list})">-->
+<!--</md-input-container>-->
+<!--</h2>-->
+<!--<span ng-show="ctrl.list.active">(active)</span>-->
+
+<!--<md-list>-->
+<!--<md-subheader class="md-no-sticky">members - {{ctrl.list.members.length}}</md-subheader>-->
+<!--<md-list-item ng-repeat="member in ctrl.list.members">-->
+<!--<div flex layout="row">-->
+<!--<p flex="60">{{ member.name }} {{member.email}}</p>-->
+<!--<div layout-align="end">-->
+<!--&lt;!&ndash;todo set admin&ndash;&gt;-->
+<!--<md-checkbox class="md-secondary" ng-model="member.admin"-->
+<!--ng-click="member.admin = !member.admin">-->
+<!--Admin-->
+<!--</md-checkbox>-->
+<!--<md-button flex ng-click="ctrl.removeMember({list : ctrl.list, member : member})">remove</md-button>-->
+<!--</div>-->
+<!--</div>-->
+<!--</md-list-item>-->
+
+<!--<md-divider></md-divider>-->
+
+<!--<md-subheader class="md-no-sticky">invites</md-subheader>-->
+<!--<md-list-item ng-repeat="invite in ctrl.list.invites">-->
+<!--<div flex layout="row">-->
+<!--<span flex="60" ng-show="invite.key != undefined">{{ invite.email }} (last sent: {{invite.lastSent}})</span>-->
+<!--<div layout-align="end">-->
+<!--<md-button ng-click="ctrl.remindInvite({list : ctrl.list, invite : invite})">remind</md-button>-->
+<!--<md-button ng-click="ctrl.removeInvite({list : ctrl.list, invite : invite})">remove</md-button>-->
+<!--</div>-->
+<!--</div>-->
+<!--</md-list-item>-->
+<!--<md-list-item>-->
+<!--<div flex layout="row">-->
+<!--<md-input-container flex="60" md-no-float>-->
+<!--<input placeholder="+ add invite" ng-model="ctrl.newInvite.email" ng-blur="ctrl.createInviteLocal()">-->
+<!--</md-input-container>-->
+<!--</div>-->
+<!--</md-list-item>-->
+
+<!--</md-list>-->
+
+<!--</md-card-content>-->
+
+<!--<div class="md-actions" layout="row" layout-align="end center">-->
+<!--<md-button ng-click="ctrl.setActive({list : ctrl.list})">Make list active</md-button>-->
+<!--<md-button ng-click="ctrl.removeMe({list : ctrl.list})">Remove me from list</md-button>-->
+<!--</div>-->
+
+<!--</md-card>-->

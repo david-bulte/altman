@@ -17,6 +17,7 @@
             </h2>
             <md-button
                     class="md-fab md-mini"
+                    aria-label="toggle star"
                     ng-show="!ctrl.hideStar"
                     ng-click="ctrl.toggleStar({dish : ctrl.dish})">
                 <md-icon ng-show="!ctrl.starred"
@@ -30,6 +31,7 @@
         <md-subheader class="md-no-sticky">ingredients</md-subheader>
         <md-list-item ng-repeat="ingredient in ctrl.dish.ingredients"
                       layout="row"
+                      aria-label="select ingredient"
                       ng-class="{'selected' : ingredient == ctrl.selected}"
                       ng-click="ctrl.selectIngredient(ingredient)">
             <div class="selector">&nbsp;</div>
@@ -61,21 +63,25 @@
 
     <div class="md-actions" layout="row" layout-align="end center">
         <md-button class="md-accent"
+                   aria-label="remove ingredient"
                    ng-show="ctrl.selected"
                    ng-click="ctrl.removeIngredient({dish: ctrl.dish, ingredient : ctrl.selected})">
             Remove ingredient
         </md-button>
         <md-button class="md-primary md-hue-1"
+                   aria-label="add to menu"
                    ng-show="!ctrl.hideAddRemoveWeekMenu && !ctrl.used"
                    ng-click="ctrl.addToWeekMenu({dish : ctrl.dish})">
             Add to weekmenu
         </md-button>
         <md-button class="md-primary md-hue-1"
+                   aria-label="remove from menu"
                    ng-show="!ctrl.hideAddRemoveWeekMenu && ctrl.used"
                    ng-click="ctrl.removeFromWeekMenu({dish : ctrl.dish})">
             Remove from weekmenu
         </md-button>
         <md-button class="md-primary md-hue-1"
+                   aria-label="remove dish"
                    ng-show="ctrl.canDelete"
                    ng-click="ctrl.removeDish({dish : dish})">
             Remove

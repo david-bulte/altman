@@ -49,9 +49,9 @@ class ShoppingListController {
         });
     }
 
-    updateIngredient(dish, ingredient) {
-        this._shoppingListService.updateShoppingList(this.shoppingList).then(() => this.toast('updated'));
-    }
+    //updateIngredient(dish, ingredient) {
+    //    this._shoppingListService.updateShoppingList(this.shoppingList).then(() => this.toast('updated'));
+    //}
 
     updateIngredient(dish, ingredient) {
         if (ingredient.key !== undefined) {
