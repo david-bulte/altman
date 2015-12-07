@@ -46,6 +46,10 @@ class ListsService {
                 return spec.dishes
                     ? Promise.all(lists.map(_loadDishes.bind(this)))
                     : Promise.resolve(lists);
+            })
+            .catch(err => {
+                console.log(err);
+                throw err;
             });
     }
 
@@ -471,6 +475,13 @@ class ListsService {
         });
     }
 
+    updateList(list) {
+        return new Promise((resolve) => {
+            let listRef = new Firebase(`https://altman.firebaseio.com/families/${list.key}`);
+            listRef.update(list, () => resolve());
+        });
+    }
+
 }
 
 function _getListKeys(userKey) {
@@ -503,14 +514,14 @@ function _getDishKeys(listKey) {
         dishesRef.once('value', (snapshot) => {
             var dishKeys = [];
             var dishes = snapshot.val();
-            if (dishes != null) {
+            if (dishes !== null) {
                 for (let dishKey of Object.keys(dishes)) {
                     if (dishes[dishKey] === true) {
                         dishKeys.push(dishKey);
                     }
                 }
-                resolve(dishKeys);
             }
+            resolve(dishKeys);
         });
     });
 }
@@ -556,14 +567,15 @@ function _loadInvites(list) {
 
 function _loadDishes(list) {
 
-    return new Promise((resolve, reject) => {
-        _getDishKeys(list.key)
+    //return new Promise((resolve, reject) => {
+        return _getDishKeys(list.key)
             .then(_getDishes)
             .then((dishes) => {
                 list.dishes = list.dishes.concat(dishes);
-                resolve(list);
+                //resolve(list);
+                return list;
             });
-    });
+    //});
 
 }
 

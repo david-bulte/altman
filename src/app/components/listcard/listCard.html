@@ -22,7 +22,8 @@
                     ng-click="ctrl.toggleActive({list : ctrl.list})">
                 <md-icon ng-show="!ctrl.isActive({list : ctrl.list})"
                          md-svg-src="assets/images/icons/ic_star_border_white_18px.svg"></md-icon>
-                <md-icon ng-show="ctrl.isActive({list : ctrl.list})" md-svg-src="assets/images/icons/ic_star_white_18px.svg"></md-icon>
+                <md-icon ng-show="ctrl.isActive({list : ctrl.list})"
+                         md-svg-src="assets/images/icons/ic_star_white_18px.svg"></md-icon>
             </md-button>
         </div>
     </md-toolbar>
@@ -35,7 +36,10 @@
                       ng-click="ctrl.selectMember(member)">
             <div class="selector">&nbsp;</div>
             <md-input-container flex="auto" md-no-float>
-                <input  aria-label="email" disabled ng-model="member.email">
+                <input aria-label="email" disabled ng-model="member.email">
+            </md-input-container>
+            <md-input-container flex="auto" md-no-float>
+                <input aria-label="nick" disabled ng-model="member.nick">
             </md-input-container>
             <md-switch class="md-primary" md-no-ink aria-label="Toggle admin" style="margin-top:-5px"
                        ng-class="{'switched' : member.admin}"
@@ -53,15 +57,19 @@
                       ng-click="ctrl.selectInvite(invite)">
             <div class="selector">&nbsp;</div>
             <md-input-container flex="auto" md-no-float>
-                <input placeholder="+ add invite" ng-model="invite.email"
+                <input placeholder="+ add invite"
+                       ng-model="invite.email"
+                       aria-label="email"
                        ng-change="ctrl.updateInvite({list : ctrl.list, invite : invite})"
                        ng-model-options="{updateOn: 'blur'}">
             </md-input-container>
-            <!--<md-switch class="md-primary" md-no-ink aria-label="Switch Bought" style="margin-top:-5px"-->
-                       <!--ng-class="{'switched' : ingredient.switched}"-->
-                       <!--ng-model="ingredient.switched"-->
-                       <!--ng-change="ctrl.switchIngredient({section : ctrl.section, ingredient : ingredient})">-->
-            <!--</md-switch>-->
+            <md-input-container flex="auto" md-no-float>
+                <input ng-model="invite.nick"
+                       placeholder="nick"
+                       aria-label="nick"
+                       ng-change="ctrl.updateInvite({list : ctrl.list, invite : invite})"
+                       ng-model-options="{updateOn: 'blur'}">
+            </md-input-container>
         </md-list-item>
     </md-list>
 

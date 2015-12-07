@@ -1,8 +1,9 @@
 class ListsController {
 
-    constructor(ListsService, UserService, $log, $mdDialog, $mdToast, $location, $timeout) {
+    constructor(InvitesService, ListsService, UserService, $log, $mdDialog, $mdToast, $location, $timeout) {
         'ngInject';
 
+        this._invitesService = InvitesService;
         this._listsService = ListsService;
         this._userService = UserService;
         this._$mdToast = $mdToast;
@@ -37,7 +38,6 @@ class ListsController {
     }
 
     toggleActive(list) {
-        //let toggled = list.active
         this._listsService.setActive(list.key).then(() => {
             this._$timeout(() => {
                 this.user.activeFamily = list.key;
@@ -55,6 +55,7 @@ class ListsController {
         this._listsService.addInvite(list.key, invite.email).then((created) => {
             this._$timeout(() => {
                 invite.key = created.key;
+                invite.family = created.family;
                 list.invites.push({email: undefined})
             });
         });
@@ -62,7 +63,7 @@ class ListsController {
 
     updateInvite(list, invite) {
         if (invite.key !== undefined) {
-            this._listsService.updateList(this.list).then(() => this.toast('updated'));
+            this._invitesService.updateInvite(invite.key, {family : invite.family, email : invite.email, nick : invite.nick}).then(() => this.toast('updated'));
         }
         else {
             this.addInvite(list, invite);

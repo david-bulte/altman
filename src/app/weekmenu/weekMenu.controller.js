@@ -29,11 +29,9 @@ class WeekMenuController {
         //todo refactor : get lists (specify listKey)
         this._listsService.getListsByListKey(this.user.activeFamily, {dishes: true})
             .then((lists) => {
-                if (lists && lists.length > 0) {
-                    this._$timeout(this.dishes = lists[0].dishes);
-                }
+                this._$timeout(this.dishes = lists && lists.length > 0 ? lists[0].dishes: []);
             }).catch(err => {
-            //todo toast error msg
+                this.toast(`oops ${err}`);
         });
     }
 

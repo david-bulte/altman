@@ -8,6 +8,10 @@
 
     <md-content style="margin: 16px; box-sizing: border-box;">
 
+        <div ng-show="weekMenuCtrl.dishes.length == 0">
+            no dishes (yet)
+        </div>
+
         <!--todo responsive-->
         <div ng-repeat="dish in weekMenuCtrl.dishes"
              style="width:30%; display: inline-block; vertical-align: top; margin-left:5px;margin-right:5px">
