@@ -1,32 +1,31 @@
-function runBlock($log, $location, $rootScope) {
-  'ngInject';
+function runBlock($log, $location) {
+    'ngInject';
 
-  let ref = new Firebase('https://altman.firebaseio.com');
+    let ref = new Firebase('https://altman.firebaseio.com');
 
-  //only needed when authenticating via redirect
-  ref.onAuth(function (authData) {
+    //only needed when authenticating via redirect
+    ref.onAuth(function (authData) {
 
-    if (authData) {
+        if (authData) {
 
-      $log.debug('User already authenticated :', authData);
+            $log.debug('User already authenticated :', authData);
 
-      let userRef = new Firebase('https://altman.firebaseio.com/users/' + authData.uid);
-      userRef.once('value', (snapshot) => {
+            let userRef = new Firebase(`https://altman.firebaseio.com/users/${authData.uid}`);
+            userRef.once('value', snapshot => {
+                let userExists = snapshot.val() !== null;
+                let redirectPage = !userExists ? '/welcome' : '/weekmenu';
+                console.log(`redirecting to ${redirectPage}`);
+                $location.path(redirectPage);
+                //$rootScope.$apply();
+            });
 
-        let userExists = snapshot.val() !== null;
-        let redirectPage = !userExists ? '/welcome' : '/weekmenu';
-        $location.path(redirectPage);
-        $rootScope.$apply();
+        }
+        else {
 
-      });
-
-    }
-    else {
-
-      $log.debug('User unknown - redirecting to login page');
-      $location.path('/login');
-    }
-  });
+            $log.debug('User unknown - redirecting to login page');
+            $location.path('/login');
+        }
+    });
 
 }
 

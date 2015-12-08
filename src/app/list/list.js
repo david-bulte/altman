@@ -14,6 +14,11 @@ class List {
   }
 
   static fromSnapshot(snapshot) {
+
+    if (snapshot == null) {
+      return null;
+    }
+
     let list = new List();
     list._firebaseo_ = snapshot.val();
     list.key = snapshot.key();

@@ -34,13 +34,13 @@ class ListsController {
     }
 
     isActive(list) {
-        return this.user.activeFamily === list.key;
+        return this.user.activeList === list.key;
     }
 
     toggleActive(list) {
         this._listsService.setActive(list.key).then(() => {
             this._$timeout(() => {
-                this.user.activeFamily = list.key;
+                this.user.activeList = list.key;
             });
         });
     }
@@ -55,7 +55,7 @@ class ListsController {
         this._listsService.addInvite(list.key, invite.email).then((created) => {
             this._$timeout(() => {
                 invite.key = created.key;
-                invite.family = created.family;
+                invite.list = created.list;
                 list.invites.push({email: undefined})
             });
         });
@@ -63,7 +63,7 @@ class ListsController {
 
     updateInvite(list, invite) {
         if (invite.key !== undefined) {
-            this._invitesService.updateInvite(invite.key, {family : invite.family, email : invite.email, nick : invite.nick}).then(() => this.toast('updated'));
+            this._invitesService.updateInvite(invite.key, {list : invite.list, email : invite.email, nick : invite.nick}).then(() => this.toast('updated'));
         }
         else {
             this.addInvite(list, invite);
@@ -90,7 +90,7 @@ class ListsController {
 
     createList() {
         this._listsService.createList().then((list) => {
-            //todo just add new family iso reloading all
+            //todo just add new list iso reloading all
             this._getLists(this.user);
         });
     }

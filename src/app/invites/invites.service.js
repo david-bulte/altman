@@ -27,17 +27,33 @@ class InvitesService {
         });
     }
 
-    on(event, handler) {
-        let ticket = new Date();
-        this.handlers[ticket] = handler;
-        this._userService.getCurrentUser().then(user => {
+    getInvitesByEmail(email) {
+        return new Promise((resolve) => {
             let invitesRef = new Firebase('https://altman.firebaseio.com/invites');
-            invitesRef.orderByChild('email').equalTo(user.email).on('child_added', (snapshot) => {
-                for (let handler of Object.values(this.handlers)) {
-                    handler(Invite.fromSnapshot(snapshot));
-                }
+            invitesRef.orderByChild('email').equalTo(email).once('value', (snapshot) => {
+                let invites = [];
+                snapshot.forEach((data) => {
+                    let invite = data.val();
+                    invite.key = data.key();
+                    invites.push(invite);
+                });
+                resolve(invites);
             });
         });
+    }
+
+    on(event, handler) {
+        let ticket = new Date();
+        //todo david 7/12
+        //this.handlers[ticket] = handler;
+        //this._userService.getCurrentUser().then(user => {
+        //    let invitesRef = new Firebase('https://altman.firebaseio.com/invites');
+        //    invitesRef.orderByChild('email').equalTo(user.email).on('child_added', (snapshot) => {
+        //        for (let handler of Object.values(this.handlers)) {
+        //            handler(Invite.fromSnapshot(snapshot));
+        //        }
+        //    });
+        //});
         return ticket;
     }
 

@@ -15,24 +15,24 @@
           There's an invitation
           <md-button class="md-raised" aria-label="Accept invitation" ng-click="welcome.acceptInvite(invite)"
                      ng-repeat="invite in welcome.invites">
-            Yes! Make me part of this family!
+            Yes! Make me part of this list!
           </md-button>
         </div>
 
         <div>
 
-          <md-button class="md-raised" aria-label="Setup family"
-                     ng-click="welcome.setupFamily()">
-            Setup family
+          <md-button class="md-raised" aria-label="Setup list"
+                     ng-click="welcome.setupList()">
+            Setup list
           </md-button>
-          <list-card family="welcome.family"
-                       update-name="welcome.updateName(family)"
-                       send-invite="welcome.sendInvite(family, invite)"
-                       remove-invite="welcome.removeInvite(family, invite)"
-                       ng-show="welcome.family != undefined">
+          <list-card list="welcome.list"
+                       update-name="welcome.updateName(list)"
+                       send-invite="welcome.sendInvite(list, invite)"
+                       remove-invite="welcome.removeInvite(list, invite)"
+                       ng-show="welcome.list != undefined">
           </list-card>
-          <span ng-show="welcome.family != undefined">test</span>
-          <md-button class="md-raised" aria-label="Setup family"
+          <span ng-show="welcome.list != undefined">test</span>
+          <md-button class="md-raised" aria-label="Setup list"
                      ng-click="welcome.done()">
             ok done
           </md-button>

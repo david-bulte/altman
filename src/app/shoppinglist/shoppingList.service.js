@@ -68,7 +68,7 @@ class ShoppingListService {
 
         let updateList = (shoppingList) => {
             return new Promise((resolve, reject) => {
-                let listRef = new Firebase(`https://altman.firebaseio.com/families/${shoppingList.list}`);
+                let listRef = new Firebase(`https://altman.firebaseio.com/lists/${shoppingList.list}`);
                 listRef.update({shoppingList: shoppingList.key}, () => {
                     resolve(shoppingList);
                 });
@@ -81,7 +81,7 @@ class ShoppingListService {
 
     //_saveShoppingList(shoppingList) {
     //    return new Promise((resolve, reject) => {
-    //        let shoppingListRef = new Firebase(`https://altman.firebaseio.com/families/${shoppingList.list}/shoppingList`);
+    //        let shoppingListRef = new Firebase(`https://altman.firebaseio.com/lists/${shoppingList.list}/shoppingList`);
     //        shoppingListRef.update(shoppingList, () => {
     //            resolve(ShoppingList.fromRef(shoppingListRef));
     //        });
@@ -149,9 +149,9 @@ class ShoppingListService {
         });
     }
 
-    getIngredients(familyKey) {
+    getIngredients(listKey) {
         return new Promise((resolve) => {
-            this._listsService.getDishes(familyKey).then((dishes) => {
+            this._listsService.getDishes(listKey).then((dishes) => {
                 let ingredients = [];
                 for (let dish of dishes) {
                     for (let key of Object.keys(dish.ingredients)) {
@@ -164,9 +164,9 @@ class ShoppingListService {
 
     }
 
-    addIngredient(familyKey, section, ingredient, type) {
+    addIngredient(listKey, section, ingredient, type) {
         return new Promise((resolve) => {
-            let changesRef = new Firebase(`https://altman.firebaseio.com/families/${familyKey}/shoppingListChanges/${type}`);
+            let changesRef = new Firebase(`https://altman.firebaseio.com/lists/${listKey}/shoppingListChanges/${type}`);
             let changeRef = changesRef.push();
             let change = {section: section, ingredient: ingredient};
             changeRef.set(change, () => {
@@ -181,7 +181,7 @@ class ShoppingListService {
     //    shoppingList = JSON.parse(angular.toJson(shoppingList));
     //    console.log('updating', shoppingList);
     //    return new Promise((resolve) => {
-    //        let shoppingListRef = new Firebase(`https://altman.firebaseio.com/families/${shoppingList.family}/shoppingList`);
+    //        let shoppingListRef = new Firebase(`https://altman.firebaseio.com/lists/${shoppingList.list}/shoppingList`);
     //        shoppingListRef.update(shoppingList, () => resolve(shoppingList));
     //    });
     //}

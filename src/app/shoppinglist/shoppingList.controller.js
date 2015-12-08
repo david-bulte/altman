@@ -15,7 +15,7 @@ class ShoppingListController {
     }
 
     _getShoppingList() {
-        this._shoppingListService.getShoppingList(this.user.activeFamily).then((shoppingList) => {
+        this._shoppingListService.getShoppingList(this.user.activeList).then((shoppingList) => {
             this._$timeout(() => {
                 this.shoppingList = shoppingList;
                 this.sections = Object.values(shoppingList.sections);

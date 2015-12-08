@@ -19,7 +19,7 @@ class DishesController {
     }
 
     _getSections() {
-        this._configService.getSections(this.user.activeFamily).then((sections) => {
+        this._configService.getSections(this.user.activeList).then((sections) => {
             this._$timeout(this.sections = sections);
         });
     }
@@ -42,7 +42,7 @@ class DishesController {
     }
 
     addToWeekMenu(dish) {
-        var listKey = this.user.activeFamily;
+        var listKey = this.user.activeList;
         this._listsService.addDish(listKey, dish.key).then(() => {
             dish.usedBy.push(listKey);
             this.toast(dish.name + ' added to week menu')
@@ -50,7 +50,7 @@ class DishesController {
     }
 
     removeFromWeekMenu(dish) {
-        var listKey = this.user.activeFamily;
+        var listKey = this.user.activeList;
         this._listsService.removeDish(listKey, dish.key).then(() => {
             dish.usedBy.splice(dish.usedBy.indexOf(listKey), 1);
             this.toast(dish.name + ' removed from week menu')
@@ -58,7 +58,7 @@ class DishesController {
     }
 
     isUsed(dish) {
-        return this.user.activeFamily !== undefined && dish.usedBy.indexOf(this.user.activeFamily) >= 0;
+        return this.user.activeList !== undefined && dish.usedBy.indexOf(this.user.activeList) >= 0;
     }
 
     updateName(dish) {

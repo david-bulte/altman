@@ -23,12 +23,12 @@ class DishesService {
 
 
     /**
-     * Returns dishes created all members of user's active family
+     * Returns dishes created all members of user's active list
      * @param user
      * @returns {Promise}
      */
     getDishes(user) {
-        return this._getMembers(user.activeFamily)
+        return this._getMembers(user.activeList)
             .then((members) => {
                 return Promise.all(members.map((user) => {
                     return user.key;

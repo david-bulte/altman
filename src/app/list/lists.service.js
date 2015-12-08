@@ -62,13 +62,13 @@ class ListsService {
     addInvite(listKey, email) {
         return new Promise((resolve, reject) => {
 
-            let invite = {family: listKey, email: email};
+            let invite = {list: listKey, email: email};
 
             let invitesRef = new Firebase(`https://altman.firebaseio.com/invites`);
             let inviteRef = invitesRef.push(invite);
             invite.key = inviteRef.key();
 
-            let listInvitesRef = new Firebase(`https://altman.firebaseio.com/families/${listKey}/invites`);
+            let listInvitesRef = new Firebase(`https://altman.firebaseio.com/lists/${listKey}/invites`);
             let invites = {};
             invites[inviteRef.key()] = true;
             listInvitesRef.update(invites, (err) => {
@@ -105,7 +105,7 @@ class ListsService {
 
             function updateList() {
                 self._$log.debug(`updateList ${listKey}`);
-                let inviteRef = new Firebase(`https://altman.firebaseio.com/families/${listKey}/invites/${inviteKey}`);
+                let inviteRef = new Firebase(`https://altman.firebaseio.com/lists/${listKey}/invites/${inviteKey}`);
                 inviteRef.remove(() => it.next());
             }
 
@@ -119,7 +119,7 @@ class ListsService {
 
     setAdmin(listKey, userKey, admin) {
         return new Promise((resolve, reject) => {
-            let adminsRef = new Firebase(`https://altman.firebaseio.com/families/${listKey}/admins`);
+            let adminsRef = new Firebase(`https://altman.firebaseio.com/lists/${listKey}/admins`);
             let admins = {};
             admins[userKey] = admin;
             adminsRef.update(admins, () => resolve());
@@ -137,7 +137,7 @@ class ListsService {
             let authData = ref.getAuth();
 
             let userRef = new Firebase(`https://altman.firebaseio.com/users/${authData.uid}`);
-            userRef.update({activeFamily: listKey}, () => resolve());
+            userRef.update({activeList: listKey}, () => resolve());
         });
     }
 
@@ -158,13 +158,13 @@ class ListsService {
 
             function updateUser() {
                 self._$log.debug(`updateUser ${userKey}`);
-                let familyRef = new Firebase(`https://altman.firebaseio.com/user/${userKey}/families/${listKey}`);
-                familyRef.remove(() => it.next());
+                let listRef = new Firebase(`https://altman.firebaseio.com/user/${userKey}/lists/${listKey}`);
+                listRef.remove(() => it.next());
             }
 
             function updateList() {
                 self._$log.debug(`updateList ${listKey}`);
-                let memberRef = new Firebase(`https://altman.firebaseio.com/families/${listKey}/members/${userKey}`);
+                let memberRef = new Firebase(`https://altman.firebaseio.com/lists/${listKey}/members/${userKey}`);
                 memberRef.remove(() => it.next());
             }
 
@@ -191,13 +191,13 @@ class ListsService {
             it.next();
 
             function createList(name = '_default_', createdBy = '') {
-                let listsRef = new Firebase('https://altman.firebaseio.com/families');
+                let listsRef = new Firebase('https://altman.firebaseio.com/lists');
                 let listRef = listsRef.push({name: name, createdBy: createdBy});
                 setTimeout(() => it.next(listRef.key()), 0);  //calling it.next should be in another 'thread'
             }
 
             function addAdmin(listKey, userKey) {
-                let adminsRef = new Firebase(`https://altman.firebaseio.com/families/${listKey}/admins`);
+                let adminsRef = new Firebase(`https://altman.firebaseio.com/lists/${listKey}/admins`);
                 let admins = {};
                 admins[userKey] = true;
                 adminsRef.update(admins, () => it.next());
@@ -229,7 +229,7 @@ class ListsService {
     addDish(listKey, dishKey) {
         let updateDishes = () => {
             return new Promise((resolve) => {
-                let dishesRef = new Firebase(`https://altman.firebaseio.com/families/${listKey}/dishes`);
+                let dishesRef = new Firebase(`https://altman.firebaseio.com/lists/${listKey}/dishes`);
                 let dishes = {};
                 dishes[dishKey] = true;
                 dishesRef.update(dishes, () => resolve());
@@ -257,15 +257,15 @@ class ListsService {
     removeDish(listKey, dishKey) {
         let updateDishes = () => {
             new Promise((resolve) => {
-                let dishesRef = new Firebase(`https://altman.firebaseio.com/families/${listKey}/dishes/${dishKey}`);
+                let dishesRef = new Firebase(`https://altman.firebaseio.com/lists/${listKey}/dishes/${dishKey}`);
                 dishesRef.remove(() => resolve());
             });
         };
 
         let updateDish = () => {
             new Promise((resolve) => {
-                let familyRef = new Firebase(`https://altman.firebaseio.com/dishes/${dishKey}/usedBy/${listKey}`);
-                familyRef.remove(() => resolve());
+                let listRef = new Firebase(`https://altman.firebaseio.com/dishes/${dishKey}/usedBy/${listKey}`);
+                listRef.remove(() => resolve());
             });
         };
 
@@ -288,9 +288,9 @@ class ListsService {
     }
 
 
-    //todo refactor with getFamilies + make it less synchronous
+    //todo refactor with getLists + make it less synchronous
     //todo also pass parameters with what to load
-    getFamily(familyKey) {
+    getList(listKey) {
 
         var self = this;
 
@@ -298,11 +298,11 @@ class ListsService {
 
             let it;
 
-            let familyRef = new Firebase(`https://altman.firebaseio.com/families/${familyKey}`);
-            familyRef.once('value', (snapshot) => {
-                let family = snapshot.val();
-                family.key = snapshot.key();
-                it = main(family);
+            let listRef = new Firebase(`https://altman.firebaseio.com/lists/${listKey}`);
+            listRef.once('value', (snapshot) => {
+                let list = snapshot.val();
+                list.key = snapshot.key();
+                it = main(list);
                 it.next();
             });
 
@@ -328,30 +328,30 @@ class ListsService {
                 });
             };
 
-            function* main(family) {
+            function* main(list) {
 
                 let members = [];
-                if (family.members !== undefined) {
-                    for (let key of Object.keys(family.members)) {
+                if (list.members !== undefined) {
+                    for (let key of Object.keys(list.members)) {
                         yield loadUser(key, members);
                     }
                 }
-                family.members = members;
+                list.members = members;
 
                 let invites = [];
-                if (family.invites !== undefined) {
-                    for (let key of Object.keys(family.invites)) {
+                if (list.invites !== undefined) {
+                    for (let key of Object.keys(list.invites)) {
                         yield loadInvite(key, invites);
                     }
                 }
-                family.invites = invites;
-                resolve(family);
+                list.invites = invites;
+                resolve(list);
 
             }
         });
     }
 
-    addMember(familyKey, userKey) {
+    addMember(listKey, userKey) {
 
         var self = this;
 
@@ -360,9 +360,9 @@ class ListsService {
             let it = main();
             it.next();
 
-            function updateFamily() {
-                self._$log.debug(`updateFamily ${familyKey}`);
-                let membersRef = new Firebase(`https://altman.firebaseio.com/families/${familyKey}/members`);
+            function updateList() {
+                self._$log.debug(`updateList ${listKey}`);
+                let membersRef = new Firebase(`https://altman.firebaseio.com/lists/${listKey}/members`);
                 let members = {};
                 members[userKey] = true;
                 membersRef.update(members, () => it.next());
@@ -370,14 +370,14 @@ class ListsService {
 
             function updateUser() {
                 self._$log.debug(`updateUser ${userKey}`);
-                let familiesRef = new Firebase(`https://altman.firebaseio.com/users/${userKey}/families`);
-                let families = {};
-                families[familyKey] = true;
-                familiesRef.update(families, () => it.next());
+                let listsRef = new Firebase(`https://altman.firebaseio.com/users/${userKey}/lists`);
+                let lists = {};
+                lists[listKey] = true;
+                listsRef.update(lists, () => it.next());
             }
 
             function* main() {
-                yield updateFamily();
+                yield updateList();
                 yield updateUser();
                 resolve();
             }
@@ -385,7 +385,7 @@ class ListsService {
         });
     }
 
-    acceptInvite(familyKey, userKey, inviteKey) {
+    acceptInvite(listKey, userKey, inviteKey) {
 
         var self = this;
 
@@ -396,12 +396,12 @@ class ListsService {
 
             function addMember() {
                 self._$log.debug(`addMember ${userKey}`);
-                self.addMember(familyKey, userKey).then(() => it.next());
+                self.addMember(listKey, userKey).then(() => it.next());
             }
 
             function deleteInvite() {
                 self._$log.debug(`deleteInvite ${inviteKey}`);
-                self.deleteInvite(familyKey, inviteKey).then(() => it.next());
+                self.deleteInvite(listKey, inviteKey).then(() => it.next());
             }
 
             function* main() {
@@ -413,9 +413,9 @@ class ListsService {
 
     }
 
-    removeMember(familyKey, memberKey) {
+    removeMember(listKey, memberKey) {
         return new Promise((resolve) => {
-            let membersRef = new Firebase(`https://altman.firebaseio.com/families/${familyKey}/members`);
+            let membersRef = new Firebase(`https://altman.firebaseio.com/lists/${listKey}/members`);
             membersRef.once('value', (snapshot) => {
                 let member = snapshot.val();
                 delete member[memberKey];
@@ -426,9 +426,9 @@ class ListsService {
         });
     }
 
-    getMembers(familyKey) {
+    getMembers(listKey) {
 
-        this._$log.debug(`Getting members for family with key ${familyKey}`);
+        this._$log.debug(`Getting members for list with key ${listKey}`);
 
         var self = this;
 
@@ -436,10 +436,10 @@ class ListsService {
 
             let it;
 
-            let familyRef = new Firebase(`https://altman.firebaseio.com/families/${familyKey}`);
-            familyRef.once('value', (snapshot) => {
-                let family = snapshot.val();
-                it = main(family);
+            let listRef = new Firebase(`https://altman.firebaseio.com/lists/${listKey}`);
+            listRef.once('value', (snapshot) => {
+                let list = snapshot.val();
+                it = main(list);
                 it.next();
             });
 
@@ -455,9 +455,9 @@ class ListsService {
                 });
             }
 
-            function* main(family) {
+            function* main(list) {
                 let result = [];
-                let keys = Object.keys(family.members);
+                let keys = Object.keys(list.members);
                 for (let key of keys) {
                     yield addUser(key, result);
                 }
@@ -468,16 +468,16 @@ class ListsService {
         });
     }
 
-    updateName(familyKey, name) {
+    updateName(listKey, name) {
         return new Promise((resolve) => {
-            let familyRef = new Firebase(`https://altman.firebaseio.com/families/${familyKey}`);
-            familyRef.update({name: name}, () => resolve());
+            let listRef = new Firebase(`https://altman.firebaseio.com/lists/${listKey}`);
+            listRef.update({name: name}, () => resolve());
         });
     }
 
     updateList(list) {
         return new Promise((resolve) => {
-            let listRef = new Firebase(`https://altman.firebaseio.com/families/${list.key}`);
+            let listRef = new Firebase(`https://altman.firebaseio.com/lists/${list.key}`);
             listRef.update(list, () => resolve());
         });
     }
@@ -486,7 +486,7 @@ class ListsService {
 
 function _getListKeys(userKey) {
     return new Promise((resolve, reject) => {
-        let listsRef = new Firebase(`https://altman.firebaseio.com/users/${userKey}/families`);
+        let listsRef = new Firebase(`https://altman.firebaseio.com/users/${userKey}/lists`);
         listsRef.once('value', (snapshot) => {
             if (snapshot.val() != null) {
                 resolve(Object.keys(snapshot.val()));
@@ -496,12 +496,13 @@ function _getListKeys(userKey) {
 }
 
 function _getLists(listKeys) {
+    console.log('listKeys', listKeys);
     return Promise.all(listKeys.map(_getList));
 }
 
 function _getList(listKey) {
     return new Promise((resolve, reject) => {
-        let listRef = new Firebase(`https://altman.firebaseio.com/families/${listKey}`);
+        let listRef = new Firebase(`https://altman.firebaseio.com/lists/${listKey}`);
         listRef.once('value', (snapshot) => {
             resolve(List.fromSnapshot(snapshot));
         });
@@ -510,7 +511,7 @@ function _getList(listKey) {
 
 function _getDishKeys(listKey) {
     return new Promise((resolve, reject) => {
-        let dishesRef = new Firebase(`https://altman.firebaseio.com/families/${listKey}/dishes`);
+        let dishesRef = new Firebase(`https://altman.firebaseio.com/lists/${listKey}/dishes`);
         dishesRef.once('value', (snapshot) => {
             var dishKeys = [];
             var dishes = snapshot.val();
@@ -581,7 +582,7 @@ function _loadDishes(list) {
 
 function _setActive(list, user) {
     return new Promise((resolve) => {
-        list.active = list.key === user.activeFamily;
+        list.active = list.key === user.activeList;
         resolve(list);
     });
 }

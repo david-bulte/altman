@@ -4,7 +4,7 @@ class WeekMenuService {
     'ngInject';
   }
 
-  getWeekMenuDishes(familyKey) {
+  getWeekMenuDishes(listKey) {
 
     return new Promise((resolve) => {
 
@@ -13,7 +13,7 @@ class WeekMenuService {
 
       function getWeekMenuDishes() {
         let weekMenusRef = new Firebase("https://altman.firebaseio.com/weekmenus");
-        weekMenusRef.orderByChild('family').equalTo(familyKey).once('value', (snapshot) => {
+        weekMenusRef.orderByChild('list').equalTo(listKey).once('value', (snapshot) => {
           let weekMenuDishes = [];
           snapshot.forEach(function (data) {
             weekMenuDishes.push(data.val());
@@ -32,7 +32,7 @@ class WeekMenuService {
       }
 
       function* main() {
-        let weekMenuDishes = yield getWeekMenuDishes(); //returns all members of current family
+        let weekMenuDishes = yield getWeekMenuDishes(); //returns all members of current list
         for (let weekMenuDish of weekMenuDishes) {
           weekMenuDish._dish_ = yield getDish(weekMenuDish.dish);
         }
@@ -41,10 +41,10 @@ class WeekMenuService {
     });
   }
 
-  addDish(familyKey, dishKey) {
+  addDish(listKey, dishKey) {
     let updateWeekMenus = () => {
       new Promise((resolve) => {
-        let weekMenuRef = new Firebase(`https://altman.firebaseio.com/weekmenus/${familyKey}`);
+        let weekMenuRef = new Firebase(`https://altman.firebaseio.com/weekmenus/${listKey}`);
         let dish = {};
         dish[dishKey] = true;
         weekMenuRef.update(dish, () => resolve());
@@ -55,7 +55,7 @@ class WeekMenuService {
       new Promise((resolve) => {
         let usedByRef = new Firebase(`https://altman.firebaseio.com/dishes/${dishKey}/usedBy`);
         let usedBy = {};
-        usedBy[familyKey] = true;
+        usedBy[listKey] = true;
         usedByRef.update(usedBy, () => resolve());
       });
     };
@@ -63,18 +63,18 @@ class WeekMenuService {
     return Promise.all([updateWeekMenus(), updateDish()]);
   }
 
-  removeDish(familyKey, dishKey) {
+  removeDish(listKey, dishKey) {
     let updateWeekMenus = () => {
       new Promise((resolve) => {
-        let dishRef = new Firebase(`https://altman.firebaseio.com/weekmenus/${familyKey}/${dishKey}`);
+        let dishRef = new Firebase(`https://altman.firebaseio.com/weekmenus/${listKey}/${dishKey}`);
         dishRef.remove(() => resolve());
       });
     };
 
     let updateDish = () => {
       new Promise((resolve) => {
-        let familyRef = new Firebase(`https://altman.firebaseio.com/dishes/${dishKey}/usedBy/${familyKey}`);
-        familyRef.remove(() => resolve());
+        let listRef = new Firebase(`https://altman.firebaseio.com/dishes/${dishKey}/usedBy/${listKey}`);
+        listRef.remove(() => resolve());
       });
     };
 
