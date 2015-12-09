@@ -8,6 +8,7 @@ class WelcomeController {
         this._$timeout = $timeout;
         this._invitesService = InvitesService;
         this._listsService = ListsService;
+        this._userService = UserService;
 
         this.registered = false;
         this.progressing = false;
@@ -17,13 +18,50 @@ class WelcomeController {
         this.members = [{email: undefined, fresh: true}];
         this.userData;
 
-        UserService.register()
-            .then(user => user.email)
-            .then(InvitesService.getInvitesByEmail)
-            .then((invites) => this._$timeout(() => this.invites = invites))
-            .then(() => ListsService.createList())
+        this._userExists().then(userExists => {
+            if (userExists) {
+                $log.debug('User exists -> redirecting to /weekmenu');
+                $location.path('/weekmenu');
+            }
+            else {
+                $log.debug('User does not exist yet -> register user');
+                this._registerUser().then(() => $location.path('/weekmenu'));
+            }
+        })
+    }
+
+    _userExists() {
+        this._$log.debug('Checking if user exists');
+
+        let ref = new Firebase('https://altman.firebaseio.com');
+        let authData = ref.getAuth();
+
+        return new Promise((resolve) => {
+            let userRef = new Firebase(`https://altman.firebaseio.com/users/${authData.uid}`);
+            userRef.once('value', snapshot => {
+                resolve(snapshot.val() !== null);
+            });
+        });
+    }
+
+    _registerUser() {
+        return this._userService.register()
+            //.then(user => user.email)
+            //.then(InvitesService.getInvitesByEmail)
+            //.then((invites) => this._$timeout(() => this.invites = invites))
+            .then(() => this._listsService.createList())
+            .then(listKey => this._listsService.setActive(listKey))
             .then(() => this._$log.debug('finished initialization'));
     }
+
+    start() {
+        this._$log.debug('Starting app');
+        this._$location.path('/weekmenu');
+    }
+
+
+
+
 
 
 
@@ -198,5 +236,6 @@ class WelcomeController {
 //    }
 //
 //}
+
 
 export default WelcomeController;

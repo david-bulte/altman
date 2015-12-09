@@ -19,28 +19,29 @@
           </md-button>
         </div>
 
-        <div>
+        <!--<div>-->
 
-          <md-button class="md-raised" aria-label="Setup list"
-                     ng-click="welcome.setupList()">
-            Setup list
-          </md-button>
-          <list-card list="welcome.list"
-                       update-name="welcome.updateName(list)"
-                       send-invite="welcome.sendInvite(list, invite)"
-                       remove-invite="welcome.removeInvite(list, invite)"
-                       ng-show="welcome.list != undefined">
-          </list-card>
-          <span ng-show="welcome.list != undefined">test</span>
-          <md-button class="md-raised" aria-label="Setup list"
-                     ng-click="welcome.done()">
-            ok done
-          </md-button>
-          <p/>
+          <!--<md-button class="md-raised" aria-label="Setup list"-->
+                     <!--ng-click="welcome.setupList()">-->
+            <!--Setup list-->
+          <!--</md-button>-->
+          <!--<list-card list="welcome.list"-->
+                       <!--update-name="welcome.updateName(list)"-->
+                       <!--send-invite="welcome.sendInvite(list, invite)"-->
+                       <!--remove-invite="welcome.removeInvite(list, invite)"-->
+                       <!--ng-show="welcome.list != undefined">-->
+          <!--</list-card>-->
+          <!--<span ng-show="welcome.list != undefined">test</span>-->
+          <!--<md-button class="md-raised" aria-label="Setup list"-->
+                     <!--ng-click="welcome.done()">-->
+            <!--ok done-->
+          <!--</md-button>-->
+          <!--<p/>-->
 
-          <md-button ng-click="welcome.notNow()"  aria-label="not now">not now</md-button>
-        </div>
+          <!--<md-button ng-click="welcome.notNow()"  aria-label="not now">not now</md-button>-->
+        <!--</div>-->
 
+        <md-button ng-click="welcome.start()"  aria-label="start">start</md-button>
 
         <md-progress-linear md-mode="indeterminate" ng-show="welcome.progressing"></md-progress-linear>
 

@@ -6,23 +6,14 @@ function runBlock($log, $location) {
     //only needed when authenticating via redirect
     ref.onAuth(function (authData) {
 
+        $log.debug('onAuth callback called with authData', authData);
+
         if (authData) {
-
-            $log.debug('User already authenticated :', authData);
-
-            let userRef = new Firebase(`https://altman.firebaseio.com/users/${authData.uid}`);
-            userRef.once('value', snapshot => {
-                let userExists = snapshot.val() !== null;
-                let redirectPage = !userExists ? '/welcome' : '/weekmenu';
-                console.log(`redirecting to ${redirectPage}`);
-                $location.path(redirectPage);
-                //$rootScope.$apply();
-            });
-
+            $log.debug('User already authenticated');
+            $location.path('/welcome');
         }
         else {
-
-            $log.debug('User unknown - redirecting to login page');
+            $log.debug('User not authenticated -> redirecting to login page');
             $location.path('/login');
         }
     });

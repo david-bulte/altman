@@ -1,7 +1,7 @@
 function routerConfig ($routeProvider) {
   'ngInject';
   $routeProvider
-    .when('/', {
+    .when('/weekmenu', {
       templateUrl: 'app/weekMenu/weekMenu.html',
       controller: 'WeekMenuController',
       controllerAs: 'weekMenuCtrl'
@@ -46,8 +46,11 @@ function routerConfig ($routeProvider) {
       controller: 'ShoppingListController',
       controllerAs: 'shoppingListCtrl'
     })
+    .when('/', {
+      redirectTo: '/welcome'
+    })
     .otherwise({
-      redirectTo: '/'
+      redirectTo: '/welcome'
     });
 }
 
