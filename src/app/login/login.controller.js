@@ -1,10 +1,13 @@
 class LoginController {
 
-    constructor($firebaseAuth, $log) {
+    constructor($firebaseAuth, $log, $location, $scope) {
         'ngInject';
 
         this._$firebaseAuth = $firebaseAuth;
         this._$log = $log;
+        this._$location = $location;
+        this._$scope = $scope;
+        console.log('========================');
     }
 
     authenticateWithGoogle() {
@@ -20,14 +23,34 @@ class LoginController {
 
         var provider = 'google';
         var scope = {remember: 'sessionOnly', scope: 'email'};
-        var auth = this._$firebaseAuth(ref);
-        auth.$authWithOAuthRedirect(provider, scope).then(
-            function (authObject) {
-                this._$log.debug("Login success!", authObject);
-            },
-            function (error) {
+
+        //ref.onAuth(authData => {
+        //    this._$log.debug("Login success!", authData);
+        //    this._$location.path('/welcome');
+        //});
+        ref.authWithOAuthPopup("google", (error, authData) => {
+            if (error) {
                 this._$log.debug("Login failed!", error);
-            });
+            }
+            else {
+                this._$log.debug("Login success!", authData);
+                this._$location.path('/welcome');
+                this._$scope.$apply();
+            }
+        }, scope);
+        //ref.authWithOAuthRedirect("google", error => {
+        //    this._$log.debug("Login failed!", error);
+        //}, scope);
+
+        //var auth = this._$firebaseAuth(ref);
+        //auth.$authWithOAuthRedirect(provider, scope).then(
+        //    function (authObject) {
+        //        this._$log.debug("Login success!", authObject);
+        //        this._$location.path('/welcome');
+        //    },
+        //    function (error) {
+        //        this._$log.debug("Login failed!", error);
+        //    });
     }
 }
 
