@@ -15,12 +15,14 @@ class ShoppingListController {
     }
 
     _getShoppingList() {
-        this._shoppingListService.getShoppingList(this.user.activeList).then((shoppingList) => {
-            this._$timeout(() => {
-                this.shoppingList = shoppingList;
-                this.sections = Object.values(shoppingList.sections);
+        this._shoppingListService.getShoppingList(this.user.activeList)
+            .then(sort)
+            .then((shoppingList) => {
+                this._$timeout(() => {
+                    this.shoppingList = shoppingList;
+                    this.sections = Object.values(shoppingList.sections);
+                });
             });
-        });
     }
 
     switchIngredient(section, ingredient) {
@@ -71,6 +73,15 @@ class ShoppingListController {
         );
     }
 
+}
+
+function sort(shoppingList) {
+    for (let section of Object.values(shoppingList.sections)) {
+        section.ingredients.sort((left, right) => {
+            return left.name.localeCompare(right.name);
+        });
+    }
+    return shoppingList;
 }
 
 export default ShoppingListController;
