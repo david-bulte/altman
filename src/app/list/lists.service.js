@@ -227,25 +227,11 @@ class ListsService {
      * @returns {Promise}
      */
     addDish(listKey, dishKey) {
-        let updateDishes = () => {
-            return new Promise((resolve) => {
-                let dishesRef = new Firebase(`https://altman.firebaseio.com/lists/${listKey}/dishes`);
-                let dishes = {};
-                dishes[dishKey] = true;
-                dishesRef.update(dishes, () => resolve());
-            });
-        };
-
-        let updateDish = () => {
-            return new Promise((resolve) => {
-                let usedByRef = new Firebase(`https://altman.firebaseio.com/dishes/${dishKey}/usedBy`);
-                let usedBy = {};
-                usedBy[listKey] = true;
-                usedByRef.update(usedBy, () => resolve());
-            });
-        };
-
-        return Promise.all([updateDishes(), updateDish()]);
+        return addDishKey(listKey, dishKey)
+            .then(() => {
+                return {listKey: listKey, dishKey : dishKey}
+            })
+            .then(updateUsedBy)
     }
 
     /**
@@ -569,13 +555,13 @@ function _loadInvites(list) {
 function _loadDishes(list) {
 
     //return new Promise((resolve, reject) => {
-        return _getDishKeys(list.key)
-            .then(_getDishes)
-            .then((dishes) => {
-                list.dishes = list.dishes.concat(dishes);
-                //resolve(list);
-                return list;
-            });
+    return _getDishKeys(list.key)
+        .then(_getDishes)
+        .then((dishes) => {
+            list.dishes = list.dishes.concat(dishes);
+            //resolve(list);
+            return list;
+        });
     //});
 
 }
@@ -584,6 +570,28 @@ function _setActive(list, user) {
     return new Promise((resolve) => {
         list.active = list.key === user.activeList;
         resolve(list);
+    });
+}
+
+function addDishKey(listKey, dishKey) {
+    return new Promise((resolve) => {
+        let dishesRef = new Firebase(`https://altman.firebaseio.com/lists/${listKey}/dishes`);
+        let dishes = {};
+        dishes[dishKey] = true;
+        dishesRef.update(dishes, () => resolve());
+    });
+}
+
+//destructuring shortcut, equavalent to {listKey : listKey, dishKey : dishKey},
+// when called {listKey : A, dishKey : B} will be assigned like so:
+// let {listKey : key} = {key : A}
+//  ==> listKey = A
+function updateUsedBy({listKey, dishKey}) {
+    return new Promise((resolve) => {
+        let usedByRef = new Firebase(`https://altman.firebaseio.com/dishes/${dishKey}/usedBy`);
+        let usedBy = {};
+        usedBy[listKey] = true;
+        usedByRef.update(usedBy, () => resolve());
     });
 }
 

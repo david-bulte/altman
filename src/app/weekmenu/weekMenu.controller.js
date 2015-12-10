@@ -99,13 +99,14 @@ class WeekMenuController {
     }
 
     createDish() {
-        this._dishesService.createDish().then((dish) => {
-            this._listsService.addDish(this.user.activeList, dish.key).then(() => {
-                this._$timeout(() => {
-                    this.dishes.unshift(dish)
-                });
-            });
-        })
+        this._dishesService.createDish()
+            .then(dish => {
+                return this._listsService.addDish(this.user.activeList, dish.key).then(() => dish);
+            })
+            .then((dish) => this._$timeout(() => {
+                dish.usedBy = [this.user.activeList];
+                this.dishes.unshift(dish)
+            }));
     }
 
     toast(content) {
